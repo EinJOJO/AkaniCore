@@ -1,17 +1,10 @@
-plugins {
-    id("java")
-}
 
-group = "it.einjojo.akani"
-version = "1.0"
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    compileOnly(libs.paper)
+    api(project(":api"))
+    api(project(":common"))
+
 }
 
 tasks.test {

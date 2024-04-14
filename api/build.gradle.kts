@@ -1,6 +1,7 @@
 dependencies {
     compileOnly(libs.adventure)
     compileOnly(libs.minimessage)
+    compileOnly(libs.jedis)
 
 }
 
@@ -10,7 +11,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "it.einjojo.nucleoflex"
             artifactId = "api"
-            version = "1.1"
+            version = rootProject.version.toString()
 
             from(components["java"])
         }

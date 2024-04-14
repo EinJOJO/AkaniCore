@@ -18,6 +18,7 @@ vadventure = "4.16.0"
 vguava = "33.1.0-jre"
 vgson = "2.10.1"
 vcaffeine = "3.1.8"
+vhikari = "5.1.0"
 vjedis = "5.1.0"
 
 # Wandoria Specific
@@ -42,7 +43,7 @@ cloudnetbridge = { group = "eu.cloudnetservice.cloudnet", name = "bridge", versi
 cloudnetwrapperjvm = { group = "eu.cloudnetservice.cloudnet", name = "wrapper-jvm", version.ref = "vcloudnet" }
 luckperms = { group = "net.luckperms", name = "api", version.ref = "vluckperms" }
 boostedyaml = { group = "dev.dejvokep", name = "boosted-yaml", version.ref = "vboostedyaml" }
-
+hikari = { group = "com.zaxxer", name = "HikariCP", version.ref = "vhikari" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
