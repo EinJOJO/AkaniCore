@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.api.economy.EconomyManager;
 import it.einjojo.akani.core.api.message.MessageManager;
 import it.einjojo.akani.core.api.messaging.BrokerService;
+import it.einjojo.akani.core.api.player.playtime.PlaytimeManager;
 import redis.clients.jedis.JedisPool;
 
 import java.util.logging.Logger;
@@ -26,6 +27,8 @@ public interface AkaniCore {
     EconomyManager thalerManager();
 
     MessageManager messageManager();
+
+    PlaytimeManager playtimeManager();
 
     Logger logger();
 

@@ -3,13 +3,21 @@ package it.einjojo.akani.core.economy;
 import it.einjojo.akani.core.api.economy.BadBalanceException;
 import it.einjojo.akani.core.api.economy.EconomyHolder;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class ImplEconomyHolder implements EconomyHolder {
+public class CommonEconomyHolderImpl implements EconomyHolder {
+    private final UUID uuid;
     private final AtomicLong balance;
     private boolean hasChanged = false;
 
-    public ImplEconomyHolder(long balance) {
+    @Override
+    public UUID ownerUuid() {
+        return uuid;
+    }
+
+    public CommonEconomyHolderImpl(UUID uuid, long balance) {
+        this.uuid = uuid;
         this.balance = new AtomicLong(balance);
     }
 
