@@ -6,14 +6,18 @@ import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.api.economy.EconomyManager;
 import it.einjojo.akani.core.api.message.MessageManager;
 import it.einjojo.akani.core.api.messaging.BrokerService;
+import it.einjojo.akani.core.api.network.NetworkManager;
 import it.einjojo.akani.core.api.network.Server;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeManager;
+import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
 import it.einjojo.akani.core.config.MariaDBConfig;
 import it.einjojo.akani.core.config.RedisCredentials;
 import it.einjojo.akani.core.economy.CoinsEconomyManager;
 import it.einjojo.akani.core.economy.EconomyStorage;
 import it.einjojo.akani.core.economy.ThalerEconomyManager;
 import it.einjojo.akani.core.messaging.RedisBrokerService;
+import it.einjojo.akani.core.network.CommonNetworkManager;
+import it.einjojo.akani.core.network.CommonServer;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeManager;
 import it.einjojo.akani.core.player.playtime.PlaytimeStorage;
 import it.einjojo.akani.core.util.HikariFactory;
@@ -23,35 +27,42 @@ import redis.clients.jedis.JedisPool;
 import java.util.logging.Logger;
 
 public abstract class AbstractAkaniCore implements InternalAkaniCore {
+    private final Server me;
+    private final SimpleCloudnetAPI cloudnetAPI;
     private final Logger logger;
     private final JedisPool jedisPool;
     private final HikariDataSource dataSource;
     private final BrokerService brokerService;
     private final Gson gson;
 
+    //server
+    private final NetworkManager networkManager;
     //economy
     private final EconomyStorage coinsStorage;
     private final EconomyManager coinsEconomyManager;
     private final EconomyStorage thalerStorage;
     private final EconomyManager thalerEconomyManager;
-
+    //player
     private final PlaytimeStorage playtimeStorage;
     private final PlaytimeManager playtimeManager;
 
     /**
      * Called on the plugin's onEnable
      *
-     * @param executor         the server that is running the plugin
      * @param pluginLogger     the Logger of the plugin
      * @param redisCredentials the credentials for the redis server
      * @param mariaDBConfig    the configuration for the MariaDB database
      */
-    protected AbstractAkaniCore(Server executor, Logger pluginLogger, RedisCredentials redisCredentials, MariaDBConfig mariaDBConfig) {
+    protected AbstractAkaniCore(Logger pluginLogger, RedisCredentials redisCredentials, MariaDBConfig mariaDBConfig) {
         logger = pluginLogger;
+        cloudnetAPI = new SimpleCloudnetAPI();
+        me = new CommonServer(this, cloudnetAPI.getServiceName(), cloudnetAPI.getServiceTaskName());
         dataSource = HikariFactory.create(mariaDBConfig);
         jedisPool = JedisPoolFactory.create(redisCredentials);
         gson = new Gson();
-        brokerService = new RedisBrokerService(executor.name(), executor.groupName(), pluginLogger, jedisPool, gson);
+        brokerService = new RedisBrokerService(me.name(), me.groupName(), pluginLogger, jedisPool, gson);
+        //server
+        networkManager = new CommonNetworkManager(this);
         //economy
         coinsStorage = new EconomyStorage("core_economy_coins", dataSource);
         thalerStorage = new EconomyStorage("core_economy_thaler", dataSource);
@@ -129,6 +140,15 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     public Gson gson() {
         Preconditions.checkNotNull(gson, "Gson is not initialized");
         return gson;
+    }
+
+
+    public Server me() {
+        return me;
+    }
+
+    public SimpleCloudnetAPI cloudnetAPI() {
+        return cloudnetAPI;
     }
 
     public EconomyStorage coinsStorage() {
