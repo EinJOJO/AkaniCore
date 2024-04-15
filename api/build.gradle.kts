@@ -2,6 +2,7 @@ dependencies {
     compileOnly(libs.adventure)
     compileOnly(libs.minimessage)
     compileOnly(libs.jedis)
+    compileOnly(libs.hikari)
 
 }
 

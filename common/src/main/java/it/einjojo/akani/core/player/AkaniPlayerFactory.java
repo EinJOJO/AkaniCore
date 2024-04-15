@@ -1,4 +1,4 @@
-package it.einjojo.akani.core.factory;
+package it.einjojo.akani.core.player;
 
 import it.einjojo.akani.core.api.player.AkaniOfflinePlayer;
 import it.einjojo.akani.core.api.player.AkaniPlayer;

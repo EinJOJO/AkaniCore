@@ -1,7 +1,7 @@
 package it.einjojo.akani.core.handler;
 
 import com.google.common.io.ByteStreams;
-import it.einjojo.akani.core.api.InternalAkaniCore;
+import it.einjojo.akani.core.InternalAkaniCore;
 import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.api.messaging.ChannelMessage;
 import it.einjojo.akani.core.api.messaging.ChannelReceiver;

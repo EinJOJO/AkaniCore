@@ -1,6 +1,8 @@
-package it.einjojo.akani.core.api;
+package it.einjojo.akani.core;
 
-import it.einjojo.akani.core.factory.AkaniPlayerFactory;
+import com.google.gson.Gson;
+import it.einjojo.akani.core.api.AkaniCore;
+import it.einjojo.akani.core.player.AkaniPlayerFactory;
 import it.einjojo.akani.core.handler.AbstractCommandHandler;
 
 public interface InternalAkaniCore extends AkaniCore {
@@ -8,4 +10,6 @@ public interface InternalAkaniCore extends AkaniCore {
     AbstractCommandHandler commandHandler();
 
     AkaniPlayerFactory playerFactory();
+
+    Gson gson();
 }

@@ -1,6 +1,6 @@
 package it.einjojo.akani.core.api;
 
-import it.einjojo.akani.core.api.database.DatabaseProvider;
+import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.api.economy.EconomyManager;
 import it.einjojo.akani.core.api.message.MessageManager;
 import it.einjojo.akani.core.api.messaging.BrokerService;
@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public interface AkaniCore {
     JedisPool jedisPool();
-    DatabaseProvider databaseProvider();
+    HikariDataSource dataSource();
     BrokerService brokerService();
     /**
      * @return Main Currency Manager

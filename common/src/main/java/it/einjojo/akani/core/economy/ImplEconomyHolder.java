@@ -7,9 +7,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ImplEconomyHolder implements EconomyHolder {
     private final AtomicLong balance;
+    private boolean hasChanged = false;
 
     public ImplEconomyHolder(long balance) {
         this.balance = new AtomicLong(balance);
+    }
+
+    public boolean hasChanged() {
+        return hasChanged;
     }
 
     @Override
@@ -19,29 +24,29 @@ public class ImplEconomyHolder implements EconomyHolder {
 
     @Override
     public void setBalance(long balance) throws BadBalanceException {
-        if (balance < 0) {
-            throw BadBalanceException.negativeBalance();
-        }
-        this.balance.getAndSet(balance);
+        change(balance);
     }
 
     @Override
     public void addBalance(long balance) throws BadBalanceException {
-        if (balance < 0) {
-            throw BadBalanceException.negativeBalance();
-        }
-        this.balance.set(balance() + balance);
+        change(balance() + balance);
+
     }
 
     @Override
     public void removeBalance(long balance) throws BadBalanceException {
-        if (balance < 0) {
-            throw BadBalanceException.negativeBalance();
-        }
         long newBalance = balance() - balance;
         if (newBalance < 0) {
             throw BadBalanceException.notEnoughFunds();
         }
-        this.balance.set(newBalance);
+        change(newBalance);
+    }
+
+    private void change(long newBalance) throws BadBalanceException {
+        if (newBalance < 0) {
+            throw BadBalanceException.negativeBalance();
+        }
+        hasChanged = true;
+        balance.set(newBalance);
     }
 }

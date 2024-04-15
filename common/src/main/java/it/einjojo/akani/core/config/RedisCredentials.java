@@ -1,4 +1,4 @@
-package it.einjojo.akani.core.redis;
+package it.einjojo.akani.core.config;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

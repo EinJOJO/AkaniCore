@@ -1,4 +1,4 @@
-package it.einjojo.akani.core.redis;
+package it.einjojo.akani.core.messaging;
 
 import com.google.gson.Gson;
 import it.einjojo.akani.core.api.messaging.ChannelMessage;
