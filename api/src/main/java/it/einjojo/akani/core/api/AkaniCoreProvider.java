@@ -29,6 +29,10 @@ public class AkaniCoreProvider {
         return instance;
     }
 
+    public AkaniCoreProvider() {
+        throw new UnsupportedOperationException("This class cannot be instantiated");
+    }
+
     public static class NotLoadedException extends RuntimeException {
         public static final String MESSAGE = "AkaniCore is not loaded!";
 

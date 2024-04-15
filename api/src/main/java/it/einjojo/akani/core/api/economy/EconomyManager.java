@@ -11,18 +11,16 @@ public interface EconomyManager {
      * @return the player economy
      */
     Optional<EconomyHolder> cachedPlayerEconomy(UUID uuid);
-
     /**
      * Get the player economy async
      * Tries to get the cached economy, if it's not cached it will load it from the database.
      * @param uuid the player to get the economy
      * @return the player economy
      */
-    CompletableFuture<EconomyHolder> playerEconomyAsync(UUID uuid);
+    CompletableFuture<Optional<EconomyHolder>> playerEconomyAsync(UUID uuid);
+    Optional<EconomyHolder> playerEconomy(UUID uuid);
+    void invalidateLocalCachedEconomy(UUID uuid);
 
-
-    void invalidateCachedEconomy(UUID uuid);
-    CompletableFuture<EconomyHolder> loadEconomy(UUID uuid);
     void updateEconomy(EconomyHolder economyHolder);
-    void updateEconomyAsync(EconomyHolder economyHolder);
+    CompletableFuture<Void> updateEconomyAsync(EconomyHolder economyHolder);
 }

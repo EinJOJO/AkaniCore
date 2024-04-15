@@ -8,10 +8,12 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class AkaniCorePaperPlugin extends JavaPlugin {
-
+    private AkaniCorePaper akaniCorePaper;
     @Override
     public void onEnable() {
-        AkaniCoreProvider.register(null);
+        akaniCorePaper = new AkaniCorePaper(this);
+        akaniCorePaper.load();
+        AkaniCoreProvider.register(akaniCorePaper);
         setupVault();
     }
 

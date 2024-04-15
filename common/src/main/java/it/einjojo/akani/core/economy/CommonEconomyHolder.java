@@ -6,7 +6,7 @@ import it.einjojo.akani.core.api.economy.EconomyHolder;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class CommonEconomyHolderImpl implements EconomyHolder {
+public class CommonEconomyHolder implements EconomyHolder {
     private final UUID uuid;
     private final AtomicLong balance;
     private boolean hasChanged = false;
@@ -16,7 +16,7 @@ public class CommonEconomyHolderImpl implements EconomyHolder {
         return uuid;
     }
 
-    public CommonEconomyHolderImpl(UUID uuid, long balance) {
+    public CommonEconomyHolder(UUID uuid, long balance) {
         this.uuid = uuid;
         this.balance = new AtomicLong(balance);
     }

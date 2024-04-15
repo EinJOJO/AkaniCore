@@ -14,7 +14,7 @@ public class JedisPoolFactory {
         Preconditions.checkNotNull(credentials.host(), "Host must not be null");
         HostAndPort hostAndPort = new HostAndPort(credentials.host(), credentials.port());
         JedisClientConfig config = DefaultJedisClientConfig.builder()
-                .clientName("nucleoflex")
+                .clientName("akani")
                 .user(credentials.username())
                 .password(credentials.password())
                 .build();

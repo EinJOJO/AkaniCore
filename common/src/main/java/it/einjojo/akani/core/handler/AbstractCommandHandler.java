@@ -6,6 +6,7 @@ import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.api.messaging.ChannelMessage;
 import it.einjojo.akani.core.api.messaging.ChannelReceiver;
 import it.einjojo.akani.core.api.messaging.MessageProcessor;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.UUID;
 
@@ -59,20 +60,22 @@ public abstract class AbstractCommandHandler implements MessageProcessor {
         return core.brokerService();
     }
 
-    abstract void runServerCommand(String command);
+    @ApiStatus.Internal
+    abstract void runServerCommandLocal(String command);
 
-    abstract void runPlayerCommand(UUID player, String command);
+    @ApiStatus.Internal
+    abstract void runPlayerCommandLocal(UUID player, String command);
 
 
     @Override
     public void processMessage(ChannelMessage message) {
         if (message.messageTypeID().equals("cmds")) {
-            runServerCommand(message.content());
+            runServerCommandLocal(message.content());
         } else if (message.messageTypeID().equals("cmdpl")) {
             var payload = ByteStreams.newDataInput(message.content().getBytes());
             var player = UUID.fromString(payload.readUTF());
             var command = payload.readUTF();
-            runPlayerCommand(player, command);
+            runPlayerCommandLocal(player, command);
         }
     }
 
