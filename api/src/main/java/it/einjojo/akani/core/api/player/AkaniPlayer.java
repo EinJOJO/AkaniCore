@@ -1,20 +1,29 @@
 package it.einjojo.akani.core.api.player;
 
+import it.einjojo.akani.core.api.network.Group;
 import it.einjojo.akani.core.api.network.NetworkLocation;
 import it.einjojo.akani.core.api.network.Server;
 import net.kyori.adventure.text.Component;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface AkaniPlayer extends AkaniOfflinePlayer{
+public interface AkaniPlayer extends AkaniOfflinePlayer {
 
     String serverName();
+
     Server server();
+
     default void connect(Server server) {
         connect(server.name());
     }
 
     void connect(String serverName);
+
+    default void connectGroup(Group server) {
+        connectGroup(server.name());
+    }
+
+    void connectGroup(String groupName);
 
     void runCommand(String command);
 

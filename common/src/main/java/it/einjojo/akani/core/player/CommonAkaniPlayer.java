@@ -42,12 +42,18 @@ public abstract class CommonAkaniPlayer extends CommonAkaniOfflinePlayer impleme
 
     @Override
     public void teleport(NetworkLocation networkLocation) {
-        //TODO
+        core.positionHandler().teleport(uuid(), serverName(), networkLocation);
     }
 
     @Override
     public CompletableFuture<NetworkLocation> location() {
-        return null;
+        return core.positionHandler().position(uuid(), serverName());
+    }
+
+
+    @Override
+    public void connectGroup(String groupName) {
+        core.connectionHandler().connectPlayerToGroup(uuid(), groupName);
     }
 
 

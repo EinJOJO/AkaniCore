@@ -41,6 +41,14 @@ public record PlayerStorage(String tableName, InternalAkaniCore core) {
         return onlinePlayer(jedis(), uuid.toString());
     }
 
+    public void updateOnlinePlayer(AkaniPlayer player) {
+        try (var jedis = jedis()) {
+            var key = PLAYER_KEY_PREFIX + player.uuid().toString();
+            jedis.hset(key, "name", player.name());
+            jedis.hset(key, "server", player.serverName());
+        }
+    }
+
     private @Nullable AkaniPlayer onlinePlayer(Jedis jedis, String uuid) {
         var key = PLAYER_KEY_PREFIX + uuid;
         var data = jedis.hgetAll(key);
