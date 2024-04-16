@@ -88,6 +88,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
 
     }
 
+
     public void load() {
         logger.info("Loading Akani Core...");
         networkManager.register(me);
@@ -143,6 +144,11 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     @Override
     public MessageManager messageManager() {
         return null;
+    }
+
+    @Override
+    public ConnectionHandler connectionHandler() {
+        return connectionHandler;
     }
 
     @Override

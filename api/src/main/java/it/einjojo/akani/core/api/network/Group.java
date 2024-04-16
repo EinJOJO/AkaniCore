@@ -7,4 +7,6 @@ public interface Group {
     String name();
     Set<String> serverNames();
 
+    void runCommand(String command);
+
 }

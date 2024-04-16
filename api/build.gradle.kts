@@ -12,7 +12,7 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "it.einjojo.nucleoflex"
+            groupId = "it.einjojo.akani.core"
             artifactId = "api"
             version = rootProject.version.toString()
 

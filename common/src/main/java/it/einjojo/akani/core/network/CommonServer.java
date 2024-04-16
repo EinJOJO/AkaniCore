@@ -11,5 +11,9 @@ public record CommonServer(InternalAkaniCore core, String name, String groupName
         return core.networkManager().group(groupName).orElseThrow();
     }
 
+    @Override
+    public void runCommand(String command) {
+        core.commandHandler().runCommandAsServer(name(), command);
+    }
 }
 

@@ -5,6 +5,8 @@ import java.util.UUID;
 public interface ConnectionHandler {
 
 
-    void connectPlayer(UUID player, String serverName);
+    void connectPlayerToServer(UUID player, String serverName);
+
+    void connectPlayerToGroup(UUID player, String groupName);
 
 }

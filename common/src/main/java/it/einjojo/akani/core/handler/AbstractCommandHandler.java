@@ -27,13 +27,12 @@ public abstract class AbstractCommandHandler implements MessageProcessor {
      * @param serverName Name of the server
      * @param command    Command to run
      */
-    public void runCommandAsServer(String serverName, String command) {
-        var message = ChannelMessage.builder()
-                .channel(CHANNEL)
-                .messageTypeID("cmds")
-                .content(command)
-                .recipient(ChannelReceiver.server(serverName))
-                .build();
+    public final void runCommandAsServer(String serverName, String command) {
+        if (serverName.equals(brokerService.brokerName())) {
+            runServerCommandLocally(command);
+            return;
+        }
+        var message = ChannelMessage.builder().channel(CHANNEL).messageTypeID("cmds").content(command).recipient(ChannelReceiver.server(serverName)).build();
         brokerService().publish(message);
     }
 
@@ -44,17 +43,16 @@ public abstract class AbstractCommandHandler implements MessageProcessor {
      * @param serverName Name of the server
      * @param command    Command to run
      */
-    public void runCommandAsPlayer(UUID playerUuid, String serverName, String command) {
+    public final void runCommandAsPlayer(UUID playerUuid, String serverName, String command) {
+        if (serverName.equals(brokerService.brokerName())) {
+            runPlayerCommandLocally(playerUuid, command);
+            return;
+        }
         var payload = ByteStreams.newDataOutput();
         payload.writeUTF(playerUuid.toString());
         payload.writeUTF(command);
 
-        var message = ChannelMessage.builder()
-                .channel(CHANNEL)
-                .messageTypeID("cmdpl")
-                .content(payload.toByteArray())
-                .recipient(ChannelReceiver.server(serverName))
-                .build();
+        var message = ChannelMessage.builder().channel(CHANNEL).messageTypeID("cmdpl").content(payload.toByteArray()).recipient(ChannelReceiver.server(serverName)).build();
         brokerService().publish(message);
         logger.info("Published PlayerCommand:");
     }
@@ -64,21 +62,21 @@ public abstract class AbstractCommandHandler implements MessageProcessor {
     }
 
     @ApiStatus.Internal
-    abstract void runServerCommandLocal(String command);
+    protected abstract void runServerCommandLocally(String command);
 
     @ApiStatus.Internal
-    abstract void runPlayerCommandLocal(UUID player, String command);
+    protected abstract void runPlayerCommandLocally(UUID player, String command);
 
 
     @Override
     public void processMessage(ChannelMessage message) {
         if (message.messageTypeID().equals("cmds")) {
-            runServerCommandLocal(message.content());
+            runServerCommandLocally(message.content());
         } else if (message.messageTypeID().equals("cmdpl")) {
             var payload = ByteStreams.newDataInput(message.content().getBytes());
             var player = UUID.fromString(payload.readUTF());
             var command = payload.readUTF();
-            runPlayerCommandLocal(player, command);
+            runPlayerCommandLocally(player, command);
         }
     }
 

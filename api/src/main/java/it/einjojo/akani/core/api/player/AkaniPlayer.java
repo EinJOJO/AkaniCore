@@ -14,7 +14,9 @@ public interface AkaniPlayer extends AkaniOfflinePlayer{
         connect(server.name());
     }
 
-    void connect(String servername);
+    void connect(String serverName);
+
+    void runCommand(String command);
 
     void teleport(NetworkLocation networkLocation);
 
