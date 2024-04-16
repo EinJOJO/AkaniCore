@@ -1,7 +1,6 @@
 package it.einjojo.akani.core.handler;
 
 import com.google.common.io.ByteStreams;
-import it.einjojo.akani.core.InternalAkaniCore;
 import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.api.messaging.ChannelMessage;
 import it.einjojo.akani.core.api.messaging.ChannelReceiver;
@@ -9,14 +8,17 @@ import it.einjojo.akani.core.api.messaging.MessageProcessor;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public abstract class AbstractCommandHandler implements MessageProcessor {
     public static final String CHANNEL = "command";
-    private final InternalAkaniCore core;
+    private final BrokerService brokerService;
+    private final Logger logger;
 
-    public AbstractCommandHandler(InternalAkaniCore core) {
-        this.core = core;
-        core.brokerService().registerMessageProcessor(this);
+    public AbstractCommandHandler(BrokerService brokerService, Logger logger) {
+        this.brokerService = brokerService;
+        this.logger = logger;
+        brokerService.registerMessageProcessor(this);
     }
 
     /**
@@ -32,6 +34,7 @@ public abstract class AbstractCommandHandler implements MessageProcessor {
                 .content(command)
                 .recipient(ChannelReceiver.server(serverName))
                 .build();
+        brokerService().publish(message);
     }
 
     /**
@@ -53,11 +56,11 @@ public abstract class AbstractCommandHandler implements MessageProcessor {
                 .recipient(ChannelReceiver.server(serverName))
                 .build();
         brokerService().publish(message);
-        core.logger().info("Published PlayerCommand:");
+        logger.info("Published PlayerCommand:");
     }
 
     private BrokerService brokerService() {
-        return core.brokerService();
+        return brokerService;
     }
 
     @ApiStatus.Internal

@@ -15,6 +15,9 @@ import it.einjojo.akani.core.config.RedisCredentials;
 import it.einjojo.akani.core.economy.CoinsEconomyManager;
 import it.einjojo.akani.core.economy.EconomyStorage;
 import it.einjojo.akani.core.economy.ThalerEconomyManager;
+import it.einjojo.akani.core.handler.CloudnetConnectionHandler;
+import it.einjojo.akani.core.handler.ConnectionHandler;
+import it.einjojo.akani.core.handler.DummyConnectionHandler;
 import it.einjojo.akani.core.messaging.RedisBrokerService;
 import it.einjojo.akani.core.network.CommonNetworkManager;
 import it.einjojo.akani.core.network.CommonServer;
@@ -47,6 +50,8 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     private final PlaytimeStorage playtimeStorage;
     private final PlaytimeManager playtimeManager;
 
+    private final ConnectionHandler connectionHandler;
+
     /**
      * Called on the plugin's onEnable
      *
@@ -59,9 +64,11 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         if (SimpleCloudnetAPI.isAvailable()) {
             cloudnetAPI = new SimpleCloudnetAPI();
             me = new CommonServer(this, cloudnetAPI.getServiceName(), cloudnetAPI.getServiceTaskName());
+            connectionHandler = new CloudnetConnectionHandler(cloudnetAPI);
         } else {
             cloudnetAPI = null;
             me = new CommonServer(this, UUID.randomUUID().toString(), "local");
+            connectionHandler = new DummyConnectionHandler();
         }
         dataSource = HikariFactory.create(mariaDBConfig);
         jedisPool = JedisPoolFactory.create(redisCredentials);
@@ -77,6 +84,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         // ...
         playtimeStorage = new PlaytimeStorage("core_playtime", jedisPool, dataSource);
         playtimeManager = new CommonPlaytimeManager(playtimeStorage);
+
 
     }
 

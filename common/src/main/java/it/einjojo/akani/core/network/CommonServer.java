@@ -11,6 +11,5 @@ public record CommonServer(InternalAkaniCore core, String name, String groupName
         return core.networkManager().group(groupName).orElseThrow();
     }
 
-
 }
 

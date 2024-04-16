@@ -23,7 +23,7 @@ public abstract class CommonAkaniPlayer extends CommonAkaniOfflinePlayer impleme
         if (this.serverName.equals(serverName)) {
             return;
         }
-        //TODO
+        core.playerConnectionHandler().connectPlayer(uuid(), serverName);
     }
 
     @Override
