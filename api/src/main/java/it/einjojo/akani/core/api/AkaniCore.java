@@ -6,6 +6,7 @@ import it.einjojo.akani.core.api.message.MessageManager;
 import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.api.network.NetworkManager;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeManager;
+import org.jetbrains.annotations.ApiStatus;
 import redis.clients.jedis.JedisPool;
 
 import java.util.logging.Logger;
@@ -14,8 +15,14 @@ import java.util.logging.Logger;
  * Main interface for AkaniCore
  */
 public interface AkaniCore {
+    /**
+     * @return JedisPool instance
+     */
     JedisPool jedisPool();
 
+    /**
+     * @return HikariDataSource instance
+     */
     HikariDataSource dataSource();
 
     BrokerService brokerService();
@@ -30,8 +37,14 @@ public interface AkaniCore {
      */
     EconomyManager thalerManager();
 
+    /**
+     * @return Message Manager
+     */
     MessageManager messageManager();
 
+    /**
+     * @return Playtime Manager
+     */
     PlaytimeManager playtimeManager();
 
     /**
@@ -39,6 +52,7 @@ public interface AkaniCore {
      */
     NetworkManager networkManager();
 
+    @ApiStatus.Internal
     Logger logger();
 
 

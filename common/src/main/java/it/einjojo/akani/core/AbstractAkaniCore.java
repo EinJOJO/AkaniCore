@@ -24,6 +24,7 @@ import it.einjojo.akani.core.util.HikariFactory;
 import it.einjojo.akani.core.util.JedisPoolFactory;
 import redis.clients.jedis.JedisPool;
 
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public abstract class AbstractAkaniCore implements InternalAkaniCore {
@@ -55,8 +56,13 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
      */
     protected AbstractAkaniCore(Logger pluginLogger, RedisCredentials redisCredentials, MariaDBConfig mariaDBConfig) {
         logger = pluginLogger;
-        cloudnetAPI = new SimpleCloudnetAPI();
-        me = new CommonServer(this, cloudnetAPI.getServiceName(), cloudnetAPI.getServiceTaskName());
+        if (SimpleCloudnetAPI.isAvailable()) {
+            cloudnetAPI = new SimpleCloudnetAPI();
+            me = new CommonServer(this, cloudnetAPI.getServiceName(), cloudnetAPI.getServiceTaskName());
+        } else {
+            cloudnetAPI = null;
+            me = new CommonServer(this, UUID.randomUUID().toString(), "local");
+        }
         dataSource = HikariFactory.create(mariaDBConfig);
         jedisPool = JedisPoolFactory.create(redisCredentials);
         gson = new Gson();
@@ -76,6 +82,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
 
     public void load() {
         logger.info("Loading Akani Core...");
+        networkManager.register(me);
         brokerService().connect();
         coinsStorage.seedTables();
         thalerStorage.seedTables();
@@ -111,6 +118,12 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     public EconomyManager coinsManager() {
         Preconditions.checkNotNull(coinsEconomyManager, "Coins economy manager is not initialized");
         return coinsEconomyManager;
+    }
+
+    @Override
+    public NetworkManager networkManager() {
+        Preconditions.checkNotNull(networkManager, "Network manager is not initialized");
+        return networkManager;
     }
 
     @Override

@@ -28,4 +28,13 @@ public record CommonNetworkManager(InternalAkaniCore core) implements NetworkMan
     public List<String> groups() {
         return List.of();
     }
+
+    public void register(Server server) {
+
+    }
+
+    @Override
+    public void unregister(Server server) {
+
+    }
 }

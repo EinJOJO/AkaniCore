@@ -9,4 +9,8 @@ public interface NetworkManager {
 
     Optional<Group> group(String name);
     List<String> groups();
+
+    void register(Server server);
+
+    void unregister(Server server);
 }

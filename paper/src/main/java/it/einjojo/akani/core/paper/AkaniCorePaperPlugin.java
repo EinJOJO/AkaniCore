@@ -23,9 +23,7 @@ public class AkaniCorePaperPlugin extends JavaPlugin {
         }
 
         if (!SimpleCloudnetAPI.isAvailable()) {
-            getLogger().severe("SimpleCloudNetAPI is not available.");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
+            getLogger().warning("Cloudnet-API is not available. Will use random UUIDs for server identification");
         }
         akaniCorePaper = new AkaniCorePaper(this, yamlConfigFile);
         akaniCorePaper.load();
