@@ -1,0 +1,19 @@
+mariadb:
+  host: localhost
+  port: 3306
+  database: test
+  username: root
+  password: root
+  minIdle: 5
+  maxPoolSize: 10
+
+#Redis
+redis:
+  host: localhost
+  port: 6379
+  password:
+  username:
+
+
+
+

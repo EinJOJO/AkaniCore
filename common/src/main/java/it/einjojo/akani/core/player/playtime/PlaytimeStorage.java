@@ -12,7 +12,7 @@ import java.util.UUID;
 public record PlaytimeStorage(String tableName, JedisPool jedisPool, HikariDataSource dataSource) {
     public void seedTables() {
         try (var con = dataSource.getConnection()) {
-            try (var ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS ? (player_uuid VARCHAR(36) PRIMARY KEY, playtime BIGINT, first_join TIMESTAMP, last_join TIMESTAMP)")) {
+            try (var ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS " + tableName + " (player_uuid VARCHAR(36) PRIMARY KEY, playtime BIGINT, first_join TIMESTAMP, last_join TIMESTAMP)")) {
                 ps.setString(1, tableName);
                 ps.execute();
             }
@@ -23,7 +23,7 @@ public record PlaytimeStorage(String tableName, JedisPool jedisPool, HikariDataS
 
     public @Nullable PlaytimeHolder playtimeHolder(UUID uuid) {
         try (var con = dataSource.getConnection()) {
-            try (var ps = con.prepareStatement("SELECT * FROM ? WHERE player_uuid = ?")) {
+            try (var ps = con.prepareStatement("SELECT * FROM " + tableName + " WHERE player_uuid = ?")) {
                 ps.setString(1, tableName);
                 ps.setString(2, uuid.toString());
                 var rs = ps.executeQuery();
@@ -39,7 +39,7 @@ public record PlaytimeStorage(String tableName, JedisPool jedisPool, HikariDataS
 
     public void createPlaytimeHolder(PlaytimeHolder ph) {
         try (var con = dataSource.getConnection()) {
-            try (var ps = con.prepareStatement("INSERT INTO ? (player_uuid, playtime, first_join, last_join) VALUES (?, ?, ?, ?)")) {
+            try (var ps = con.prepareStatement("INSERT INTO " + tableName + " (player_uuid, playtime, first_join, last_join) VALUES (?, ?, ?, ?)")) {
                 ps.setString(1, tableName);
                 ps.setString(2, ph.ownerUuid().toString());
                 ps.setLong(3, ph.playtimeMillis());
@@ -54,7 +54,7 @@ public record PlaytimeStorage(String tableName, JedisPool jedisPool, HikariDataS
 
     public void updatePlaytimeHolder(PlaytimeHolder ph) {
         try (var con = dataSource.getConnection()) {
-            try (var ps = con.prepareStatement("UPDATE ? SET playtime = ?, first_join = ?, last_join = ? WHERE player_uuid = ?")) {
+            try (var ps = con.prepareStatement("UPDATE " + tableName + " SET playtime = ?, first_join = ?, last_join = ? WHERE player_uuid = ?")) {
                 ps.setString(1, tableName);
                 ps.setLong(2, ph.playtimeMillis());
                 ps.setTimestamp(3, Timestamp.from(ph.firstJoin()));

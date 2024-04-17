@@ -29,7 +29,7 @@ public abstract class AbstractChatHandler implements MessageProcessor {
             var messageContent = payload.readUTF();
             sendMessageLocally(receiver, deserializeComponent(messageContent));
         } else if (message.messageTypeID().equals(SERVER_CHAT_KEY) || message.messageTypeID().equals(GLOBAL_CHAT_KEY)) {
-            sendMessageToServerLocally(brokerService.brokerName(), deserializeComponent(message.content()));
+            sendMessageToServerLocally(deserializeComponent(message.content()));
         }
     }
 
@@ -39,7 +39,7 @@ public abstract class AbstractChatHandler implements MessageProcessor {
 
     protected abstract void sendMessageLocally(UUID receiver, Component message);
 
-    protected abstract void sendMessageToServerLocally(String serverName, Component message);
+    protected abstract void sendMessageToServerLocally(Component message);
 
     public final void sendMessageToPlayer(UUID specificPlayer, String playerServer, Component message) {
         if (playerServer.equals(brokerService.brokerName())) {
@@ -60,7 +60,7 @@ public abstract class AbstractChatHandler implements MessageProcessor {
 
     public final void sendMessageToServer(String serverName, Component message) {
         if (serverName.equals(brokerService.brokerName())) {
-            sendMessageToServerLocally(serverName, message);
+            sendMessageToServerLocally(message);
             return;
         }
         var messageToSend = ChannelMessage.builder()

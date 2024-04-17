@@ -1,5 +1,8 @@
 package it.einjojo.akani.core.handler;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.api.messaging.ChannelMessage;
@@ -7,10 +10,12 @@ import it.einjojo.akani.core.api.messaging.ChannelReceiver;
 import it.einjojo.akani.core.api.messaging.MessageProcessor;
 import it.einjojo.akani.core.api.network.NetworkLocation;
 
+import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractPositionHandler implements MessageProcessor {
+    protected static final Cache<UUID, NetworkLocation> openTeleports = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(10)).build();
     private static final String REQUEST_POSITION_MESSAGE_ID = "reqpos";
     private static final String TELEPORT_MESSAGE_ID = "tp";
     private final BrokerService brokerService;
@@ -36,7 +41,20 @@ public abstract class AbstractPositionHandler implements MessageProcessor {
             var response = ChannelMessage.responseTo(message).content(serializeNetworkLocation(location)).build();
             brokerService().publish(response);
         }
+        if (message.messageTypeID().equals(TELEPORT_MESSAGE_ID)) {
+            var payload = ByteStreams.newDataInput(message.content().getBytes());
+            var player = UUID.fromString(payload.readUTF());
+            var location = deserializeNetworkLocation(payload.readUTF());
+            if (isPlayerOnline(player)) {
+                teleportLocally(player, location);
+            } else {
+                openTeleports.put(player, location);
+            }
+        }
     }
+
+
+    public abstract boolean isPlayerOnline(UUID player);
 
     public abstract NetworkLocation positionLocally(UUID player);
 
@@ -55,7 +73,11 @@ public abstract class AbstractPositionHandler implements MessageProcessor {
             teleportLocally(player, location);
             return;
         }
-        var message = ChannelMessage.builder().channel(processingChannel()).messageTypeID(TELEPORT_MESSAGE_ID).content(serializeNetworkLocation(location)).recipient(ChannelReceiver.server(serverName)).build();
+        // SEND REDIS MESSAGE TO SERVER
+        var payload = ByteStreams.newDataOutput();
+        payload.writeUTF(player.toString());
+        payload.writeUTF(serializeNetworkLocation(location));
+        var message = ChannelMessage.builder().channel(processingChannel()).messageTypeID(TELEPORT_MESSAGE_ID).content(payload.toByteArray()).recipient(ChannelReceiver.server(serverName)).build();
         brokerService().publish(message);
     }
 

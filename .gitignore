@@ -14,12 +14,15 @@ build/
 .idea/tasks.xml
 .idea/uiDesigner.xml
 .idea/gradle.xml
+.idea/datasources.xml
+.idea/dataSources/
 *.iws
 *.iml
 *.ipr
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+**/run/
 
 ### Eclipse ###
 .apt_generated
@@ -45,3 +48,4 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/.idea/dataSources.local.xml

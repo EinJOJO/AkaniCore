@@ -8,9 +8,10 @@ import it.einjojo.akani.core.api.message.MessageManager;
 import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.api.network.NetworkManager;
 import it.einjojo.akani.core.api.network.Server;
+import it.einjojo.akani.core.api.player.AkaniPlayerManager;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeManager;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
-import it.einjojo.akani.core.config.MariaDBConfig;
+import it.einjojo.akani.core.config.MariaDbConfig;
 import it.einjojo.akani.core.config.RedisCredentials;
 import it.einjojo.akani.core.economy.CoinsEconomyManager;
 import it.einjojo.akani.core.economy.EconomyStorage;
@@ -21,6 +22,8 @@ import it.einjojo.akani.core.handler.DummyConnectionHandler;
 import it.einjojo.akani.core.messaging.RedisBrokerService;
 import it.einjojo.akani.core.network.CommonNetworkManager;
 import it.einjojo.akani.core.network.CommonServer;
+import it.einjojo.akani.core.player.CommonPlayerManager;
+import it.einjojo.akani.core.player.PlayerStorage;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeManager;
 import it.einjojo.akani.core.player.playtime.PlaytimeStorage;
 import it.einjojo.akani.core.util.HikariFactory;
@@ -49,7 +52,8 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     //player
     private final PlaytimeStorage playtimeStorage;
     private final PlaytimeManager playtimeManager;
-
+    private final PlayerStorage playerStorage;
+    private final AkaniPlayerManager playerManager;
     private final ConnectionHandler connectionHandler;
 
     /**
@@ -59,7 +63,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
      * @param redisCredentials the credentials for the redis server
      * @param mariaDBConfig    the configuration for the MariaDB database
      */
-    protected AbstractAkaniCore(Logger pluginLogger, RedisCredentials redisCredentials, MariaDBConfig mariaDBConfig) {
+    protected AbstractAkaniCore(Logger pluginLogger, RedisCredentials redisCredentials, MariaDbConfig mariaDBConfig) {
         logger = pluginLogger;
         if (SimpleCloudnetAPI.isAvailable()) {
             cloudnetAPI = new SimpleCloudnetAPI();
@@ -75,7 +79,8 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         gson = new Gson();
         brokerService = new RedisBrokerService(me.name(), me.groupName(), pluginLogger, jedisPool, gson);
         //server
-        networkManager = new CommonNetworkManager(this);
+        networkManager = new CommonNetworkManager(brokerService, this);
+
         //economy
         coinsStorage = new EconomyStorage("core_economy_coins", dataSource);
         thalerStorage = new EconomyStorage("core_economy_thaler", dataSource);
@@ -84,10 +89,20 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         // ...
         playtimeStorage = new PlaytimeStorage("core_playtime", jedisPool, dataSource);
         playtimeManager = new CommonPlaytimeManager(playtimeStorage);
-
+        playerStorage = new PlayerStorage("core_players", jedisPool, dataSource, this);
+        playerManager = new CommonPlayerManager(playerStorage, brokerService);
 
     }
 
+    @Override
+    public AkaniPlayerManager playerManager() {
+        return playerManager;
+    }
+
+
+    public PlayerStorage playerStorage() {
+        return playerStorage;
+    }
 
     public void load() {
         logger.info("Loading Akani Core...");
@@ -96,10 +111,12 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         coinsStorage.seedTables();
         thalerStorage.seedTables();
         playtimeStorage.seedTables();
+        playerManager().loadOnlinePlayers();
     }
 
     public void unload() {
         logger.info("Unloading Akani Core...");
+        networkManager.unregister(me);
         brokerService().disconnect();
         dataSource.close();
         jedisPool.close();

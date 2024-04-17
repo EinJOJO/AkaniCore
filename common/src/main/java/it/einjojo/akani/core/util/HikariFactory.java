@@ -2,11 +2,16 @@ package it.einjojo.akani.core.util;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import it.einjojo.akani.core.config.MariaDBConfig;
+import it.einjojo.akani.core.config.MariaDbConfig;
 
 public class HikariFactory {
 
-    public static HikariDataSource create(MariaDBConfig mariaconfig) {
+    public static HikariDataSource create(MariaDbConfig mariaconfig) {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("MariaDB driver not found", e);
+        }
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl("jdbc:mariadb://" + mariaconfig.host() + ":" + mariaconfig.port() + "/" + mariaconfig.database());
         hikariConfig.setUsername(mariaconfig.username());

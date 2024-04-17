@@ -10,7 +10,7 @@ import java.util.UUID;
 public record EconomyStorage(String tableName, HikariDataSource dataSource) {
     public void seedTables() {
         try (var con = dataSource.getConnection()) {
-            try (var ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS ? (player_uuid VARCHAR(36) PRIMARY KEY, balance BIGINT NOT NULL)")) {
+            try (var ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS " + tableName + " (player_uuid VARCHAR(36) PRIMARY KEY, balance BIGINT NOT NULL)")) {
                 ps.setString(1, tableName);
                 ps.execute();
             }
@@ -21,7 +21,7 @@ public record EconomyStorage(String tableName, HikariDataSource dataSource) {
 
     public void createEconomy(EconomyHolder economyHolder) {
         try (var con = dataSource.getConnection()) {
-            try (var ps = con.prepareStatement("INSERT INTO ? (player_uuid, balance) VALUES (?, ?)")) {
+            try (var ps = con.prepareStatement("INSERT INTO " + tableName + " (player_uuid, balance) VALUES (?, ?)")) {
                 ps.setString(1, tableName);
                 ps.setString(2, economyHolder.ownerUuid().toString());
                 ps.setLong(3, economyHolder.balance());
@@ -34,7 +34,7 @@ public record EconomyStorage(String tableName, HikariDataSource dataSource) {
 
     public EconomyHolder loadEconomy(UUID uuid) {
         try (var con = dataSource.getConnection()) {
-            try (var ps = con.prepareStatement("SELECT * FROM ? WHERE player_uuid = ?")) {
+            try (var ps = con.prepareStatement("SELECT * FROM " + tableName + " WHERE player_uuid = ?")) {
                 ps.setString(1, tableName);
                 ps.setString(2, uuid.toString());
                 try (var rs = ps.executeQuery()) {
@@ -51,7 +51,7 @@ public record EconomyStorage(String tableName, HikariDataSource dataSource) {
 
     public void updateEconomy(EconomyHolder economyHolder) {
         try (var con = dataSource.getConnection()) {
-            try (var ps = con.prepareStatement("UPDATE ? SET balance = ? WHERE player_uuid = ?")) {
+            try (var ps = con.prepareStatement("UPDATE " + tableName + " SET balance = ? WHERE player_uuid = ?")) {
                 ps.setString(1, tableName);
                 ps.setLong(2, economyHolder.balance());
                 ps.setString(3, economyHolder.ownerUuid().toString());

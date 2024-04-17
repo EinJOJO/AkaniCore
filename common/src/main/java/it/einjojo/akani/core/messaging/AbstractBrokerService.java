@@ -124,6 +124,7 @@ public abstract class AbstractBrokerService implements BrokerService {
 
     public boolean registerMessageProcessor(String channel, MessageProcessor processor) {
         Set<MessageProcessor> processors = messageProcessors.computeIfAbsent(channel, k -> new HashSet<>());
+        subscribe(channel);
         return processors.add(processor);
     }
 

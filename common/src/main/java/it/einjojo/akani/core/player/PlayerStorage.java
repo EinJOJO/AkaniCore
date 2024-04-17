@@ -2,25 +2,30 @@ package it.einjojo.akani.core.player;
 
 import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.InternalAkaniCore;
+import it.einjojo.akani.core.api.player.AkaniOfflinePlayer;
 import it.einjojo.akani.core.api.player.AkaniPlayer;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.params.ScanParams;
 import redis.clients.jedis.resps.ScanResult;
 
 import javax.annotation.Nullable;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public record PlayerStorage(String tableName, InternalAkaniCore core) {
+public record PlayerStorage(String tableName, JedisPool jedisPool, HikariDataSource dataSource,
+                            InternalAkaniCore core) {
     private static final String PLAYER_KEY_PREFIX = "akani:player:";
 
     private Jedis jedis() {
-        return core.jedisPool().getResource();
+        return jedisPool.getResource();
     }
 
-    private HikariDataSource dataSource() {
-        return core.dataSource();
+    private Connection connection() throws SQLException {
+        return dataSource.getConnection();
     }
 
     public List<AkaniPlayer> onlinePlayers() {
@@ -61,6 +66,12 @@ public record PlayerStorage(String tableName, InternalAkaniCore core) {
         return core.playerFactory().player(playerUuid, playerName, serverName);
     }
 
+    public void removeOnlinePlayer(UUID uuid) {
+        try (var jedis = jedis()) {
+            jedis.del(PLAYER_KEY_PREFIX + uuid.toString());
+        }
+    }
+
 
     public List<String> onlinePlayerUuids() {
         try (var jedis = jedis()) {
@@ -78,6 +89,33 @@ public record PlayerStorage(String tableName, InternalAkaniCore core) {
             cur = scanResult.getCursor();
         } while (!cur.equals(ScanParams.SCAN_POINTER_START));
         return keys;
+    }
+
+    public AkaniOfflinePlayer loadOfflinePlayer(UUID uuid) {
+        try (var connection = connection()) {
+            var statement = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE uuid = ?");
+            statement.setString(1, uuid.toString());
+            var result = statement.executeQuery();
+            if (!result.next()) {
+                return null;
+            }
+            return core.playerFactory().offlinePlayer(UUID.fromString(result.getString("uuid")), result.getString("name"));
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void upsertOfflinePlayer(AkaniOfflinePlayer player) {
+        try (var connection = connection()) {
+            var statement = connection.prepareStatement("INSERT INTO " + tableName + " (uuid, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?");
+            statement.setString(1, player.uuid().toString());
+            statement.setString(2, player.name());
+            statement.setString(3, player.name());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

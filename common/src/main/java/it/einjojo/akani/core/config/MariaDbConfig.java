@@ -2,7 +2,7 @@ package it.einjojo.akani.core.config;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
 
-public interface MariaDBConfig {
+public interface MariaDbConfig {
 
     String host();
 
@@ -18,7 +18,7 @@ public interface MariaDBConfig {
 
     int maxPoolSize();
 
-    public static class Impl implements MariaDBConfig {
+    public static class Impl implements MariaDbConfig {
         private final YamlDocument yamlDocument;
 
         public Impl(YamlDocument yamlDocument) {
@@ -27,37 +27,37 @@ public interface MariaDBConfig {
 
         @Override
         public String host() {
-            return yamlDocument.getString("mariaDB.host");
+            return yamlDocument.getString("mariadb.host");
         }
 
         @Override
         public int port() {
-            return yamlDocument.getInt("mariaDB.port");
+            return yamlDocument.getInt("mariadb.port");
         }
 
         @Override
         public String database() {
-            return yamlDocument.getString("mariaDB.database");
+            return yamlDocument.getString("mariadb.database");
         }
 
         @Override
         public String username() {
-            return yamlDocument.getString("mariaDB.username");
+            return yamlDocument.getString("mariadb.username");
         }
 
         @Override
         public String password() {
-            return yamlDocument.getString("mariaDB.password");
+            return yamlDocument.getString("mariadb.password");
         }
 
         @Override
         public int minIdle() {
-            return yamlDocument.getInt("mariaDB.minIdle");
+            return yamlDocument.getInt("mariadb.minIdle");
         }
 
         @Override
         public int maxPoolSize() {
-            return yamlDocument.getInt("mariaDB.maxPoolSize");
+            return yamlDocument.getInt("mariadb.maxPoolSize");
         }
     }
 

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 public abstract class AbstractCommandHandler implements MessageProcessor {
     public static final String CHANNEL = "command";
     private final BrokerService brokerService;
-    private final Logger logger;
+    protected final Logger logger;
 
     public AbstractCommandHandler(BrokerService brokerService, Logger logger) {
         this.brokerService = brokerService;

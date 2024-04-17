@@ -9,13 +9,13 @@ import java.nio.file.Path;
 public class YamlConfigFile {
 
 
-    private final MariaDBConfig mariaDBConfig;
+    private final MariaDbConfig mariaDBConfig;
     private final RedisCredentials redisCredentials;
     private final YamlDocument yamlDocument;
 
     public YamlConfigFile(Path filePath) throws IOException {
         yamlDocument = YamlDocument.create(filePath.toFile(), defaultFileContents());
-        mariaDBConfig = new MariaDBConfig.Impl(yamlDocument);
+        mariaDBConfig = new MariaDbConfig.Impl(yamlDocument);
         redisCredentials = new RedisCredentials.Impl(yamlDocument);
     }
 
@@ -35,7 +35,7 @@ public class YamlConfigFile {
         return getClass().getResourceAsStream("/config.yml");
     }
 
-    public MariaDBConfig mariaDBConfig() {
+    public MariaDbConfig mariaDBConfig() {
         return mariaDBConfig;
     }
 

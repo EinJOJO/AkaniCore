@@ -26,9 +26,17 @@ public class AkaniCorePaperPlugin extends JavaPlugin {
             getLogger().warning("Cloudnet-API is not available. Will use random UUIDs for server identification");
         }
         akaniCorePaper = new AkaniCorePaper(this, yamlConfigFile);
-        akaniCorePaper.load();
         AkaniCoreProvider.register(akaniCorePaper);
+        akaniCorePaper.load();
         setupVault();
+    }
+
+    @Override
+    public void onDisable() {
+        if (akaniCorePaper != null) {
+            akaniCorePaper.unload();
+            AkaniCoreProvider.unregister();
+        }
     }
 
     private void setupVault() {
