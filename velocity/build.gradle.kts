@@ -25,7 +25,7 @@ tasks {
     shadowJar {
         archiveBaseName.set("AkaniCore")
         archiveVersion.set("")
-        archiveClassifier.set("paper")
+        archiveClassifier.set("velocity")
     }
 
     runVelocity {
