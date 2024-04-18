@@ -26,7 +26,7 @@ public record PlaytimeStorage(String tableName, JedisPool jedisPool, HikariDataS
                 ps.setString(1, uuid.toString());
                 var rs = ps.executeQuery();
                 if (rs.next()) {
-                    return new CommonPlaytimeHolder(UUID.fromString(rs.getString("uuid")), rs.getLong("playtime"), rs.getTimestamp("first_join").toInstant(), rs.getTimestamp("last_join").toInstant());
+                    return new CommonPlaytimeHolder(UUID.fromString(rs.getString("player_uuid")), rs.getLong("playtime"), rs.getTimestamp("first_join").toInstant(), rs.getTimestamp("last_join").toInstant());
                 }
             }
         } catch (SQLException e) {

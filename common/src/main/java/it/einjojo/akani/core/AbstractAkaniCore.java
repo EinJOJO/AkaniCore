@@ -118,8 +118,8 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     public void unload() {
         logger.info("Unloading Akani Core...");
         networkManager.unregister(me);
-        brokerService().disconnect();
         dataSource.close();
+        brokerService().disconnect();
         jedisPool.close();
     }
 
