@@ -13,6 +13,8 @@ public interface AkaniPlayerManager {
 
     Optional<AkaniPlayer> onlinePlayer(UUID uuid);
 
+    Optional<AkaniPlayer> onlinePlayerByName(String name);
+
     /**
      * Load a player from the database by UUID or if the player is online from the onlineplayer-cache
      *
@@ -20,6 +22,15 @@ public interface AkaniPlayerManager {
      * @return CompletableFuture with the player
      */
     CompletableFuture<Optional<AkaniOfflinePlayer>> loadPlayer(UUID uuid);
+
+    /**
+     * Load a player from the database by name or if the player is online from the onlineplayer-cache
+     *
+     * @param name Name of the player
+     * @return CompletableFuture with the player
+     */
+    CompletableFuture<Optional<AkaniOfflinePlayer>> loadPlayerByName(String name);
+
 
     @ApiStatus.Internal
     void loadOnlinePlayers();

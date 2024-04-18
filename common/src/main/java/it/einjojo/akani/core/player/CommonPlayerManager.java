@@ -1,5 +1,7 @@
 package it.einjojo.akani.core.player;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.ImmutableList;
 import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.api.messaging.ChannelMessage;
@@ -18,11 +20,46 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
     private final BrokerService brokerService;
 
     private final Map<UUID, AkaniPlayer> onlinePlayers = new HashMap<>();
+    private final Cache<String, UUID> nameToUUIDCache = Caffeine.newBuilder().build();
 
     public CommonPlayerManager(PlayerStorage playerStorage, BrokerService brokerService) {
         this.playerStorage = playerStorage;
         this.brokerService = brokerService;
         brokerService.registerMessageProcessor(this);
+    }
+
+    @Override
+    public Optional<AkaniPlayer> onlinePlayerByName(String name) {
+        var uuid = nameToUUIDCache.getIfPresent(name);
+        if (uuid != null) {
+            return onlinePlayer(uuid);
+        }
+        uuid = playerStorage.playerUUIDByName(name);
+        if (uuid != null) {
+            nameToUUIDCache.put(name, uuid);
+        }
+        return onlinePlayer(uuid);
+    }
+
+    @Override
+    public CompletableFuture<Optional<AkaniOfflinePlayer>> loadPlayerByName(String name) {
+        return CompletableFuture.supplyAsync(() -> {
+            var uuid = nameToUUIDCache.getIfPresent(name);
+            if (uuid == null) {
+                uuid = playerStorage.playerUUIDByName(name);
+                if (uuid != null) {
+                    nameToUUIDCache.put(name, uuid);
+                }
+            }
+            if (uuid == null) {
+                return Optional.empty();
+            }
+            var optionalOnline = onlinePlayer(uuid);
+            if (optionalOnline.isPresent()) {
+                return Optional.of(optionalOnline.get());
+            }
+            return Optional.ofNullable(playerStorage.loadOfflinePlayer(uuid));
+        });
     }
 
     /**

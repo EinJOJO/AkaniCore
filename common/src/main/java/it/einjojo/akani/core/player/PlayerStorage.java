@@ -106,6 +106,20 @@ public record PlayerStorage(String tableName, JedisPool jedisPool, HikariDataSou
         }
     }
 
+    public UUID playerUUIDByName(String name) {
+        try (var connection = connection()) {
+            var statement = connection.prepareStatement("SELECT uuid FROM " + tableName + " WHERE name = ?");
+            statement.setString(1, name);
+            var result = statement.executeQuery();
+            if (!result.next()) {
+                return null;
+            }
+            return UUID.fromString(result.getString("uuid"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void upsertOfflinePlayer(AkaniOfflinePlayer player) {
         try (var connection = connection()) {
             var statement = connection.prepareStatement("INSERT INTO " + tableName + " (uuid, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?");
