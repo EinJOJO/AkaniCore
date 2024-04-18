@@ -15,6 +15,8 @@ public interface BrokerService {
      */
     String brokerName();
 
+    String groupName();
+
     /**
      * Connect to the broker
      */

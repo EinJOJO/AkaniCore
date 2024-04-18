@@ -71,10 +71,11 @@ public abstract class AbstractPositionHandler implements MessageProcessor, Posit
 
     @Override
     public void teleport(UUID player, String serverName, NetworkLocation location) {
-        if (serverName.equals(brokerService.brokerName())) {
+        if (serverName.equals(brokerService.brokerName()) || location.type().equals(NetworkLocation.Type.UNSPECIFIED)) {
             teleportLocally(player, location);
             return;
         }
+
         // SEND REDIS MESSAGE TO SERVER
         var payload = ByteStreams.newDataOutput();
         payload.writeUTF(player.toString());

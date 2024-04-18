@@ -31,6 +31,11 @@ public abstract class AbstractBrokerService implements BrokerService {
     }
 
     @Override
+    public String groupName() {
+        return brokerGroup;
+    }
+
+    @Override
     public String brokerName() {
         return brokerName;
     }

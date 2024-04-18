@@ -42,6 +42,12 @@ public abstract class CommonAkaniPlayer extends CommonAkaniOfflinePlayer impleme
 
     @Override
     public void teleport(NetworkLocation networkLocation) {
+        if (networkLocation.type().equals(NetworkLocation.Type.GROUP) && !core().brokerService().groupName().equals(networkLocation.referenceName())) {
+            connectGroup(networkLocation.referenceName());
+        }
+        if (networkLocation.type().equals(NetworkLocation.Type.SERVER) && !serverName().equals(networkLocation.referenceName())) {
+            connect(networkLocation.referenceName());
+        }
         core.positionHandler().teleport(uuid(), serverName(), networkLocation);
     }
 
