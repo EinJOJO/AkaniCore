@@ -10,6 +10,7 @@ import it.einjojo.akani.core.api.AkaniCoreProvider;
 import it.einjojo.akani.core.config.YamlConfigFile;
 import it.einjojo.akani.core.velocity.player.PlayerListener;
 import jakarta.inject.Inject;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,6 +25,7 @@ import java.util.logging.Logger;
         id = "akani-core"
 )
 public class VelocityAkaniCorePlugin {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(VelocityAkaniCorePlugin.class);
     private final ProxyServer proxyServer;
     private final Logger logger;
     private VelocityAkaniCore core;
@@ -40,17 +42,23 @@ public class VelocityAkaniCorePlugin {
             logger.severe(e.getMessage());
             return;
         }
-        core = new VelocityAkaniCore(logger, config);
-        AkaniCoreProvider.register(core);
+        try {
+            core = new VelocityAkaniCore(logger, config);
+            AkaniCoreProvider.register(core);
+        } catch (Exception e) {
+            logger.severe("Failed to construct AkaniCoreVelocity: Reason: " + e.getMessage());
+        }
     }
 
 
     @Subscribe
     public void onEnable(ProxyInitializeEvent event) {
         if (core == null) return;
-        logger.info("AkaniCoreVelocity constructing!");
+        logger.info("AkaniCoreVelocity is now loading!");
         try {
             core.load();
+            logger.info("AkaniCoreVelocity loaded!");
+            new PlayerListener(this);
         } catch (Exception e) {
             logger.severe("Failed to load AkaniCoreVelocity");
             logger.severe(e.getMessage());
@@ -58,10 +66,6 @@ public class VelocityAkaniCorePlugin {
             core = null;
             return;
         }
-        logger.info("AkaniCoreVelocity constructed!");
-        new PlayerListener(this);
-
-
     }
 
     public ProxyServer proxyServer() {

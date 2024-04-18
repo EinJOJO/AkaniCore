@@ -22,8 +22,14 @@ tasks {
         dependsOn("shadowJar")
     }
 
+    shadowJar {
+        archiveBaseName.set("AkaniCore")
+        archiveVersion.set("")
+        archiveClassifier.set("paper")
+    }
+
     runVelocity {
-        velocityVersion("3.2.0-SNAPSHOT")
+        velocityVersion("3.3.0-SNAPSHOT")
     }
 
 }

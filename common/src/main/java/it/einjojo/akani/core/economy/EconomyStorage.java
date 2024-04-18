@@ -19,12 +19,12 @@ public record EconomyStorage(String tableName, HikariDataSource dataSource) {
         }
     }
 
-    public void createEconomy(EconomyHolder economyHolder) {
+    public void createEconomy(UUID uuid) {
         try (var con = dataSource.getConnection()) {
             try (var ps = con.prepareStatement("INSERT INTO " + tableName + " (player_uuid, balance) VALUES (?, ?)")) {
                 ps.setString(1, tableName);
-                ps.setString(2, economyHolder.ownerUuid().toString());
-                ps.setLong(3, economyHolder.balance());
+                ps.setString(2, uuid.toString());
+                ps.setLong(3, 0);
                 ps.execute();
             }
         } catch (SQLException e) {

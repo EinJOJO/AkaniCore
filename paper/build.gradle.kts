@@ -17,10 +17,19 @@ tasks {
     }
     shadowJar {
         //minimize()
+        archiveBaseName.set("AkaniCore")
+        archiveVersion.set("")
+        archiveClassifier.set("paper")
     }
 
     runServer {
         minecraftVersion("1.20.4")
+    }
+
+    processResources {
+        filesMatching("plugin.yml") {
+            expand(mapOf("version" to project.version.toString()))
+        }
     }
 }
 

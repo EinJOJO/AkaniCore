@@ -23,4 +23,6 @@ public interface EconomyManager {
 
     void updateEconomy(EconomyHolder economyHolder);
     CompletableFuture<Void> updateEconomyAsync(EconomyHolder economyHolder);
+
+
 }

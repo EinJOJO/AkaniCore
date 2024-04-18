@@ -1,6 +1,7 @@
 name: AkaniCore
 main: it.einjojo.akani.core.paper.AkaniCorePaperPlugin
-version: ${project.version}
+version: ${version}
 api-version: 1.20
-author: EinJoJo
+author: "EinJOJO @ Kalypzo.de"
+website: https://kalypzo.de
 description: AkaniCore has been created to provide a core for all Akani plugins.

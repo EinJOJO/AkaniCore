@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 public interface PlaytimeManager {
     /**
      * Get the playtime holder for the given UUID
+     *
      * @param uuid the uuid of the player
      * @return the playtime holder and a Zero-PlaytimeHolder if the player has no playtime
      */
@@ -13,6 +14,7 @@ public interface PlaytimeManager {
 
     /**
      * Get the playtime holder for the given UUID async
+     *
      * @param uuid the uuid of the player
      * @return the playtime holder and a Zero-PlaytimeHolder if the player has no playtime
      */
@@ -20,7 +22,12 @@ public interface PlaytimeManager {
 
     /**
      * Update the playtime holder in the database and publishes changes to other servers.
+     *
      * @param playtimeHolder the playtime holder to update
      */
-    void updatePlaytime( PlaytimeHolder playtimeHolder);
+    void updatePlaytime(PlaytimeHolder playtimeHolder);
+
+
+
+    void createPlaytime(UUID uuid);
 }
