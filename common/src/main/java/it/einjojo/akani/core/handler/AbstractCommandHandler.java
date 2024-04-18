@@ -10,7 +10,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public abstract class AbstractCommandHandler implements MessageProcessor {
+public abstract class AbstractCommandHandler implements MessageProcessor , CommandHandler{
     public static final String CHANNEL = "command";
     private final BrokerService brokerService;
     protected final Logger logger;
@@ -21,12 +21,7 @@ public abstract class AbstractCommandHandler implements MessageProcessor {
         brokerService.registerMessageProcessor(this);
     }
 
-    /**
-     * Run a command as the server.
-     *
-     * @param serverName Name of the server
-     * @param command    Command to run
-     */
+    @Override
     public final void runCommandAsServer(String serverName, String command) {
         if (serverName.equals(brokerService.brokerName())) {
             runServerCommandLocally(command);
@@ -36,13 +31,7 @@ public abstract class AbstractCommandHandler implements MessageProcessor {
         brokerService().publish(message);
     }
 
-    /**
-     * Run a command as a player.
-     *
-     * @param playerUuid UUID of the player
-     * @param serverName Name of the server
-     * @param command    Command to run
-     */
+    @Override
     public final void runCommandAsPlayer(UUID playerUuid, String serverName, String command) {
         if (serverName.equals(brokerService.brokerName())) {
             runPlayerCommandLocally(playerUuid, command);

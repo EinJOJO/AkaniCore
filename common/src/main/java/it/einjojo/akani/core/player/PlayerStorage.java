@@ -118,4 +118,13 @@ public record PlayerStorage(String tableName, JedisPool jedisPool, HikariDataSou
         }
     }
 
+    public void seedTables() {
+        try (var connection = connection()) {
+            var statement = connection.createStatement();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + tableName + " (uuid VARCHAR(36) PRIMARY KEY, name VARCHAR(32))");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

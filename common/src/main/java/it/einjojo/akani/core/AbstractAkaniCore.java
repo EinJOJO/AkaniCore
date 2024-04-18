@@ -111,6 +111,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         coinsStorage.seedTables();
         thalerStorage.seedTables();
         playtimeStorage.seedTables();
+        playerStorage.seedTables();
         playerManager().loadOnlinePlayers();
     }
 

@@ -9,7 +9,7 @@ import net.kyori.adventure.text.Component;
 
 import java.util.UUID;
 
-public abstract class AbstractChatHandler implements MessageProcessor {
+public abstract class AbstractChatHandler implements MessageProcessor, ChatHandler {
     public static final String PLAYER_CHAT_KEY = "pchat";
     public static final String SERVER_CHAT_KEY = "schat";
     public static final String GLOBAL_CHAT_KEY = "gchat";
@@ -41,6 +41,7 @@ public abstract class AbstractChatHandler implements MessageProcessor {
 
     protected abstract void sendMessageToServerLocally(Component message);
 
+    @Override
     public final void sendMessageToPlayer(UUID specificPlayer, String playerServer, Component message) {
         if (playerServer.equals(brokerService.brokerName())) {
             sendMessageLocally(specificPlayer, message);
@@ -58,6 +59,7 @@ public abstract class AbstractChatHandler implements MessageProcessor {
         brokerService().publish(messageToSend);
     }
 
+    @Override
     public final void sendMessageToServer(String serverName, Component message) {
         if (serverName.equals(brokerService.brokerName())) {
             sendMessageToServerLocally(message);
@@ -72,6 +74,7 @@ public abstract class AbstractChatHandler implements MessageProcessor {
         brokerService().publish(messageToSend);
     }
 
+    @Override
     public final void sendMessageGlobal(Component message) {
         var messageToSend = ChannelMessage.builder()
                 .channel(processingChannel())

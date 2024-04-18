@@ -14,7 +14,7 @@ import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class AbstractPositionHandler implements MessageProcessor {
+public abstract class AbstractPositionHandler implements MessageProcessor, PositionHandler {
     protected static final Cache<UUID, NetworkLocation> openTeleports = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(10)).build();
     private static final String REQUEST_POSITION_MESSAGE_ID = "reqpos";
     private static final String TELEPORT_MESSAGE_ID = "tp";
@@ -60,6 +60,7 @@ public abstract class AbstractPositionHandler implements MessageProcessor {
 
     public abstract void teleportLocally(UUID player, NetworkLocation location);
 
+    @Override
     public CompletableFuture<NetworkLocation> position(UUID player, String serverName) {
         if (serverName.equals(brokerService.brokerName())) {
             return CompletableFuture.completedFuture(positionLocally(player));
@@ -68,6 +69,7 @@ public abstract class AbstractPositionHandler implements MessageProcessor {
         return brokerService().publishRequest(message).thenApply((response) -> deserializeNetworkLocation(response.content()));
     }
 
+    @Override
     public void teleport(UUID player, String serverName, NetworkLocation location) {
         if (serverName.equals(brokerService.brokerName())) {
             teleportLocally(player, location);

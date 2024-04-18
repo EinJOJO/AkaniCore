@@ -44,7 +44,7 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
         return Optional.ofNullable(onlinePlayers.get(uuid));
     }
 
-    public void addOnlinePlayer(AkaniPlayer player) {
+    public void updateOnlinePlayer(AkaniPlayer player) {
         onlinePlayers.put(player.uuid(), player);
         playerStorage.updateOnlinePlayer(player);
         publishUpdate(player.uuid());

@@ -1,5 +1,7 @@
 plugins {
     id("java")
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.runvelocity)
 }
 
 group = "it.einjojo.akani"
@@ -10,10 +12,18 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    api(project(":common"))
+    compileOnly(libs.velocity)
+    annotationProcessor(libs.velocity)
 }
 
-tasks.test {
-    useJUnitPlatform()
+tasks {
+    build {
+        dependsOn("shadowJar")
+    }
+
+    runVelocity {
+        velocityVersion("3.2.0-SNAPSHOT")
+    }
+
 }
