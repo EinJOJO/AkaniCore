@@ -9,20 +9,20 @@ import java.util.List;
 /**
  * Eine Nachricht, die über den BrokerService versendet wird. Sie enthält den Inhalt, den Sender, die Empfänger und den Kanal.
  *
- * @param channel       Der Kanal, über den die Nachricht gesendet wird.
- * @param messageTypeID Die ID des Nachrichtentyps, welche zum Identifizieren der Nachricht genutzt wird.
- * @param contentBytes  Der Inhalt der Nachricht. Das kann ein JSON-String sein, oder ein einfacher Text, oder eine UUID.
- * @param sender        Der Sender der Nachricht.
- * @param recipients    Die Empfänger der Nachricht.
- * @param requestID     Wird beim Senden einer Anfrage gesetzt und bei der Antwort übernommen.
+ * @param c Der Kanal, über den die Nachricht gesendet wird.
+ * @param m Die ID des Nachrichtentyps, welche zum Identifizieren der Nachricht genutzt wird.
+ * @param b Der Inhalt der Nachricht. Das kann ein JSON-String sein, oder ein einfacher Text, oder eine UUID.
+ * @param s Der Sender der Nachricht.
+ * @param r Die Empfänger der Nachricht.
+ * @param i Wird beim Senden einer Anfrage gesetzt und bei der Antwort übernommen.
  */
 public record ChannelMessage(
-        String channel,
-        String messageTypeID,
-        byte[] contentBytes,
-        ChannelSender sender,
-        Collection<ChannelReceiver> recipients,
-        String requestID
+        String c, //channel
+        String m, // messageTypeID
+        byte[] b, // contentBytes
+        ChannelSender s, // sender
+        Collection<ChannelReceiver> r, // recipients
+        String i // requestID
 ) {
 
     public static Builder builder() {
@@ -36,12 +36,36 @@ public record ChannelMessage(
                 .recipient(ChannelReceiver.server(message.sender().name()));
     }
 
+    public String channel() {
+        return c;
+    }
+
+    public String messageTypeID() {
+        return m;
+    }
+
+    public byte[] contentBytes() {
+        return b;
+    }
+
+    public ChannelSender sender() {
+        return s;
+    }
+
+    public Collection<ChannelReceiver> recipients() {
+        return r;
+    }
+
+    public String requestID() {
+        return i;
+    }
+
     public String content() {
-        return new String(contentBytes, StandardCharsets.UTF_8);
+        return new String(contentBytes(), StandardCharsets.UTF_8);
     }
 
     public boolean isRequest() {
-        return requestID != null && !requestID.isEmpty();
+        return requestID() != null && !requestID().isEmpty();
     }
 
     public static class Builder {
