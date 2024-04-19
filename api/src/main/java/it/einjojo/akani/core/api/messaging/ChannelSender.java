@@ -6,9 +6,10 @@ import it.einjojo.akani.core.api.AkaniCoreProvider;
 import java.util.Objects;
 
 /**
- * @param name der Name des Senders
+ * @param n der Name des Senders
  */
-public record ChannelSender(String name) {
+public record ChannelSender(String n) {
+
     private static ChannelSender self;
 
     public static ChannelSender of(String name) {
@@ -20,6 +21,10 @@ public record ChannelSender(String name) {
             self = new ChannelSender(AkaniCoreProvider.get().brokerService().brokerName());
         }
         return self;
+    }
+
+    public String name() {
+        return n;
     }
 
     @Override
