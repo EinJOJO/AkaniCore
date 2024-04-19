@@ -3,7 +3,7 @@ package it.einjojo.akani.core.velocity.player;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
-import com.velocitypowered.api.event.player.ServerPostConnectEvent;
+import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeHolder;
 import it.einjojo.akani.core.player.CommonPlayerManager;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeHolder;
@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 
 public class PlayerListener {
     private final VelocityAkaniCorePlugin corePlugin;
-    private Executor executor = Executors.newSingleThreadExecutor();
+    private final Executor executor = Executors.newCachedThreadPool();
 
     public PlayerListener(VelocityAkaniCorePlugin corePlugin) {
         this.corePlugin = corePlugin;
@@ -55,18 +55,15 @@ public class PlayerListener {
         });
     }
 
-    @SuppressWarnings("UnstableApiUsage")
+
     @Subscribe
-    public void playerConnectHandler(ServerPostConnectEvent event) {
-        executor.execute(() -> {
-            var player = event.getPlayer();
-            UUID playerUuid = player.getUniqueId();
-            player.getCurrentServer().ifPresent((server) -> {
-                var serverName = server.getServerInfo().getName();
-                var akaniPlayer = corePlugin.core().playerFactory().player(playerUuid, player.getUsername(), serverName);
-                playerManager().updateOnlinePlayer(akaniPlayer);
-            });
-        });
+    public void playerConnectHandler(ServerConnectedEvent event) {
+        var player = event.getPlayer();
+        UUID playerUuid = player.getUniqueId();
+        var serverName = event.getServer().getServerInfo().getName();
+        var akaniPlayer = corePlugin.core().playerFactory().player(playerUuid, player.getUsername(), serverName);
+        playerManager().updateOnlinePlayer(akaniPlayer);
+
     }
 
     @Subscribe
@@ -80,7 +77,6 @@ public class PlayerListener {
             Duration duration = Duration.between(pt.lastJoin(), Instant.now());
             pt.playtimeMillis(pt.playtimeMillis() + duration.toMillis());
             corePlugin.core().playtimeManager().updatePlaytime(pt);
-
         });
     }
 
