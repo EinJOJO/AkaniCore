@@ -29,6 +29,7 @@ public class RedisBrokerService extends AbstractBrokerService {
         this.gson = gson;
         pubSub = new RedisBrokerPubSub(this, gson);
         this.pool = pool;
+        logger.info("Redis broker service initialized with name: " + name + " and group: " + group);
     }
 
 

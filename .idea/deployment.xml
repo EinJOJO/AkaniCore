@@ -7,7 +7,7 @@
         <serverdata>
           <mappings>
             <mapping deploy="/local/templates/Proxy/default/plugins" local="$PROJECT_DIR$/velocity/build/libs" web="/" />
-            <mapping deploy="/home/akani//local/templates/Global/Global-Server/plugins" local="$PROJECT_DIR$/paper/build/libs" web="/" />
+            <mapping deploy="/local/templates/Global/Global-Server/plugins" local="$PROJECT_DIR$/paper/build/libs" web="/" />
           </mappings>
         </serverdata>
       </paths>

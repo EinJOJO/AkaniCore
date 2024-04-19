@@ -43,7 +43,7 @@ public abstract class AbstractPositionHandler implements MessageProcessor, Posit
             brokerService().publish(response);
         }
         if (message.messageTypeID().equals(TELEPORT_MESSAGE_ID)) {
-            var payload = ByteStreams.newDataInput(message.content().getBytes());
+            var payload = ByteStreams.newDataInput(message.contentBytes());
             var player = UUID.fromString(payload.readUTF());
             var location = deserializeNetworkLocation(payload.readUTF());
             if (isPlayerOnline(player)) {
@@ -78,7 +78,6 @@ public abstract class AbstractPositionHandler implements MessageProcessor, Posit
             teleportLocally(player, location);
             return;
         }
-
 
         // SEND REDIS MESSAGE TO SERVER
         var payload = ByteStreams.newDataOutput();

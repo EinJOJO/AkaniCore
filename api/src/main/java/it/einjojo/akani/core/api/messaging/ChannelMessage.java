@@ -2,6 +2,7 @@ package it.einjojo.akani.core.api.messaging;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  *
  * @param channel       Der Kanal, über den die Nachricht gesendet wird.
  * @param messageTypeID Die ID des Nachrichtentyps, welche zum Identifizieren der Nachricht genutzt wird.
- * @param content       Der Inhalt der Nachricht. Das kann ein JSON-String sein, oder ein einfacher Text, oder eine UUID.
+ * @param contentBytes  Der Inhalt der Nachricht. Das kann ein JSON-String sein, oder ein einfacher Text, oder eine UUID.
  * @param sender        Der Sender der Nachricht.
  * @param recipients    Die Empfänger der Nachricht.
  * @param requestID     Wird beim Senden einer Anfrage gesetzt und bei der Antwort übernommen.
@@ -18,7 +19,7 @@ import java.util.List;
 public record ChannelMessage(
         String channel,
         String messageTypeID,
-        String content,
+        byte[] contentBytes,
         ChannelSender sender,
         Collection<ChannelReceiver> recipients,
         String requestID
@@ -28,7 +29,6 @@ public record ChannelMessage(
         return new Builder();
     }
 
-
     @ApiStatus.Internal
     public static Builder responseTo(ChannelMessage message) {
         return new Builder(message)
@@ -36,6 +36,9 @@ public record ChannelMessage(
                 .recipient(ChannelReceiver.server(message.sender().name()));
     }
 
+    public String content() {
+        return new String(contentBytes, StandardCharsets.UTF_8);
+    }
 
     public boolean isRequest() {
         return requestID != null && !requestID.isEmpty();
@@ -46,7 +49,7 @@ public record ChannelMessage(
         private ChannelSender sender;
         private String channel = BrokerService.DEFAULT_CHANNEL;
         private String requestID;
-        private String content = "";
+        private byte[] content = new byte[]{};
         private Collection<ChannelReceiver> recipients = List.of(ChannelReceiver.all());
 
         public Builder() {
@@ -58,7 +61,7 @@ public record ChannelMessage(
             this.sender = other.sender();
             this.requestID = other.requestID();
             this.channel = other.channel();
-            this.content = other.content();
+            this.content = other.contentBytes();
             recipients = other.recipients();
 
         }
@@ -92,12 +95,12 @@ public record ChannelMessage(
          * @param content Der Inhalt der Nachricht. Das kann ein JSON-String sein, oder ein einfacher Text, oder eine UUID.
          */
         public Builder content(String content) {
-            this.content = content;
+            this.content = content.getBytes(StandardCharsets.UTF_8);
             return this;
         }
 
         public Builder content(byte[] content) {
-            this.content = new String(content);
+            this.content = content;
             return this;
         }
 
@@ -126,7 +129,7 @@ public record ChannelMessage(
         public ChannelMessage build() {
             if (messageTypeID == null) throw new IllegalStateException("messageTypeID not set");
             if (sender == null) sender = ChannelSender.self();
-            return new ChannelMessage(channel, messageTypeID, content, sender , recipients, requestID);
+            return new ChannelMessage(channel, messageTypeID, content, sender, recipients, requestID);
         }
     }
 
