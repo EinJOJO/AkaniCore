@@ -106,12 +106,12 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
 
     public void load() {
         logger.info("Loading Akani Core...");
-        networkManager.register(me);
         brokerService().connect();
         coinsStorage.seedTables();
         thalerStorage.seedTables();
         playtimeStorage.seedTables();
         playerStorage.seedTables();
+        networkManager.register(me);
         playerManager().loadOnlinePlayers();
     }
 

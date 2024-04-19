@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="dfe88db2-d4d4-4210-9405-5a188bdcbd73" name="Akani">
+        <fileTransfer rootFolder="/home/akani/cloudnet" accessType="SFTP" host="46.4.185.146" port="13008" sshConfigId="95629fcc-9351-4cd4-959a-699a43e3bc1c" sshConfig="akani@46.4.185.146:13008 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

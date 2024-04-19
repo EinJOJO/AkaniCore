@@ -2,6 +2,7 @@ package it.einjojo.akani.core.velocity.player;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeHolder;
 import it.einjojo.akani.core.player.CommonPlayerManager;
@@ -23,6 +24,37 @@ public class PlayerListener {
         corePlugin.proxyServer().getEventManager().register(corePlugin, this);
     }
 
+    @Subscribe
+    public void playerJoin(PostLoginEvent event) {
+        executor.execute(() -> {
+            var player = event.getPlayer();
+            var playerUuid = player.getUniqueId();
+            var akaniPlayer = corePlugin.core().playerFactory().offlinePlayer(playerUuid, player.getUsername());
+            corePlugin.core().playerStorage().upsertOfflinePlayer(akaniPlayer);
+            //setup playtime
+            PlaytimeHolder playTime = corePlugin.core().playtimeManager().playtimeHolder(playerUuid);
+            if (playTime.ownerUuid() == null) { // if the player has no playtime
+                corePlugin.logger().info("Creating playtime for " + player.getUsername());
+                corePlugin.core().playtimeManager().createPlaytime(playerUuid);
+            } else {
+                ((CommonPlaytimeHolder) playTime).lastJoin(Instant.now());
+                corePlugin.core().playtimeManager().updatePlaytime(playTime);
+            }
+
+            // setup economy
+            var optionalCoins = corePlugin.core().coinsEconomyManager().playerEconomy(playerUuid);
+            if (optionalCoins.isEmpty()) {
+                corePlugin.logger().info("Creating coins economy for " + player.getUsername());
+                corePlugin.core().coinsStorage().createEconomy(playerUuid);
+            }
+            var optionalThaler = corePlugin.core().thalerEconomyManager().playerEconomy(playerUuid);
+            if (optionalThaler.isEmpty()) {
+                corePlugin.logger().info("Creating thaler economy for " + player.getUsername());
+                corePlugin.core().thalerStorage().createEconomy(playerUuid);
+            }
+        });
+    }
+
     @SuppressWarnings("UnstableApiUsage")
     @Subscribe
     public void playerConnectHandler(ServerPostConnectEvent event) {
@@ -33,27 +65,7 @@ public class PlayerListener {
                 var serverName = server.getServerInfo().getName();
                 var akaniPlayer = corePlugin.core().playerFactory().player(playerUuid, player.getUsername(), serverName);
                 playerManager().updateOnlinePlayer(akaniPlayer);
-                corePlugin.core().playerStorage().upsertOfflinePlayer(akaniPlayer);
             });
-
-            //setup playtime
-            PlaytimeHolder playTime = corePlugin.core().playtimeManager().playtimeHolder(playerUuid);
-            if (playTime.ownerUuid() == null) { // if the player has no playtime
-                corePlugin.core().playtimeManager().createPlaytime(playerUuid);
-            } else {
-                ((CommonPlaytimeHolder) playTime).lastJoin(Instant.now());
-                corePlugin.core().playtimeManager().updatePlaytime(playTime);
-            }
-
-            // setup economy
-            var optionalCoins = corePlugin.core().coinsEconomyManager().playerEconomy(playerUuid);
-            if (optionalCoins.isEmpty()) {
-                corePlugin.core().coinsStorage().createEconomy(playerUuid);
-            }
-            var optionalThaler = corePlugin.core().thalerEconomyManager().playerEconomy(playerUuid);
-            if (optionalThaler.isEmpty()) {
-                corePlugin.core().thalerStorage().createEconomy(playerUuid);
-            }
         });
     }
 
@@ -68,6 +80,7 @@ public class PlayerListener {
             Duration duration = Duration.between(pt.lastJoin(), Instant.now());
             pt.playtimeMillis(pt.playtimeMillis() + duration.toMillis());
             corePlugin.core().playtimeManager().updatePlaytime(pt);
+
         });
     }
 

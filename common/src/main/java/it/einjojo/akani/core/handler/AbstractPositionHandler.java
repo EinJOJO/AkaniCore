@@ -24,6 +24,7 @@ public abstract class AbstractPositionHandler implements MessageProcessor, Posit
     protected AbstractPositionHandler(BrokerService brokerService, Gson gson) {
         this.brokerService = brokerService;
         this.gson = gson;
+        brokerService.registerMessageProcessor(this);
     }
 
     public BrokerService brokerService() {
@@ -71,16 +72,20 @@ public abstract class AbstractPositionHandler implements MessageProcessor, Posit
 
     @Override
     public void teleport(UUID player, String serverName, NetworkLocation location) {
-        if (serverName.equals(brokerService.brokerName()) || location.type().equals(NetworkLocation.Type.UNSPECIFIED)) {
+        boolean alreadyOnServer = location.type().equals(NetworkLocation.Type.SERVER) && location.referenceName().equals(brokerService.brokerName());
+        boolean alreadyOnGroup = location.type().equals(NetworkLocation.Type.GROUP) && location.referenceName().equals(brokerService.groupName());
+        if (alreadyOnServer || alreadyOnGroup || location.type().equals(NetworkLocation.Type.UNSPECIFIED)) {
             teleportLocally(player, location);
             return;
         }
+
 
         // SEND REDIS MESSAGE TO SERVER
         var payload = ByteStreams.newDataOutput();
         payload.writeUTF(player.toString());
         payload.writeUTF(serializeNetworkLocation(location));
-        var message = ChannelMessage.builder().channel(processingChannel()).messageTypeID(TELEPORT_MESSAGE_ID).content(payload.toByteArray()).recipient(ChannelReceiver.server(serverName)).build();
+        ChannelReceiver receiver = location.type().equals(NetworkLocation.Type.SERVER) ? ChannelReceiver.server(location.referenceName()) : ChannelReceiver.group(location.referenceName());
+        var message = ChannelMessage.builder().channel(processingChannel()).messageTypeID(TELEPORT_MESSAGE_ID).content(payload.toByteArray()).recipient(receiver).build();
         brokerService().publish(message);
     }
 

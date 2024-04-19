@@ -4,9 +4,6 @@ plugins {
     alias(libs.plugins.runvelocity)
 }
 
-group = "it.einjojo.akani"
-version = "1.0"
-
 repositories {
     mavenCentral()
 }
@@ -18,6 +15,9 @@ dependencies {
 }
 
 tasks {
+    jar {
+        enabled = false
+    }
     build {
         dependsOn("shadowJar")
     }

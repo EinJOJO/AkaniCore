@@ -65,6 +65,7 @@ public class RedisBrokerService extends AbstractBrokerService {
         try (Jedis jedis = pool.getResource()) {
             String payload = gson.toJson(message);
             jedis.publish(message.channel(), payload);
+            logger.info("Published message: " + message);
         }
     }
 

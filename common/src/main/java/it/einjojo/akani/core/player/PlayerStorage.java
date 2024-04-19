@@ -7,7 +7,6 @@ import it.einjojo.akani.core.api.player.AkaniPlayer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.params.ScanParams;
-import redis.clients.jedis.resps.ScanResult;
 
 import javax.annotation.Nullable;
 import java.sql.Connection;
@@ -80,15 +79,15 @@ public record PlayerStorage(String tableName, JedisPool jedisPool, HikariDataSou
     }
 
     private List<String> onlinePlayerUuids(Jedis jedis) {
-        ScanParams scanParams = new ScanParams().match(PLAYER_KEY_PREFIX + "*");
-        String cur = ScanParams.SCAN_POINTER_START;
-        List<String> keys = new ArrayList<>();
+        var cursor = "0";
+        var params = new ScanParams().match(PLAYER_KEY_PREFIX + "*");
+        var uuids = new ArrayList<String>();
         do {
-            ScanResult<String> scanResult = jedis.scan(cur, scanParams);
-            keys.addAll(scanResult.getResult());
-            cur = scanResult.getCursor();
-        } while (!cur.equals(ScanParams.SCAN_POINTER_START));
-        return keys;
+            var result = jedis.scan(cursor, params);
+            cursor = result.getCursor();
+            uuids.addAll(result.getResult());
+        } while (!cursor.equals("0"));
+        return uuids;
     }
 
     public AkaniOfflinePlayer loadOfflinePlayer(UUID uuid) {

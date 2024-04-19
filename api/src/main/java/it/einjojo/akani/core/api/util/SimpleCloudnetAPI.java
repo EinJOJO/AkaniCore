@@ -11,6 +11,13 @@ public class SimpleCloudnetAPI {
     private final InjectionLayer<Injector> injector;
     private PlayerManager playerManager;
 
+    public SimpleCloudnetAPI() {
+        if (!isAvailable()) {
+            throw new IllegalStateException("CloudNet-API Injector is unavailable.");
+        }
+        this.injector = InjectionLayer.ext();
+    }
+
     public static boolean isAvailable() {
         try {
             Class.forName("eu.cloudnetservice.driver.inject.InjectionLayer");
@@ -19,15 +26,6 @@ public class SimpleCloudnetAPI {
             return false;
         }
     }
-
-    public SimpleCloudnetAPI() {
-        if (!isAvailable()) {
-            throw new IllegalStateException("CloudNet-API Injector is unavailable.");
-        }
-        this.injector = InjectionLayer.ext();
-        playerManager = injector.instance(ServiceRegistry.class).firstProvider(PlayerManager.class);
-    }
-
 
     public WrapperServiceInfoHolder wrapperServiceInfoHolder() {
         return injector.instance(WrapperServiceInfoHolder.class);
@@ -38,6 +36,9 @@ public class SimpleCloudnetAPI {
     }
 
     public PlayerManager getCloudNetPlayerManager() {
+        if (playerManager == null) {
+            playerManager = injector.instance(ServiceRegistry.class).firstProvider(PlayerManager.class);
+        }
         return playerManager;
     }
 

@@ -157,6 +157,7 @@ public abstract class AbstractBrokerService implements BrokerService {
             logger.warning("Received message but no processors registered for channel: " + message.channel());
             return;
         }
+        logger.info("Forwarding message to processors: " + message);
 
         for (MessageProcessor processor : processors) {
             try {

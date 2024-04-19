@@ -10,12 +10,15 @@ import it.einjojo.akani.core.api.messaging.MessageProcessor;
 import it.einjojo.akani.core.api.player.AkaniOfflinePlayer;
 import it.einjojo.akani.core.api.player.AkaniPlayer;
 import it.einjojo.akani.core.api.player.AkaniPlayerManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor {
     private static final String PLAYER_UPDATE_MESSAGE_TYPE_ID = "player_update";
+    private static final Logger log = LoggerFactory.getLogger(CommonPlayerManager.class);
     private final PlayerStorage playerStorage;
     private final BrokerService brokerService;
 
@@ -69,6 +72,7 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
         for (AkaniPlayer player : playerStorage.onlinePlayers()) {
             onlinePlayers.put(player.uuid(), player);
         }
+        log.info("Loaded {} online players", onlinePlayers.size());
     }
 
     @Override
@@ -85,12 +89,14 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
         onlinePlayers.put(player.uuid(), player);
         playerStorage.updateOnlinePlayer(player);
         publishUpdate(player.uuid());
+        log.debug("Updated player {} in online players", player.uuid());
     }
 
     public void removeOnlinePlayer(UUID uuid) {
         onlinePlayers.remove(uuid);
         playerStorage.removeOnlinePlayer(uuid);
         publishUpdate(uuid);
+        log.debug("Removed player {} from online players", uuid);
     }
 
     public void publishUpdate(UUID uuid) {

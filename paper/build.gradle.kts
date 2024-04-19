@@ -15,6 +15,10 @@ tasks {
     build {
         dependsOn("shadowJar")
     }
+
+    jar {
+        enabled = false
+    }
     shadowJar {
         //minimize()
         archiveBaseName.set("AkaniCore")

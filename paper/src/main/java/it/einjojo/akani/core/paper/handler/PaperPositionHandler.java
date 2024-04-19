@@ -14,8 +14,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.UUID;
 
 public class PaperPositionHandler extends AbstractPositionHandler implements Listener {
+    private final JavaPlugin plugin;
+
     public PaperPositionHandler(JavaPlugin plugin, BrokerService brokerService, Gson gson) {
         super(brokerService, gson);
+        this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -25,12 +28,14 @@ public class PaperPositionHandler extends AbstractPositionHandler implements Lis
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         var player = event.getPlayer();
         var location = openTeleports.getIfPresent(player.getUniqueId());
         if (location != null) {
-            teleportLocally(player.getUniqueId(), location);
-            openTeleports.invalidate(player.getUniqueId());
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                teleportLocally(player.getUniqueId(), location);
+                openTeleports.invalidate(player.getUniqueId());
+            }, 2);
         }
     }
 
@@ -45,11 +50,13 @@ public class PaperPositionHandler extends AbstractPositionHandler implements Lis
 
     @Override
     public void teleportLocally(UUID player, NetworkLocation location) {
-        var bukkitPlayer = Bukkit.getPlayer(player);
-        if (bukkitPlayer != null) {
-            bukkitPlayer.teleport(AkaniBukkitAdapter.bukkitLocation(location));
-        } else {
-            throw new IllegalArgumentException("Player with UUID " + player + " not found.");
-        }
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            var bukkitPlayer = Bukkit.getPlayer(player);
+            if (bukkitPlayer != null) {
+                bukkitPlayer.teleport(AkaniBukkitAdapter.bukkitLocation(location));
+            } else {
+                throw new IllegalArgumentException("Player with UUID " + player + " not found.");
+            }
+        });
     }
 }
