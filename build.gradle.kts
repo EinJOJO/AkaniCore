@@ -2,7 +2,7 @@ plugins {
     id("java-library")
 }
 
-version = "1.1.3"
+version = "1.1.4"
 
 allprojects {
     apply(plugin = "java-library")
@@ -16,7 +16,12 @@ allprojects {
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.panda-lang.org/releases")
     }
+}
 
+tasks {
+    jar {
+        enabled = false
+    }
 }
 
 

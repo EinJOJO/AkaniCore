@@ -6,7 +6,7 @@ plugins {
 dependencies {
     compileOnly(libs.paper)
     api(project(":api"))
-    implementation(project(":common"))
+    api(project(":common"))
     implementation(libs.caffeine)
     compileOnly(libs.vault)
 

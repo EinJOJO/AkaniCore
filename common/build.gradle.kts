@@ -26,3 +26,15 @@ tasks {
         //minimize()
     }
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "it.einjojo.akani.core"
+            artifactId = "common"
+            version = rootProject.version.toString()
+
+            from(components["java"])
+        }
+    }
+}
