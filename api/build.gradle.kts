@@ -1,9 +1,8 @@
-
 dependencies {
     compileOnly(libs.adventure)
     compileOnly(libs.minimessage)
-    compileOnly(libs.jedis)
-    compileOnly(libs.hikari)
+    api(libs.jedis)
+    api(libs.hikari)
     compileOnly(libs.cloudnetwrapperjvm)
     compileOnly(libs.cloudnetbridge)
     compileOnly(libs.litecommands)
