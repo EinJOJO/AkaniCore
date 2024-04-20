@@ -10,9 +10,11 @@ import java.time.Duration;
 import java.util.Map;
 
 public abstract class AbstractMessageManager<T> implements MessageManager<T> {
+    private static final String PREFIX_PLACEHOLDER = "%prefix%";
     private final Language language;
     private final MessageStorage storage;
     private final LoadingCache<String, String> hotMessages;
+    private String prefix;
 
     public AbstractMessageManager(Language language, MessageStorage storage) {
         this.language = language;
@@ -27,6 +29,10 @@ public abstract class AbstractMessageManager<T> implements MessageManager<T> {
         for (Map.Entry<String, String> entry : storage().readMessages(language().langKey()).entrySet()) {
             hotMessages.put(entry.getKey(), entry.getValue());
         }
+        prefix = hotMessages.get("prefix");
+        if (prefix == null) {
+            throw new IllegalStateException("No prefix found for language " + language().langKey());
+        }
     }
 
     @Override
@@ -40,7 +46,7 @@ public abstract class AbstractMessageManager<T> implements MessageManager<T> {
 
     @Override
     public String plainMessage(String key) {
-        return hotMessages.get(key);
+        return hotMessages.get(key).replace(PREFIX_PLACEHOLDER, prefix);
     }
 
 }

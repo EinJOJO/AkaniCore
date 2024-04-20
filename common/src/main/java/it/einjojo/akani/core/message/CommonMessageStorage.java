@@ -13,8 +13,11 @@ public record CommonMessageStorage(HikariDataSource dataSource) implements Messa
     public void seedTables() {
         try (var con = dataSource.getConnection()) {
             con.createStatement().execute("CREATE TABLE IF NOT EXISTS %s (lang VARCHAR(5), message_key VARCHAR(100), message TEXT, PRIMARY KEY (lang, message_key));".formatted(TABLE_NAME));
-            if (isRegistered("de", "prefix")) {
+            if (!isRegistered("de", "prefix")) {
                 registerMessage("de", "prefix", "<gray>[<gold>Akani</gold>]</gray> ");
+            }
+            if (!isRegistered("en", "prefix")) {
+                registerMessage("en", "prefix", "<gray>[<gold>Akani</gold>]</gray> ");
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error seeding tables", e);
