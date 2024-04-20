@@ -34,6 +34,12 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 public abstract class AbstractAkaniCore implements InternalAkaniCore {
+    @Override
+    public boolean shuttingDown() {
+        return shuttingDown;
+    }
+
+    boolean shuttingDown = false;
     private final Server me;
     private final SimpleCloudnetAPI cloudnetAPI;
     private final Logger logger;
@@ -123,6 +129,10 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         jedisPool.close();
     }
 
+    @Override
+    public Server server() {
+        return me;
+    }
 
     @Override
     public Logger logger() {

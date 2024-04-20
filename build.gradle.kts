@@ -2,7 +2,7 @@ plugins {
     id("java-library")
 }
 
-version = "1.0.3"
+version = "1.0.4"
 
 allprojects {
     apply(plugin = "java-library")

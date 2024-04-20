@@ -95,6 +95,7 @@ public class CommonNetworkManager implements NetworkManager, MessageProcessor {
     @Override
     public void processMessage(ChannelMessage message) {
         if (message.messageTypeID().equals(UPDATE_MESSAGE_ID)) {
+            if (core.shuttingDown()) return;
             load();
         }
     }

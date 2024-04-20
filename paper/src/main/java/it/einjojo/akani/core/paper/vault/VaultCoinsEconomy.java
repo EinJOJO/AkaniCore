@@ -57,7 +57,7 @@ public class VaultCoinsEconomy extends AbstractEconomy {
 
     @Override
     public double getBalance(String playerName) {
-        return 0; //TODO
+        return 69; //TODO
     }
 
     @Override
@@ -77,7 +77,7 @@ public class VaultCoinsEconomy extends AbstractEconomy {
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
-        return null;
+        return null; //TODO
     }
 
     @Override

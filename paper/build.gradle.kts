@@ -6,7 +6,7 @@ plugins {
 dependencies {
     compileOnly(libs.paper)
     api(project(":api"))
-    api(project(":common"))
+    implementation(project(":common"))
     implementation(libs.caffeine)
     compileOnly(libs.vault)
 
@@ -17,7 +17,7 @@ tasks {
     }
 
     jar {
-        enabled = false
+
     }
     shadowJar {
         //minimize()
@@ -37,4 +37,15 @@ tasks {
     }
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "it.einjojo.akani.core"
+            artifactId = "paper"
+            version = rootProject.version.toString()
+
+            from(components["java"])
+        }
+    }
+}
 

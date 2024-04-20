@@ -17,6 +17,7 @@ public interface InternalAkaniCore extends AkaniCore {
 
     PositionHandler positionHandler();
 
+    boolean shuttingDown();
 
     Gson gson();
 }
