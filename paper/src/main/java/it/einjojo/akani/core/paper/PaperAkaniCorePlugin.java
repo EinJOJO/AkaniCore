@@ -28,6 +28,7 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         paperAkaniCore = new PaperAkaniCore(this, yamlConfigFile);
         AkaniCoreProvider.register(paperAkaniCore);
         paperAkaniCore.load();
+        paperAkaniCore.delayedMessageReload();
         setupVault();
     }
 

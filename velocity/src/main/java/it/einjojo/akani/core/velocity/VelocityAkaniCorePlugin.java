@@ -57,6 +57,7 @@ public class VelocityAkaniCorePlugin {
         try {
             core.load();
             logger.info("AkaniCoreVelocity loaded!");
+            core.delayedMessageReload();
             new PlayerListener(this);
         } catch (Exception e) {
             logger.severe("Failed to load AkaniCoreVelocity");
