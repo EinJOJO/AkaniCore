@@ -36,6 +36,10 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
         return plugin;
     }
 
+    @Override
+    public PaperMessageManager messageManager() {
+        return germanMessageManager;
+    }
 
     @Override
     public PaperMessageManager germanMessageManager() {

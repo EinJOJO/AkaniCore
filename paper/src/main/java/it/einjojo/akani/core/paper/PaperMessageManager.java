@@ -5,9 +5,9 @@ import it.einjojo.akani.core.api.message.MessageStorage;
 import it.einjojo.akani.core.message.AbstractMessageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
-public class PaperMessageManager extends AbstractMessageManager<Player> {
+public class PaperMessageManager extends AbstractMessageManager<CommandSender> {
     private static final MiniMessage minimessage = MiniMessage.miniMessage();
 
     public PaperMessageManager(Language language, MessageStorage storage) {
@@ -20,7 +20,7 @@ public class PaperMessageManager extends AbstractMessageManager<Player> {
     }
 
     @Override
-    public void sendMessage(Player player, String key) {
+    public void sendMessage(CommandSender player, String key) {
         player.sendMessage(message(key));
     }
 
