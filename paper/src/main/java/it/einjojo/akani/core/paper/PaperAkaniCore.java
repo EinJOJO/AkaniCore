@@ -1,6 +1,7 @@
 package it.einjojo.akani.core.paper;
 
 import it.einjojo.akani.core.AbstractAkaniCore;
+import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.config.YamlConfigFile;
 import it.einjojo.akani.core.paper.handler.PaperChatHandler;
@@ -10,7 +11,7 @@ import it.einjojo.akani.core.paper.player.PaperPlayerFactory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-public class PaperAkaniCore extends AbstractAkaniCore {
+public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
     private final JavaPlugin plugin;
     private final PaperPlayerFactory playerFactory;
     private final PaperChatHandler chatHandler;

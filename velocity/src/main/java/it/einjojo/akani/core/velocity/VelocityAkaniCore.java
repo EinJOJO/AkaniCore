@@ -3,6 +3,7 @@ package it.einjojo.akani.core.velocity;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 import it.einjojo.akani.core.AbstractAkaniCore;
+import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.config.YamlConfigFile;
 import it.einjojo.akani.core.velocity.handler.VelocityChatHandler;
@@ -13,7 +14,7 @@ import it.einjojo.akani.core.velocity.player.VelocityPlayerFactory;
 import java.time.Duration;
 import java.util.logging.Logger;
 
-public class VelocityAkaniCore extends AbstractAkaniCore {
+public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
     private final VelocityAkaniCorePlugin plugin;
     private final VelocityPlayerFactory playerFactory;
     private final VelocityCommandHandler commandHandler;
