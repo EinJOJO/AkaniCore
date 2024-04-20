@@ -19,8 +19,16 @@ allprojects {
 
 }
 
-subprojects {
+tasks {
+    register("publishSubProjects") {
+        // run api publish
+        dependsOn("api:publishToMavenLocal")
+        dependsOn("velocity:publishToMavenLocal")
+        dependsOn("paper:publishToMavenLocal")
+    }
+}
 
+subprojects {
     tasks.withType<Jar>() {
 
     }
