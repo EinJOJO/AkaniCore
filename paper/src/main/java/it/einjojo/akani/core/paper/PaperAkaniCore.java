@@ -2,7 +2,6 @@ package it.einjojo.akani.core.paper;
 
 import it.einjojo.akani.core.AbstractAkaniCore;
 import it.einjojo.akani.core.api.message.Language;
-import it.einjojo.akani.core.api.message.MessageProvider;
 import it.einjojo.akani.core.config.YamlConfigFile;
 import it.einjojo.akani.core.paper.handler.PaperChatHandler;
 import it.einjojo.akani.core.paper.handler.PaperCommandHandler;
@@ -73,12 +72,8 @@ public class PaperAkaniCore extends AbstractAkaniCore {
         if (messageReloadTask != null && !messageReloadTask.isCancelled()) {
             messageReloadTask.cancel();
         }
-        messageReloadTask = plugin.getServer().getScheduler().runTaskLater(plugin(), () -> {
-            for (MessageProvider provider : messageProviders()) {
-                if (provider.shouldInsert(messageStorage())) {
-                    provider.insertMessages(messageStorage());
-                }
-            }
+        messageReloadTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin(), () -> {
+            load();
             germanMessageManager.load();
             englishMessageManager.load();
         }, 20L);

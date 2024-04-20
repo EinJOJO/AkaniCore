@@ -130,6 +130,14 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         delayedMessageReload();
     }
 
+    public void loadProviders() {
+        for (MessageProvider provider : messageProviders) {
+            if (provider.shouldInsert(messageStorage())) {
+                provider.insertMessages(messageStorage());
+            }
+        }
+    }
+
     public abstract void delayedMessageReload();
 
     public void load() {
