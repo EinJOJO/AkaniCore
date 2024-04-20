@@ -5,7 +5,7 @@ import it.einjojo.akani.core.api.messaging.BrokerService;
 public class CoinsEconomyManager extends CommonAbstractEconomyManager {
     private static final String INVALIDATE_MESSAGE_ID = "deleco";
 
-    public CoinsEconomyManager(BrokerService brokerService, EconomyStorage storage) {
+    public CoinsEconomyManager(BrokerService brokerService, CommonEconomyStorage storage) {
         super(brokerService, storage);
     }
 

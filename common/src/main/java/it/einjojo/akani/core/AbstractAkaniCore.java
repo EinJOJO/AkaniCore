@@ -4,7 +4,9 @@ import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.api.economy.EconomyManager;
+import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.api.message.MessageManager;
+import it.einjojo.akani.core.api.message.MessageProvider;
 import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.api.network.NetworkManager;
 import it.einjojo.akani.core.api.network.Server;
@@ -14,32 +16,29 @@ import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
 import it.einjojo.akani.core.config.MariaDbConfig;
 import it.einjojo.akani.core.config.RedisCredentials;
 import it.einjojo.akani.core.economy.CoinsEconomyManager;
-import it.einjojo.akani.core.economy.EconomyStorage;
+import it.einjojo.akani.core.economy.CommonEconomyStorage;
 import it.einjojo.akani.core.economy.ThalerEconomyManager;
 import it.einjojo.akani.core.handler.CloudnetConnectionHandler;
 import it.einjojo.akani.core.handler.ConnectionHandler;
 import it.einjojo.akani.core.handler.DummyConnectionHandler;
+import it.einjojo.akani.core.message.CommonMessageStorage;
 import it.einjojo.akani.core.messaging.RedisBrokerService;
 import it.einjojo.akani.core.network.CommonNetworkManager;
 import it.einjojo.akani.core.network.CommonServer;
 import it.einjojo.akani.core.player.CommonPlayerManager;
-import it.einjojo.akani.core.player.PlayerStorage;
+import it.einjojo.akani.core.player.CommonPlayerStorage;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeManager;
-import it.einjojo.akani.core.player.playtime.PlaytimeStorage;
+import it.einjojo.akani.core.player.playtime.CommonPlaytimeStorage;
 import it.einjojo.akani.core.util.HikariFactory;
 import it.einjojo.akani.core.util.JedisPoolFactory;
 import redis.clients.jedis.JedisPool;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 public abstract class AbstractAkaniCore implements InternalAkaniCore {
-    @Override
-    public boolean shuttingDown() {
-        return shuttingDown;
-    }
-
-    boolean shuttingDown = false;
     private final Server me;
     private final SimpleCloudnetAPI cloudnetAPI;
     private final Logger logger;
@@ -47,20 +46,23 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     private final HikariDataSource dataSource;
     private final BrokerService brokerService;
     private final Gson gson;
-
+    //message
+    private final CommonMessageStorage messageStorage;
+    private final Set<MessageProvider> messageProviders;
     //server
     private final NetworkManager networkManager;
     //economy
-    private final EconomyStorage coinsStorage;
+    private final CommonEconomyStorage coinsStorage;
     private final EconomyManager coinsEconomyManager;
-    private final EconomyStorage thalerStorage;
+    private final CommonEconomyStorage thalerStorage;
     private final EconomyManager thalerEconomyManager;
     //player
-    private final PlaytimeStorage playtimeStorage;
+    private final CommonPlaytimeStorage commonPlaytimeStorage;
     private final PlaytimeManager playtimeManager;
-    private final PlayerStorage playerStorage;
+    private final CommonPlayerStorage commonPlayerStorage;
     private final AkaniPlayerManager playerManager;
     private final ConnectionHandler connectionHandler;
+    boolean shuttingDown = false;
 
     /**
      * Called on the plugin's onEnable
@@ -71,6 +73,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
      */
     protected AbstractAkaniCore(Logger pluginLogger, RedisCredentials redisCredentials, MariaDbConfig mariaDBConfig) {
         logger = pluginLogger;
+        messageProviders = new HashSet<>();
         if (SimpleCloudnetAPI.isAvailable()) {
             cloudnetAPI = new SimpleCloudnetAPI();
             me = new CommonServer(this, cloudnetAPI.getServiceName(), cloudnetAPI.getServiceTaskName());
@@ -88,16 +91,23 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         networkManager = new CommonNetworkManager(brokerService, this);
 
         //economy
-        coinsStorage = new EconomyStorage("core_economy_coins", dataSource);
-        thalerStorage = new EconomyStorage("core_economy_thaler", dataSource);
+        coinsStorage = new CommonEconomyStorage("core_economy_coins", dataSource);
+        thalerStorage = new CommonEconomyStorage("core_economy_thaler", dataSource);
         coinsEconomyManager = new CoinsEconomyManager(brokerService, coinsStorage);
         thalerEconomyManager = new ThalerEconomyManager(this.brokerService, thalerStorage);
         // ...
-        playtimeStorage = new PlaytimeStorage("core_playtime", jedisPool, dataSource);
-        playtimeManager = new CommonPlaytimeManager(playtimeStorage);
-        playerStorage = new PlayerStorage("core_players", jedisPool, dataSource, this);
-        playerManager = new CommonPlayerManager(playerStorage, brokerService);
+        commonPlaytimeStorage = new CommonPlaytimeStorage("core_playtime", jedisPool, dataSource);
+        playtimeManager = new CommonPlaytimeManager(commonPlaytimeStorage);
+        commonPlayerStorage = new CommonPlayerStorage("core_players", jedisPool, dataSource, this);
+        playerManager = new CommonPlayerManager(commonPlayerStorage, brokerService);
 
+        messageStorage = new CommonMessageStorage(dataSource);
+
+    }
+
+    @Override
+    public boolean shuttingDown() {
+        return shuttingDown;
     }
 
     @Override
@@ -106,17 +116,30 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     }
 
 
-    public PlayerStorage playerStorage() {
-        return playerStorage;
+    public CommonPlayerStorage playerStorage() {
+        return commonPlayerStorage;
     }
+
+    public CommonMessageStorage messageStorage() {
+        return messageStorage;
+    }
+
+    @Override
+    public void registerMessageProvider(MessageProvider messageProvider) {
+        messageProviders.add(messageProvider);
+        delayedMessageReload();
+    }
+
+    public abstract void delayedMessageReload();
 
     public void load() {
         logger.info("Loading Akani Core...");
         brokerService().connect();
         coinsStorage.seedTables();
         thalerStorage.seedTables();
-        playtimeStorage.seedTables();
-        playerStorage.seedTables();
+        commonPlaytimeStorage.seedTables();
+        commonPlayerStorage.seedTables();
+        messageStorage.seedTables();
         networkManager.register(me);
         playerManager().loadOnlinePlayers();
     }
@@ -169,10 +192,23 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         return thalerEconomyManager;
     }
 
-    @Override
-    public MessageManager messageManager() {
-        return null;
+    public Set<MessageProvider> messageProviders() {
+        return messageProviders;
     }
+
+    @Override
+    public MessageManager<?> messageManager(Language language) {
+        if (language == Language.GERMAN) {
+            return germanMessageManager();
+        } else {
+            return englishMessageManager();
+        }
+    }
+
+    public abstract MessageManager<?> germanMessageManager();
+
+    public abstract MessageManager<?> englishMessageManager();
+
 
     @Override
     public ConnectionHandler connectionHandler() {
@@ -206,7 +242,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         return cloudnetAPI;
     }
 
-    public EconomyStorage coinsStorage() {
+    public CommonEconomyStorage coinsStorage() {
         return coinsStorage;
     }
 
@@ -214,7 +250,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         return coinsEconomyManager;
     }
 
-    public EconomyStorage thalerStorage() {
+    public CommonEconomyStorage thalerStorage() {
         return thalerStorage;
     }
 
@@ -222,7 +258,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         return thalerEconomyManager;
     }
 
-    public PlaytimeStorage playtimeStorage() {
-        return playtimeStorage;
+    public CommonPlaytimeStorage playtimeStorage() {
+        return commonPlaytimeStorage;
     }
 }

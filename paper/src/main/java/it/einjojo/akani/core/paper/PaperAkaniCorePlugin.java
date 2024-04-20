@@ -8,8 +8,8 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class AkaniCorePaperPlugin extends JavaPlugin {
-    private AkaniCorePaper akaniCorePaper;
+public class PaperAkaniCorePlugin extends JavaPlugin {
+    private PaperAkaniCore paperAkaniCore;
     private YamlConfigFile yamlConfigFile;
 
     @Override
@@ -25,16 +25,16 @@ public class AkaniCorePaperPlugin extends JavaPlugin {
         if (!SimpleCloudnetAPI.isAvailable()) {
             getLogger().warning("Cloudnet-API is not available. Will use random UUIDs for server identification");
         }
-        akaniCorePaper = new AkaniCorePaper(this, yamlConfigFile);
-        AkaniCoreProvider.register(akaniCorePaper);
-        akaniCorePaper.load();
+        paperAkaniCore = new PaperAkaniCore(this, yamlConfigFile);
+        AkaniCoreProvider.register(paperAkaniCore);
+        paperAkaniCore.load();
         setupVault();
     }
 
     @Override
     public void onDisable() {
-        if (akaniCorePaper != null) {
-            akaniCorePaper.unload();
+        if (paperAkaniCore != null) {
+            paperAkaniCore.unload();
             AkaniCoreProvider.unregister();
         }
     }

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 //TODO
-public record EconomyStorage(String tableName, HikariDataSource dataSource) {
+public record CommonEconomyStorage(String tableName, HikariDataSource dataSource) {
     public void seedTables() {
         try (var con = dataSource.getConnection()) {
             try (var ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS " + tableName + " (player_uuid VARCHAR(36) PRIMARY KEY, balance BIGINT NOT NULL)")) {

@@ -13,14 +13,14 @@ import java.util.concurrent.CompletableFuture;
 public class CommonPlaytimeManager implements PlaytimeManager {
     public static final PlaytimeHolder EMPTY_PLAYTIME_HOLDER = new CommonPlaytimeHolder(null, 0, null, null);
     private final LoadingCache<UUID, PlaytimeHolder> playtimeCache;
-    private final PlaytimeStorage playtimeStorage;
+    private final CommonPlaytimeStorage commonPlaytimeStorage;
 
 
-    public CommonPlaytimeManager(PlaytimeStorage playtimeStorage) {
-        this.playtimeStorage = playtimeStorage;
+    public CommonPlaytimeManager(CommonPlaytimeStorage commonPlaytimeStorage) {
+        this.commonPlaytimeStorage = commonPlaytimeStorage;
         playtimeCache = Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMinutes(2))
-                .build(playtimeStorage::playtimeHolder);
+                .build(commonPlaytimeStorage::playtimeHolder);
 
     }
 
@@ -39,12 +39,12 @@ public class CommonPlaytimeManager implements PlaytimeManager {
 
     @Override
     public void createPlaytime(UUID uuid) {
-        playtimeStorage.createPlaytimeHolder(new CommonPlaytimeHolder(uuid, 0, Instant.now(), Instant.now()));
+        commonPlaytimeStorage.createPlaytimeHolder(new CommonPlaytimeHolder(uuid, 0, Instant.now(), Instant.now()));
     }
 
     public void updatePlaytime(PlaytimeHolder playtimeHolder) {
         if (playtimeHolder.ownerUuid() == null) return;
         playtimeCache.invalidate(playtimeHolder.ownerUuid());
-        playtimeStorage.updatePlaytimeHolder(playtimeHolder);
+        commonPlaytimeStorage.updatePlaytimeHolder(playtimeHolder);
     }
 }

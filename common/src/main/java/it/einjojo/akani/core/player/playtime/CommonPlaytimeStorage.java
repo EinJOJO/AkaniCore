@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-public record PlaytimeStorage(String tableName, JedisPool jedisPool, HikariDataSource dataSource) {
+public record CommonPlaytimeStorage(String tableName, JedisPool jedisPool, HikariDataSource dataSource) {
     public void seedTables() {
         try (var con = dataSource.getConnection()) {
             try (var ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS " + tableName + " (player_uuid VARCHAR(36) PRIMARY KEY, playtime BIGINT, first_join TIMESTAMP, last_join TIMESTAMP)")) {

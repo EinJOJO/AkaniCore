@@ -19,14 +19,14 @@ import java.util.concurrent.CompletableFuture;
 public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor {
     private static final String PLAYER_UPDATE_MESSAGE_TYPE_ID = "player_update";
     private static final Logger log = LoggerFactory.getLogger(CommonPlayerManager.class);
-    private final PlayerStorage playerStorage;
+    private final CommonPlayerStorage commonPlayerStorage;
     private final BrokerService brokerService;
 
     private final Map<UUID, AkaniPlayer> onlinePlayers = new HashMap<>();
     private final Cache<String, UUID> nameToUUIDCache = Caffeine.newBuilder().build();
 
-    public CommonPlayerManager(PlayerStorage playerStorage, BrokerService brokerService) {
-        this.playerStorage = playerStorage;
+    public CommonPlayerManager(CommonPlayerStorage commonPlayerStorage, BrokerService brokerService) {
+        this.commonPlayerStorage = commonPlayerStorage;
         this.brokerService = brokerService;
         brokerService.registerMessageProcessor(this);
     }
@@ -37,7 +37,7 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
         if (uuid != null) {
             return onlinePlayer(uuid);
         }
-        uuid = playerStorage.playerUUIDByName(name);
+        uuid = commonPlayerStorage.playerUUIDByName(name);
         if (uuid != null) {
             nameToUUIDCache.put(name, uuid);
         }
@@ -49,7 +49,7 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
         return CompletableFuture.supplyAsync(() -> {
             var uuid = nameToUUIDCache.getIfPresent(name);
             if (uuid == null) {
-                uuid = playerStorage.playerUUIDByName(name);
+                uuid = commonPlayerStorage.playerUUIDByName(name);
                 if (uuid != null) {
                     nameToUUIDCache.put(name, uuid);
                 }
@@ -61,7 +61,7 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
             if (optionalOnline.isPresent()) {
                 return Optional.of(optionalOnline.get());
             }
-            return Optional.ofNullable(playerStorage.loadOfflinePlayer(uuid));
+            return Optional.ofNullable(commonPlayerStorage.loadOfflinePlayer(uuid));
         });
     }
 
@@ -69,7 +69,7 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
      * Loads all online players from the redis storage into the normal storage.
      */
     public void loadOnlinePlayers() {
-        for (AkaniPlayer player : playerStorage.onlinePlayers()) {
+        for (AkaniPlayer player : commonPlayerStorage.onlinePlayers()) {
             onlinePlayers.put(player.uuid(), player);
         }
         log.info("Loaded {} online players", onlinePlayers.size());
@@ -87,14 +87,14 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
 
     public void updateOnlinePlayer(AkaniPlayer player) {
         onlinePlayers.put(player.uuid(), player);
-        playerStorage.updateOnlinePlayer(player);
+        commonPlayerStorage.updateOnlinePlayer(player);
         publishUpdate(player.uuid());
         log.debug("Updated player {} in online players", player.uuid());
     }
 
     public void removeOnlinePlayer(UUID uuid) {
         onlinePlayers.remove(uuid);
-        playerStorage.removeOnlinePlayer(uuid);
+        commonPlayerStorage.removeOnlinePlayer(uuid);
         publishUpdate(uuid);
         log.debug("Removed player {} from online players", uuid);
     }
@@ -115,7 +115,7 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
             if (player.isPresent()) {
                 return Optional.of(player.get());
             }
-            return Optional.ofNullable(playerStorage.loadOfflinePlayer(uuid));
+            return Optional.ofNullable(commonPlayerStorage.loadOfflinePlayer(uuid));
         });
     }
 
@@ -123,7 +123,7 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
     public void processMessage(ChannelMessage message) {
         if (message.messageTypeID().equals(PLAYER_UPDATE_MESSAGE_TYPE_ID)) {
             var uuid = UUID.fromString(message.content());
-            var player = playerStorage.onlinePlayer(uuid);
+            var player = commonPlayerStorage.onlinePlayer(uuid);
             if (player != null) {
                 onlinePlayers.put(uuid, player);
             } else {

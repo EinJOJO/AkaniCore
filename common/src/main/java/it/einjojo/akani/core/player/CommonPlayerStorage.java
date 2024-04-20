@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public record PlayerStorage(String tableName, JedisPool jedisPool, HikariDataSource dataSource,
-                            InternalAkaniCore core) {
+public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariDataSource dataSource,
+                                  InternalAkaniCore core) {
     private static final String PLAYER_KEY_PREFIX = "akani:player:";
 
     private Jedis jedis() {

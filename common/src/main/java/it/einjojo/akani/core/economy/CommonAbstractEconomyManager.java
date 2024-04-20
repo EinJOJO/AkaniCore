@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class CommonAbstractEconomyManager implements EconomyManager, MessageProcessor {
     protected final BrokerService brokerService;
-    protected final EconomyStorage storage;
+    protected final CommonEconomyStorage storage;
     protected final AsyncLoadingCache<UUID, EconomyHolder> cached;
 
-    public CommonAbstractEconomyManager(BrokerService brokerService, EconomyStorage storage) {
+    public CommonAbstractEconomyManager(BrokerService brokerService, CommonEconomyStorage storage) {
         this.brokerService = brokerService;
         this.storage = storage;
         cached = Caffeine.newBuilder()
