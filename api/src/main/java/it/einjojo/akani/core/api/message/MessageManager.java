@@ -23,12 +23,7 @@ public interface MessageManager<PLAYER> {
      */
     String plainMessage(@NotNull String key);
 
-    default String plainMessage(@NotNull String key, @Nullable Function<String, String> modifier) {
-        if (modifier == null) {
-            return plainMessage(key);
-        }
-        return modifier.apply(plainMessage(key));
-    }
+    String plainMessage(@NotNull String key, @Nullable Function<String, String> modifier);
 
     /**
      * Get the message from the key
@@ -45,14 +40,12 @@ public interface MessageManager<PLAYER> {
      */
     void sendMessage(PLAYER player, String key, @Nullable Function<String, String> modifier);
 
-    default void sendMessage(PLAYER player, String key) {
-        sendMessage(player, key, null);
-    }
+    void sendMessage(PLAYER player, String key);
 
 
-    default void sendMessage(AkaniPlayer player, String key, @Nullable Function<String, String> modifier) {
-        player.sendMessage(message(key, modifier));
-    }
+    void sendMessage(AkaniPlayer player, String key, @Nullable Function<String, String> modifier);
+
+    void sendMessage(AkaniPlayer player, String key);
 
     Language language();
 

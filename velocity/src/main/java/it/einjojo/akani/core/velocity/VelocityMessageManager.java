@@ -19,16 +19,6 @@ public class VelocityMessageManager extends AbstractMessageManager<Player> {
     }
 
     @Override
-    public Component message(@NotNull String key) {
-        return minimessage.deserialize(plainMessage(key));
-    }
-
-    @Override
-    public void sendMessage(Player player, String key) {
-        player.sendMessage(message(key));
-    }
-
-    @Override
     public Component message(@NotNull String key, @Nullable Function<String, String> modifier) {
         return minimessage.deserialize(plainMessage(key, modifier));
     }

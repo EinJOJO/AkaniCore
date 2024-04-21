@@ -28,16 +28,6 @@ public class PaperMessageManager extends AbstractMessageManager<CommandSender> {
         commandSender.sendMessage(message(key, modifier));
     }
 
-    @Override
-    public Component message(@NotNull String key) {
-        return minimessage.deserialize(plainMessage(key));
-    }
-
-    @Override
-    public void sendMessage(CommandSender player, String key) {
-        player.sendMessage(message(key));
-    }
-
     public MiniMessage miniMessage() {
         return minimessage;
     }
