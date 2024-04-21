@@ -10,10 +10,10 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public abstract class AbstractCommandHandler implements MessageProcessor , CommandHandler{
+public abstract class AbstractCommandHandler implements MessageProcessor, CommandHandler {
     public static final String CHANNEL = "command";
-    private final BrokerService brokerService;
     protected final Logger logger;
+    private final BrokerService brokerService;
 
     public AbstractCommandHandler(BrokerService brokerService, Logger logger) {
         this.brokerService = brokerService;
@@ -62,7 +62,7 @@ public abstract class AbstractCommandHandler implements MessageProcessor , Comma
         if (message.messageTypeID().equals("cmds")) {
             runServerCommandLocally(message.content());
         } else if (message.messageTypeID().equals("cmdpl")) {
-            var payload = ByteStreams.newDataInput(message.content().getBytes());
+            var payload = ByteStreams.newDataInput(message.contentBytes());
             var player = UUID.fromString(payload.readUTF());
             var command = payload.readUTF();
             runPlayerCommandLocally(player, command);

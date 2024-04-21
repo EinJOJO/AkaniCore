@@ -28,7 +28,7 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
         germanMessageManager = new PaperMessageManager(Language.GERMAN, messageStorage());
         englishMessageManager = new PaperMessageManager(Language.ENGLISH, messageStorage());
         chatHandler = new PaperChatHandler(brokerService(), logger());
-        commandHandler = new PaperCommandHandler(brokerService(), logger());
+        commandHandler = new PaperCommandHandler(brokerService(), logger(), plugin);
         positionHandler = new PaperPositionHandler(plugin, brokerService(), gson());
     }
 

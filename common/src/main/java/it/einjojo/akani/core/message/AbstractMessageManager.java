@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.api.message.MessageManager;
 import it.einjojo.akani.core.api.message.MessageStorage;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.Map;
@@ -45,8 +46,10 @@ public abstract class AbstractMessageManager<T> implements MessageManager<T> {
     }
 
     @Override
-    public String plainMessage(String key) {
+    public String plainMessage(@NotNull String key) {
         return hotMessages.get(key).replace(PREFIX_PLACEHOLDER, prefix);
     }
+
+
 
 }

@@ -6,6 +6,10 @@ import it.einjojo.akani.core.message.AbstractMessageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Function;
 
 public class PaperMessageManager extends AbstractMessageManager<CommandSender> {
     private static final MiniMessage minimessage = MiniMessage.miniMessage();
@@ -15,7 +19,17 @@ public class PaperMessageManager extends AbstractMessageManager<CommandSender> {
     }
 
     @Override
-    public Component message(String key) {
+    public Component message(@NotNull String key, @Nullable Function<String, String> modifier) {
+        return minimessage.deserialize(plainMessage(key, modifier));
+    }
+
+    @Override
+    public void sendMessage(CommandSender commandSender, String key, @Nullable Function<String, String> modifier) {
+        commandSender.sendMessage(message(key, modifier));
+    }
+
+    @Override
+    public Component message(@NotNull String key) {
         return minimessage.deserialize(plainMessage(key));
     }
 

@@ -3,18 +3,24 @@ package it.einjojo.akani.core.paper.handler;
 import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.handler.AbstractCommandHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 import java.util.logging.Logger;
 
 public class PaperCommandHandler extends AbstractCommandHandler {
-    public PaperCommandHandler(BrokerService brokerService, Logger logger) {
+    private final JavaPlugin plugin;
+
+    public PaperCommandHandler(BrokerService brokerService, Logger logger, JavaPlugin plugin) {
         super(brokerService, logger);
+        this.plugin = plugin;
     }
 
     @Override
     protected void runServerCommandLocally(String command) {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        });
     }
 
     @Override
@@ -24,6 +30,9 @@ public class PaperCommandHandler extends AbstractCommandHandler {
             logger.warning("Player with UUID " + player + " not found. Cannot run command.");
             return;
         }
-        Bukkit.dispatchCommand(bukkitPlayer, command);
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            Bukkit.dispatchCommand(bukkitPlayer, command);
+        });
+
     }
 }

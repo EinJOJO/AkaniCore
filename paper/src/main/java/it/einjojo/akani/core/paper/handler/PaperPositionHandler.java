@@ -40,7 +40,7 @@ public class PaperPositionHandler extends AbstractPositionHandler implements Lis
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 teleportLocally(player.getUniqueId(), location);
                 openTeleports.invalidate(player.getUniqueId());
-            }, 2);
+            }, 5);
         }
     }
 
