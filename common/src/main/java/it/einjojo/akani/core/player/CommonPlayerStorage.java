@@ -9,7 +9,6 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.params.ScanParams;
 
 import javax.annotation.Nullable;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,16 +18,9 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
                                   InternalAkaniCore core) {
     private static final String PLAYER_KEY_PREFIX = "akani:player:";
 
-    private Jedis jedis() {
-        return jedisPool.getResource();
-    }
-
-    private Connection connection() throws SQLException {
-        return dataSource.getConnection();
-    }
 
     public List<AkaniPlayer> onlinePlayers() {
-        try (var jedis = jedis()) {
+        try (var jedis = jedisPool.getResource()) {
             var uuids = onlinePlayerUuids(jedis);
             var players = new ArrayList<AkaniPlayer>();
             for (var uuid : uuids) {
@@ -42,11 +34,14 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
     }
 
     public @Nullable AkaniPlayer onlinePlayer(UUID uuid) {
-        return onlinePlayer(jedis(), uuid.toString());
+        try (var jedis = jedisPool.getResource()) {
+            return onlinePlayer(jedis, uuid.toString());
+        }
+
     }
 
     public void updateOnlinePlayer(AkaniPlayer player) {
-        try (var jedis = jedis()) {
+        try (var jedis = jedisPool.getResource()) {
             var key = PLAYER_KEY_PREFIX + player.uuid().toString();
             jedis.hset(key, "name", player.name());
             jedis.hset(key, "server", player.serverName());
@@ -66,14 +61,14 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
     }
 
     public void removeOnlinePlayer(UUID uuid) {
-        try (var jedis = jedis()) {
+        try (var jedis = jedisPool.getResource()) {
             jedis.del(PLAYER_KEY_PREFIX + uuid.toString());
         }
     }
 
 
     public List<String> onlinePlayerUuids() {
-        try (var jedis = jedis()) {
+        try (var jedis = jedisPool.getResource()) {
             return onlinePlayerUuids(jedis);
         }
     }
@@ -91,7 +86,7 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
     }
 
     public AkaniOfflinePlayer loadOfflinePlayer(UUID uuid) {
-        try (var connection = connection()) {
+        try (var connection = dataSource.getConnection()) {
             var statement = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE uuid = ?");
             statement.setString(1, uuid.toString());
             var result = statement.executeQuery();
@@ -106,7 +101,7 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
     }
 
     public UUID playerUUIDByName(String name) {
-        try (var connection = connection()) {
+        try (var connection = dataSource.getConnection()) {
             var statement = connection.prepareStatement("SELECT uuid FROM " + tableName + " WHERE name = ?");
             statement.setString(1, name);
             var result = statement.executeQuery();
@@ -120,7 +115,7 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
     }
 
     public void upsertOfflinePlayer(AkaniOfflinePlayer player) {
-        try (var connection = connection()) {
+        try (var connection = dataSource.getConnection()) {
             var statement = connection.prepareStatement("INSERT INTO " + tableName + " (uuid, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?");
             statement.setString(1, player.uuid().toString());
             statement.setString(2, player.name());
@@ -132,7 +127,7 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
     }
 
     public void seedTables() {
-        try (var connection = connection()) {
+        try (var connection = dataSource.getConnection()) {
             var statement = connection.createStatement();
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + tableName + " (uuid VARCHAR(36) PRIMARY KEY, name VARCHAR(32))");
         } catch (SQLException e) {
