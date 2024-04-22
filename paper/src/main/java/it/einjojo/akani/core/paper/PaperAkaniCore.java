@@ -78,7 +78,7 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
             messageReloadTask.cancel();
         }
         messageReloadTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin(), () -> {
-            load();
+            loadProviders();
             germanMessageManager.load();
             englishMessageManager.load();
         }, 20L);
