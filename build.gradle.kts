@@ -7,6 +7,7 @@ version = "1.1.7"
 
 allprojects {
     apply(plugin = "java-library")
+    apply(plugin = "maven-publish")
     group = "it.einjojo.akani.core"
     version = rootProject.version
 
@@ -17,17 +18,31 @@ allprojects {
         maven("https://repo.panda-lang.org/releases")
         maven("https://repo.akani.dev/releases")
     }
+
+    publishing {
+        repositories {
+            maven {
+                name = "AkaniDev"
+                url = uri("https://repo.akani.dev/releases")
+                credentials {
+                    username = providers.gradleProperty("AKANI_REPO_USER").get()
+                    password = providers.gradleProperty("AKANI_REPO_PASS").get()
+                }
+            }
+        }
+    }
 }
 
 tasks {
     jar {
         enabled = false
     }
+
 }
 
 
 subprojects {
-    apply(plugin = "maven-publish")
+
     tasks.withType<Jar>() {
 
     }

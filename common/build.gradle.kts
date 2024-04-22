@@ -37,15 +37,4 @@ publishing {
             from(components["java"])
         }
     }
-
-    repositories {
-        maven {
-            name = "AkaniDev"
-            url = uri("https://repo.akani.dev/releases")
-            credentials {
-                username = System.getProperty("AKANI_REPO_USER")
-                password = System.getProperty("AKANI_REPO_PASS")
-            }
-        }
-    }
 }
