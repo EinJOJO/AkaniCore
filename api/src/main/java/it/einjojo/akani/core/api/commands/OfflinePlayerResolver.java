@@ -1,4 +1,4 @@
-package it.einjojo.akani.core.api.litecommands;
+package it.einjojo.akani.core.api.commands;
 
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
