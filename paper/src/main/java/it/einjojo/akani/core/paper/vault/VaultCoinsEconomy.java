@@ -1,11 +1,20 @@
 package it.einjojo.akani.core.paper.vault;
 
+import it.einjojo.akani.core.api.economy.BadBalanceException;
+import it.einjojo.akani.core.paper.PaperAkaniCore;
 import net.milkbowl.vault.economy.AbstractEconomy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 import java.util.List;
 
 public class VaultCoinsEconomy extends AbstractEconomy {
+
+    private final PaperAkaniCore core;
+
+    public VaultCoinsEconomy(PaperAkaniCore core) {
+        this.core = core;
+    }
+
     @Override
     public boolean isEnabled() {
         return true;
@@ -57,7 +66,7 @@ public class VaultCoinsEconomy extends AbstractEconomy {
 
     @Override
     public double getBalance(String playerName) {
-        return 69; //TODO
+        return core.playerManager().loadPlayerByName(playerName).join().orElseThrow().coins().balance();
     }
 
     @Override
@@ -67,7 +76,7 @@ public class VaultCoinsEconomy extends AbstractEconomy {
 
     @Override
     public boolean has(String playerName, double amount) {
-        return false; //TODO
+        return getBalance(playerName) >= amount;
     }
 
     @Override
@@ -77,7 +86,12 @@ public class VaultCoinsEconomy extends AbstractEconomy {
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
-        return null; //TODO
+        try {
+            core.playerManager().loadPlayerByName(playerName).join().orElseThrow().coins().removeBalance((long) amount);
+            return new EconomyResponse(amount, getBalance(playerName), EconomyResponse.ResponseType.SUCCESS, "");
+        } catch (BadBalanceException e) {
+            return new EconomyResponse(amount, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, e.getMessage());
+        }
     }
 
     @Override
@@ -87,7 +101,12 @@ public class VaultCoinsEconomy extends AbstractEconomy {
 
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
-        return null; //TODO
+        try {
+            core.playerManager().loadPlayerByName(playerName).join().orElseThrow().coins().addBalance((long) amount);
+        } catch (BadBalanceException e) {
+            return new EconomyResponse(amount, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, e.getMessage());
+        }
+        return new EconomyResponse(amount, getBalance(playerName), EconomyResponse.ResponseType.SUCCESS, "");
     }
 
     @Override
