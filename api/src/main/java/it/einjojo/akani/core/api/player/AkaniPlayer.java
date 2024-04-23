@@ -3,6 +3,7 @@ package it.einjojo.akani.core.api.player;
 import it.einjojo.akani.core.api.network.Group;
 import it.einjojo.akani.core.api.network.NetworkLocation;
 import it.einjojo.akani.core.api.network.Server;
+import it.einjojo.akani.core.api.party.PartyPlayer;
 import net.kyori.adventure.text.Component;
 
 import java.util.concurrent.CompletableFuture;
