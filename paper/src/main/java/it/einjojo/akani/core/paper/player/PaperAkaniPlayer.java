@@ -16,25 +16,6 @@ public class PaperAkaniPlayer extends CommonAkaniPlayer {
         super(core, uuid, name, serverName);
     }
 
-    @Override
-    public void teleport(NetworkLocation networkLocation) {
-        bukkitPlayer().ifPresent((bp) -> {
-
-        });
-        super.teleport(networkLocation);
-    }
-
-    @Override
-    public void sendMessage(Component component) {
-        bukkitPlayer().ifPresentOrElse((bp) -> {
-            bp.sendMessage(component);
-        }, () -> {
-            //TODO
-            core().logger().warning("Tried to send a message to a player that is not online: " + name());
-        });
-    }
-
-
     Optional<Player> bukkitPlayer() {
         return Optional.ofNullable(Bukkit.getPlayer(uuid()));
     }
