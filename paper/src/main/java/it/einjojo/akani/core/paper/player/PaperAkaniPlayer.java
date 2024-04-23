@@ -16,7 +16,7 @@ public class PaperAkaniPlayer extends CommonAkaniPlayer {
         super(core, uuid, name, serverName);
     }
 
-    Optional<Player> bukkitPlayer() {
+    public Optional<Player> bukkitPlayer() {
         return Optional.ofNullable(Bukkit.getPlayer(uuid()));
     }
 }
