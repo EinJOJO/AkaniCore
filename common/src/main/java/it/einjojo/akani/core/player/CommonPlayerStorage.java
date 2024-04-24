@@ -60,7 +60,7 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
             log.warn("Player with uuid {} is empty.", redisKey);
             return null;
         }
-        UUID playerUuid = UUID.fromString(redisKey);
+        UUID playerUuid = UUID.fromString(redisKey.substring(PLAYER_KEY_PREFIX.length()));
         var playerName = data.get("name");
         var serverName = data.get("server");
         return core.playerFactory().player(playerUuid, playerName, serverName);
