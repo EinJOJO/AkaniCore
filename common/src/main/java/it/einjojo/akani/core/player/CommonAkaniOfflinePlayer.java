@@ -36,6 +36,13 @@ public class CommonAkaniOfflinePlayer implements AkaniOfflinePlayer {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return "CommonAkaniOfflinePlayer{" +
+                "uuid=" + uuid +
+                ", name='" + name + '\'' +
+                '}';
+    }
 
     @Override
     public boolean isOnline() {
