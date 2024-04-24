@@ -4,6 +4,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.InternalAkaniCore;
 import it.einjojo.akani.core.api.player.AkaniOfflinePlayer;
 import it.einjojo.akani.core.api.player.AkaniPlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.params.ScanParams;
@@ -16,7 +18,9 @@ import java.util.UUID;
 
 public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariDataSource dataSource,
                                   InternalAkaniCore core) {
+
     private static final String PLAYER_KEY_PREFIX = "akani:player:";
+    private static final Logger log = LoggerFactory.getLogger(CommonPlayerStorage.class);
 
 
     public List<AkaniPlayer> onlinePlayers() {
@@ -27,6 +31,8 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
                 var player = onlinePlayer(jedis, uuid);
                 if (player != null) {
                     players.add(player);
+                } else {
+                    log.warn("Player with uuid {} not found in redis", uuid);
                 }
             }
             return players;
@@ -52,6 +58,7 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
         var key = PLAYER_KEY_PREFIX + uuid;
         var data = jedis.hgetAll(key);
         if (data.isEmpty()) {
+            log.warn("Player with uuid {} is empty.", uuid);
             return null;
         }
         UUID playerUuid = UUID.fromString(uuid);
@@ -61,6 +68,7 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
     }
 
     public void removeOnlinePlayer(UUID uuid) {
+        log.debug("Removing player with uuid {} from redis", uuid);
         try (var jedis = jedisPool.getResource()) {
             jedis.del(PLAYER_KEY_PREFIX + uuid.toString());
         }
