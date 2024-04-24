@@ -25,14 +25,14 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
 
     public List<AkaniPlayer> onlinePlayers() {
         try (var jedis = jedisPool.getResource()) {
-            var uuids = onlinePlayerUuids(jedis);
+            var redisKeys = onlinePlayerUuids(jedis);
             var players = new ArrayList<AkaniPlayer>();
-            for (var uuid : uuids) {
-                var player = onlinePlayer(jedis, uuid);
+            for (var redisKey : redisKeys) {
+                var player = onlinePlayer(jedis, redisKey);
                 if (player != null) {
                     players.add(player);
                 } else {
-                    log.warn("Player with uuid {} not found in redis", uuid);
+                    log.warn("Player with uuid {} not found in redis", redisKey);
                 }
             }
             return players;
@@ -41,7 +41,7 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
 
     public @Nullable AkaniPlayer onlinePlayer(UUID uuid) {
         try (var jedis = jedisPool.getResource()) {
-            return onlinePlayer(jedis, uuid.toString());
+            return onlinePlayer(jedis, PLAYER_KEY_PREFIX + uuid.toString());
         }
 
     }
@@ -54,14 +54,13 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
         }
     }
 
-    private @Nullable AkaniPlayer onlinePlayer(Jedis jedis, String uuid) {
-        var key = PLAYER_KEY_PREFIX + uuid;
-        var data = jedis.hgetAll(key);
+    private @Nullable AkaniPlayer onlinePlayer(Jedis jedis, String redisKey) {
+        var data = jedis.hgetAll(redisKey);
         if (data.isEmpty()) {
-            log.warn("Player with uuid {} is empty.", uuid);
+            log.warn("Player with uuid {} is empty.", redisKey);
             return null;
         }
-        UUID playerUuid = UUID.fromString(uuid);
+        UUID playerUuid = UUID.fromString(redisKey);
         var playerName = data.get("name");
         var serverName = data.get("server");
         return core.playerFactory().player(playerUuid, playerName, serverName);
