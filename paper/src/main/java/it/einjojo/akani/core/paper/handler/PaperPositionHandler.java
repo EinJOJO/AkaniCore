@@ -37,10 +37,8 @@ public class PaperPositionHandler extends AbstractPositionHandler implements Lis
         var location = openTeleports.getIfPresent(player.getUniqueId());
         if (location != null) {
             log.info("Player {} joined and has an open teleport ", player.getName());
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                teleportLocally(player.getUniqueId(), location);
-                openTeleports.invalidate(player.getUniqueId());
-            }, 5);
+            teleportLocally(player.getUniqueId(), location);
+            openTeleports.invalidate(player.getUniqueId());
         }
     }
 
@@ -55,13 +53,13 @@ public class PaperPositionHandler extends AbstractPositionHandler implements Lis
 
     @Override
     public void teleportLocally(UUID player, NetworkLocation location) {
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
             var bukkitPlayer = Bukkit.getPlayer(player);
             if (bukkitPlayer != null) {
                 bukkitPlayer.teleportAsync(AkaniBukkitAdapter.bukkitLocation(location));
             } else {
                 throw new IllegalArgumentException("Player with UUID " + player + " not found.");
             }
-        });
+        }, 2L); // two ticks
     }
 }

@@ -69,6 +69,7 @@ public class CommonPlayerManager implements AkaniPlayerManager, MessageProcessor
      * Loads all online players from the redis storage into the normal storage.
      */
     public void loadOnlinePlayers() {
+        onlinePlayers.clear();
         for (AkaniPlayer player : commonPlayerStorage.onlinePlayers()) {
             onlinePlayers.put(player.uuid(), player);
         }
