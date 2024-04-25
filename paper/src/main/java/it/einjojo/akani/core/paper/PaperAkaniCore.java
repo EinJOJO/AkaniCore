@@ -78,7 +78,7 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
 
     @Override
     public LuckPermsHook luckPermsHook() {
-        return null;
+        return luckPermsHook;
     }
 
     @Override
