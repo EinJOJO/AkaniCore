@@ -26,6 +26,7 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
     private final VelocityMessageManager englishMessageManager;
     private final LuckPermsHook luckPermsHook;
     private ScheduledTask messageReloadTask;
+
     /**
      * Called on the plugin's onEnable
      */
@@ -37,8 +38,8 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
         this.commandHandler = new VelocityCommandHandler(brokerService(), logger());
         this.chatHandler = new VelocityChatHandler(brokerService());
         this.positionHandler = new VelocityPositionHandler(brokerService(), gson());
-        this.germanMessageManager = new VelocityMessageManager(Language.GERMAN, messageStorage());
-        this.englishMessageManager = new VelocityMessageManager(Language.ENGLISH, messageStorage());
+        this.germanMessageManager = new VelocityMessageManager(Language.GERMAN, miniMessage(), messageStorage());
+        this.englishMessageManager = new VelocityMessageManager(Language.ENGLISH, miniMessage(), messageStorage());
     }
 
     @Override

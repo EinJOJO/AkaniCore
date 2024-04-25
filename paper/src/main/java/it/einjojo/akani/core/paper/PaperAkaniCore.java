@@ -28,8 +28,8 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
         super(plugin.getLogger(), yamlConfigFile.redisCredentials(), yamlConfigFile.mariaDBConfig());
         this.plugin = plugin;
         playerFactory = new PaperPlayerFactory(this);
-        germanMessageManager = new PaperMessageManager(Language.GERMAN, messageStorage());
-        englishMessageManager = new PaperMessageManager(Language.ENGLISH, messageStorage());
+        germanMessageManager = new PaperMessageManager(Language.GERMAN, miniMessage(), messageStorage());
+        englishMessageManager = new PaperMessageManager(Language.ENGLISH, miniMessage(), messageStorage());
         chatHandler = new PaperChatHandler(brokerService(), logger());
         commandHandler = new PaperCommandHandler(brokerService(), logger(), plugin);
         positionHandler = new PaperPositionHandler(plugin, brokerService(), gson());

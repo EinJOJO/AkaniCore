@@ -31,6 +31,10 @@ public abstract class AbstractMessageManager<T> implements MessageManager<T> {
                 .build((k) -> this.storage.readMessage(this.language.langKey(), k));
     }
 
+    public MiniMessage miniMessage() {
+        return miniMessage;
+    }
+
     public String prefix() {
         return hotMessages.get("prefix");
     }
