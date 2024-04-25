@@ -8,6 +8,8 @@ import it.einjojo.akani.core.paper.handler.PaperChatHandler;
 import it.einjojo.akani.core.paper.handler.PaperCommandHandler;
 import it.einjojo.akani.core.paper.handler.PaperPositionHandler;
 import it.einjojo.akani.core.paper.player.PaperPlayerFactory;
+import it.einjojo.akani.core.util.LuckPermsHook;
+import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -19,9 +21,10 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
     private final PaperPositionHandler positionHandler;
     private final PaperMessageManager germanMessageManager;
     private final PaperMessageManager englishMessageManager;
+    private final LuckPermsHook luckPermsHook;
     private BukkitTask messageReloadTask;
 
-    protected PaperAkaniCore(JavaPlugin plugin, YamlConfigFile yamlConfigFile) {
+    protected PaperAkaniCore(JavaPlugin plugin, LuckPerms luckperms, YamlConfigFile yamlConfigFile) {
         super(plugin.getLogger(), yamlConfigFile.redisCredentials(), yamlConfigFile.mariaDBConfig());
         this.plugin = plugin;
         playerFactory = new PaperPlayerFactory(this);
@@ -30,6 +33,7 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
         chatHandler = new PaperChatHandler(brokerService(), logger());
         commandHandler = new PaperCommandHandler(brokerService(), logger(), plugin);
         positionHandler = new PaperPositionHandler(plugin, brokerService(), gson());
+        luckPermsHook = new LuckPermsHook(luckperms);
     }
 
     public JavaPlugin plugin() {
@@ -70,6 +74,11 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
     @Override
     public PaperPositionHandler positionHandler() {
         return positionHandler;
+    }
+
+    @Override
+    public LuckPermsHook luckPermsHook() {
+        return null;
     }
 
     @Override

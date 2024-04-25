@@ -4,7 +4,10 @@ import it.einjojo.akani.core.api.AkaniCoreProvider;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
 import it.einjojo.akani.core.config.YamlConfigFile;
 import it.einjojo.akani.core.paper.vault.VaultCoinsEconomy;
+import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,10 +33,17 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
             return;
         }
 
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if (provider == null) {
+            getLogger().severe("LuckPerms is not available. Disabling plugin.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         if (!SimpleCloudnetAPI.isAvailable()) {
             getLogger().warning("Cloudnet-API is not available. Will use random UUIDs for server identification");
         }
-        paperAkaniCore = new PaperAkaniCore(this, yamlConfigFile);
+        paperAkaniCore = new PaperAkaniCore(this, provider.getProvider(), yamlConfigFile);
         AkaniCoreProvider.register(paperAkaniCore);
         paperAkaniCore.load();
         paperAkaniCore.delayedMessageReload();
