@@ -12,6 +12,14 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
     private PaperAkaniCore paperAkaniCore;
     private YamlConfigFile yamlConfigFile;
 
+    public PaperAkaniCore paperAkaniCore() {
+        return paperAkaniCore;
+    }
+
+    public YamlConfigFile yamlConfigFile() {
+        return yamlConfigFile;
+    }
+
     @Override
     public void onEnable() {
         try {

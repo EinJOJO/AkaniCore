@@ -12,6 +12,7 @@ import it.einjojo.akani.core.api.network.NetworkManager;
 import it.einjojo.akani.core.api.network.Server;
 import it.einjojo.akani.core.api.player.AkaniPlayerManager;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeManager;
+import it.einjojo.akani.core.api.service.BackService;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
 import it.einjojo.akani.core.config.MariaDbConfig;
 import it.einjojo.akani.core.config.RedisCredentials;
@@ -29,6 +30,7 @@ import it.einjojo.akani.core.player.CommonPlayerManager;
 import it.einjojo.akani.core.player.CommonPlayerStorage;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeManager;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeStorage;
+import it.einjojo.akani.core.service.CommonBackService;
 import it.einjojo.akani.core.util.HikariFactory;
 import it.einjojo.akani.core.util.JedisPoolFactory;
 import redis.clients.jedis.JedisPool;
@@ -62,6 +64,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     private final CommonPlayerStorage commonPlayerStorage;
     private final AkaniPlayerManager playerManager;
     private final ConnectionHandler connectionHandler;
+    private final BackService backService;
     boolean shuttingDown = false;
 
     /**
@@ -100,9 +103,15 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         playtimeManager = new CommonPlaytimeManager(commonPlaytimeStorage);
         commonPlayerStorage = new CommonPlayerStorage("core_players", jedisPool, dataSource, this);
         playerManager = new CommonPlayerManager(commonPlayerStorage, brokerService);
-
         messageStorage = new CommonMessageStorage(dataSource);
+        backService = new CommonBackService(this);
 
+
+    }
+
+    @Override
+    public BackService backService() {
+        return backService;
     }
 
     @Override

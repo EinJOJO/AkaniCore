@@ -19,9 +19,9 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractPositionHandler implements MessageProcessor, PositionHandler {
     protected static final Cache<UUID, NetworkLocation> openTeleports = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(10)).build();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPositionHandler.class);
     private static final String REQUEST_POSITION_MESSAGE_ID = "reqpos";
     private static final String TELEPORT_MESSAGE_ID = "tp";
-    private static final Logger log = LoggerFactory.getLogger(AbstractPositionHandler.class);
     private final BrokerService brokerService;
     private final Gson gson;
 
@@ -32,7 +32,7 @@ public abstract class AbstractPositionHandler implements MessageProcessor, Posit
     }
 
     protected Logger logger() {
-        return log;
+        return LOGGER;
     }
 
     public BrokerService brokerService() {
@@ -48,7 +48,7 @@ public abstract class AbstractPositionHandler implements MessageProcessor, Posit
                 throw new IllegalStateException("Position not found for player " + player);
             }
             var response = ChannelMessage.responseTo(message).content(serializeNetworkLocation(location)).build();
-            log.info("Sending position of player {} to {}", player, message.sender());
+            logger().info("Sending position of player {} to {}", player, message.sender());
             brokerService().publish(response);
         }
         if (message.messageTypeID().equals(TELEPORT_MESSAGE_ID)) {
@@ -63,7 +63,6 @@ public abstract class AbstractPositionHandler implements MessageProcessor, Posit
             }
         }
     }
-
 
     public abstract boolean isPlayerOnline(UUID player);
 
@@ -91,13 +90,14 @@ public abstract class AbstractPositionHandler implements MessageProcessor, Posit
 
         // SEND REDIS MESSAGE TO SERVER
         var payload = ByteStreams.newDataOutput();
-        payload.writeUTF(player.toString());
+        payload.writeUTF(player.uuid().toString());
         payload.writeUTF(serializeNetworkLocation(location));
         ChannelReceiver receiver = location.type().equals(NetworkLocation.Type.SERVER) ? ChannelReceiver.server(location.referenceName()) : ChannelReceiver.group(location.referenceName());
         var message = ChannelMessage.builder().channel(processingChannel()).messageTypeID(TELEPORT_MESSAGE_ID).content(payload.toByteArray()).recipient(receiver).build();
         brokerService().publish(message);
-        logger().debug("Announcing teleport of player {} ({}) to {}  ", player, player.serverName(), location);
+        logger().debug("Announcing teleport of player {} ({}) to {}  ", player.name(), player.serverName(), location);
     }
+
 
     public final NetworkLocation deserializeNetworkLocation(String message) {
         return gson.fromJson(message, NetworkLocation.class);
