@@ -24,10 +24,6 @@ allprojects {
             maven {
                 name = "AkaniDev"
                 url = uri("https://repo.akani.dev/releases")
-                credentials {
-                    username = providers.gradleProperty("AKANI_REPO_USER").get()
-                    password = providers.gradleProperty("AKANI_REPO_PASS").get()
-                }
             }
         }
     }
