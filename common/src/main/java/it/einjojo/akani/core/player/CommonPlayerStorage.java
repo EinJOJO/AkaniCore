@@ -4,6 +4,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.InternalAkaniCore;
 import it.einjojo.akani.core.api.player.AkaniOfflinePlayer;
 import it.einjojo.akani.core.api.player.AkaniPlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.params.ScanParams;
@@ -16,17 +18,21 @@ import java.util.UUID;
 
 public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariDataSource dataSource,
                                   InternalAkaniCore core) {
+
     private static final String PLAYER_KEY_PREFIX = "akani:player:";
+    private static final Logger log = LoggerFactory.getLogger(CommonPlayerStorage.class);
 
 
     public List<AkaniPlayer> onlinePlayers() {
         try (var jedis = jedisPool.getResource()) {
-            var uuids = onlinePlayerUuids(jedis);
+            var redisKeys = onlinePlayerUuids(jedis);
             var players = new ArrayList<AkaniPlayer>();
-            for (var uuid : uuids) {
-                var player = onlinePlayer(jedis, uuid);
+            for (var redisKey : redisKeys) {
+                var player = onlinePlayer(jedis, redisKey);
                 if (player != null) {
                     players.add(player);
+                } else {
+                    log.warn("Player with uuid {} not found in redis", redisKey);
                 }
             }
             return players;
@@ -35,7 +41,7 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
 
     public @Nullable AkaniPlayer onlinePlayer(UUID uuid) {
         try (var jedis = jedisPool.getResource()) {
-            return onlinePlayer(jedis, uuid.toString());
+            return onlinePlayer(jedis, PLAYER_KEY_PREFIX + uuid.toString());
         }
 
     }
@@ -48,19 +54,20 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
         }
     }
 
-    private @Nullable AkaniPlayer onlinePlayer(Jedis jedis, String uuid) {
-        var key = PLAYER_KEY_PREFIX + uuid;
-        var data = jedis.hgetAll(key);
+    private @Nullable AkaniPlayer onlinePlayer(Jedis jedis, String redisKey) {
+        var data = jedis.hgetAll(redisKey);
         if (data.isEmpty()) {
+            log.warn("Player with uuid {} is empty.", redisKey);
             return null;
         }
-        UUID playerUuid = UUID.fromString(uuid);
+        UUID playerUuid = UUID.fromString(redisKey.substring(PLAYER_KEY_PREFIX.length()));
         var playerName = data.get("name");
         var serverName = data.get("server");
         return core.playerFactory().player(playerUuid, playerName, serverName);
     }
 
     public void removeOnlinePlayer(UUID uuid) {
+        log.debug("Removing player with uuid {} from redis", uuid);
         try (var jedis = jedisPool.getResource()) {
             jedis.del(PLAYER_KEY_PREFIX + uuid.toString());
         }

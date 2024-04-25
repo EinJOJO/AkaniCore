@@ -23,6 +23,11 @@ public interface AkaniPlayer extends AkaniOfflinePlayer {
         connectGroup(server.name());
     }
 
+    /**
+     * @return Whether the player was teleported back
+     */
+    CompletableFuture<Boolean> teleportBack();
+
     void connectGroup(String groupName);
 
     void runCommand(String command);

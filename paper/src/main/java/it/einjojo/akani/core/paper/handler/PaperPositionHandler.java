@@ -10,13 +10,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class PaperPositionHandler extends AbstractPositionHandler implements Listener {
-    private static final Logger log = LoggerFactory.getLogger(PaperPositionHandler.class);
     private final JavaPlugin plugin;
 
 
@@ -36,11 +33,9 @@ public class PaperPositionHandler extends AbstractPositionHandler implements Lis
         var player = event.getPlayer();
         var location = openTeleports.getIfPresent(player.getUniqueId());
         if (location != null) {
-            log.info("Player {} joined and has an open teleport ", player.getName());
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                teleportLocally(player.getUniqueId(), location);
-                openTeleports.invalidate(player.getUniqueId());
-            }, 5);
+            logger().info("Player {} joined and has an open teleport ", player.getName());
+            teleportLocally(player.getUniqueId(), location);
+            openTeleports.invalidate(player.getUniqueId());
         }
     }
 
@@ -55,6 +50,7 @@ public class PaperPositionHandler extends AbstractPositionHandler implements Lis
 
     @Override
     public void teleportLocally(UUID player, NetworkLocation location) {
+        logger().debug("Teleporting player {} locally to {}", player, location);
         Bukkit.getScheduler().runTask(plugin, () -> {
             var bukkitPlayer = Bukkit.getPlayer(player);
             if (bukkitPlayer != null) {

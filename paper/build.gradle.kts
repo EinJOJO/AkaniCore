@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compileOnly(libs.paper)
+    compileOnly(libs.luckperms)
     api(project(":api"))
     api(project(":common"))
     implementation(libs.caffeine)

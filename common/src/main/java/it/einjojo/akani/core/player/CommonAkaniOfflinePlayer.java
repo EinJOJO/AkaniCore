@@ -4,6 +4,7 @@ import it.einjojo.akani.core.InternalAkaniCore;
 import it.einjojo.akani.core.api.economy.EconomyHolder;
 import it.einjojo.akani.core.api.player.AkaniOfflinePlayer;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeHolder;
+import net.kyori.adventure.text.Component;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -15,11 +16,35 @@ public class CommonAkaniOfflinePlayer implements AkaniOfflinePlayer {
     private final UUID uuid;
     private final String name;
 
-
     public CommonAkaniOfflinePlayer(InternalAkaniCore core, UUID uuid, String name) {
         this.core = core;
         this.uuid = uuid;
         this.name = name;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> hasPermission(String permission) {
+        return core.luckPermsHook().hasPlayerPermission(uuid(), permission);
+    }
+
+    @Override
+    public CompletableFuture<String> plainPrefix() {
+        return core.luckPermsHook().prefix(uuid());
+    }
+
+    @Override
+    public CompletableFuture<Component> prefix() {
+        return plainPrefix().thenApply((prefix) -> core.miniMessage().deserialize(prefix));
+    }
+
+    @Override
+    public CompletableFuture<String> plainSuffix() {
+        return core().luckPermsHook().suffix(uuid());
+    }
+
+    @Override
+    public CompletableFuture<Component> suffix() {
+        return plainSuffix().thenApply((suffix) -> core().miniMessage().deserialize(suffix));
     }
 
     public InternalAkaniCore core() {
@@ -36,6 +61,13 @@ public class CommonAkaniOfflinePlayer implements AkaniOfflinePlayer {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return "CommonAkaniOfflinePlayer{" +
+                "uuid=" + uuid +
+                ", name='" + name + '\'' +
+                '}';
+    }
 
     @Override
     public boolean isOnline() {

@@ -10,6 +10,7 @@ import it.einjojo.akani.core.api.network.NetworkManager;
 import it.einjojo.akani.core.api.network.Server;
 import it.einjojo.akani.core.api.player.AkaniPlayerManager;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeManager;
+import it.einjojo.akani.core.api.service.BackService;
 import org.jetbrains.annotations.ApiStatus;
 import redis.clients.jedis.JedisPool;
 
@@ -52,6 +53,7 @@ public interface AkaniCore {
 
     /**
      * Register a new MessageProvider to the core to extend the message system
+     *
      * @param messageProvider the provider to register
      */
     void registerMessageProvider(MessageProvider messageProvider);
@@ -65,6 +67,13 @@ public interface AkaniCore {
      * @return Player Manager
      */
     AkaniPlayerManager playerManager();
+
+
+    /**
+     * Provides methods to interact with the back location system
+     * @return BackService instance
+     */
+    BackService backService();
 
     /**
      * @return Network Manager
