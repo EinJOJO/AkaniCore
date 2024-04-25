@@ -3,6 +3,7 @@ package it.einjojo.akani.core.velocity;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -21,7 +22,9 @@ import java.util.logging.Logger;
         version = "1.1",
         url = "https://kalypzo.de",
         description = "The core plugin for the Akani network",
-        id = "akani-core"
+        id = "akani-core",
+        dependencies = {@Dependency(id = "luckperms")}
+
 )
 public class VelocityAkaniCorePlugin {
 

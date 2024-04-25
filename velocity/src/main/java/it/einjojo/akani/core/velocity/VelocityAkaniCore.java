@@ -6,10 +6,12 @@ import it.einjojo.akani.core.AbstractAkaniCore;
 import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.config.YamlConfigFile;
+import it.einjojo.akani.core.util.LuckPermsHook;
 import it.einjojo.akani.core.velocity.handler.VelocityChatHandler;
 import it.einjojo.akani.core.velocity.handler.VelocityCommandHandler;
 import it.einjojo.akani.core.velocity.handler.VelocityPositionHandler;
 import it.einjojo.akani.core.velocity.player.VelocityPlayerFactory;
+import net.luckperms.api.LuckPermsProvider;
 
 import java.time.Duration;
 import java.util.logging.Logger;
@@ -22,14 +24,15 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
     private final VelocityPositionHandler positionHandler;
     private final VelocityMessageManager germanMessageManager;
     private final VelocityMessageManager englishMessageManager;
+    private final LuckPermsHook luckPermsHook;
     private ScheduledTask messageReloadTask;
-
     /**
      * Called on the plugin's onEnable
      */
     protected VelocityAkaniCore(VelocityAkaniCorePlugin plugin, Logger pluginLogger, YamlConfigFile configFile) {
         super(pluginLogger, configFile.redisCredentials(), configFile.mariaDBConfig());
         this.plugin = plugin;
+        this.luckPermsHook = new LuckPermsHook(LuckPermsProvider.get());
         this.playerFactory = new VelocityPlayerFactory(this, null);
         this.commandHandler = new VelocityCommandHandler(brokerService(), logger());
         this.chatHandler = new VelocityChatHandler(brokerService());
@@ -38,6 +41,10 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
         this.englishMessageManager = new VelocityMessageManager(Language.ENGLISH, messageStorage());
     }
 
+    @Override
+    public LuckPermsHook luckPermsHook() {
+        return luckPermsHook;
+    }
 
     public VelocityAkaniCorePlugin plugin() {
         return plugin;

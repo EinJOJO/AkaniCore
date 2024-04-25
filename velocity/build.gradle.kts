@@ -12,6 +12,7 @@ dependencies {
     api(project(":common"))
     compileOnly(libs.velocity)
     annotationProcessor(libs.velocity)
+    compileOnly(libs.luckperms)
 }
 
 tasks {
