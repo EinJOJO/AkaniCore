@@ -3,7 +3,6 @@ package it.einjojo.akani.core.api.player;
 import it.einjojo.akani.core.api.network.Group;
 import it.einjojo.akani.core.api.network.NetworkLocation;
 import it.einjojo.akani.core.api.network.Server;
-import it.einjojo.akani.core.api.party.PartyPlayer;
 import net.kyori.adventure.text.Component;
 
 import java.util.concurrent.CompletableFuture;
@@ -23,6 +22,11 @@ public interface AkaniPlayer extends AkaniOfflinePlayer {
     default void connectGroup(Group server) {
         connectGroup(server.name());
     }
+
+    /**
+     * @return Whether the player was teleported back
+     */
+    CompletableFuture<Boolean> teleportBack();
 
     void connectGroup(String groupName);
 

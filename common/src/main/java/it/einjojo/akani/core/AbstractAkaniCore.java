@@ -33,6 +33,7 @@ import it.einjojo.akani.core.player.playtime.CommonPlaytimeStorage;
 import it.einjojo.akani.core.service.CommonBackService;
 import it.einjojo.akani.core.util.HikariFactory;
 import it.einjojo.akani.core.util.JedisPoolFactory;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import redis.clients.jedis.JedisPool;
 
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 public abstract class AbstractAkaniCore implements InternalAkaniCore {
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final Server me;
     private final SimpleCloudnetAPI cloudnetAPI;
     private final Logger logger;
@@ -66,7 +68,6 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     private final ConnectionHandler connectionHandler;
     private final BackService backService;
     boolean shuttingDown = false;
-
     /**
      * Called on the plugin's onEnable
      *
@@ -107,6 +108,11 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         backService = new CommonBackService(this);
 
 
+    }
+
+    @Override
+    public MiniMessage miniMessage() {
+        return miniMessage;
     }
 
     @Override

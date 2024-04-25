@@ -7,6 +7,7 @@ import it.einjojo.akani.core.api.message.MessageManager;
 import it.einjojo.akani.core.api.message.MessageStorage;
 import it.einjojo.akani.core.api.player.AkaniPlayer;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,16 +18,21 @@ import java.util.function.Function;
 public abstract class AbstractMessageManager<T> implements MessageManager<T> {
     private static final String PREFIX_PLACEHOLDER = "%prefix%";
     private final Language language;
+    private final MiniMessage miniMessage;
     private final MessageStorage storage;
     private final LoadingCache<String, String> hotMessages;
-    private String prefix;
 
-    public AbstractMessageManager(Language language, MessageStorage storage) {
+    public AbstractMessageManager(Language language, MiniMessage miniMessage, MessageStorage storage) {
         this.language = language;
+        this.miniMessage = miniMessage;
         this.storage = storage;
         this.hotMessages = Caffeine.newBuilder()
                 .expireAfterAccess(Duration.ofMinutes(15))
                 .build((k) -> this.storage.readMessage(this.language.langKey(), k));
+    }
+
+    public String prefix() {
+        return hotMessages.get("prefix");
     }
 
     @Override
@@ -34,11 +40,8 @@ public abstract class AbstractMessageManager<T> implements MessageManager<T> {
         for (Map.Entry<String, String> entry : storage().readMessages(language().langKey()).entrySet()) {
             hotMessages.put(entry.getKey(), entry.getValue());
         }
-        prefix = hotMessages.get("prefix");
-        if (prefix == null) {
-            throw new IllegalStateException("No prefix found for language " + language().langKey());
-        }
     }
+
 
     @Override
     public Language language() {
@@ -52,7 +55,7 @@ public abstract class AbstractMessageManager<T> implements MessageManager<T> {
     @Override
     public String plainMessage(@NotNull String key) {
         String res = hotMessages.get(key);
-        return res == null ? "" : res.replace(PREFIX_PLACEHOLDER, prefix);
+        return res == null ? "" : res.replace(PREFIX_PLACEHOLDER, prefix());
     }
 
     @Override
@@ -74,6 +77,11 @@ public abstract class AbstractMessageManager<T> implements MessageManager<T> {
     @Override
     public Component message(@NotNull String key) {
         return message(key, null);
+    }
+
+    @Override
+    public Component message(@NotNull String key, @Nullable Function<String, String> modifier) {
+        return miniMessage.deserialize(plainMessage(key, modifier));
     }
 
     @Override

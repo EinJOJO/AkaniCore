@@ -41,6 +41,11 @@ public abstract class CommonAkaniPlayer extends CommonAkaniOfflinePlayer impleme
     }
 
     @Override
+    public CompletableFuture<Boolean> teleportBack() {
+        return core.backService().teleportBackAsync(this);
+    }
+
+    @Override
     public void teleport(NetworkLocation networkLocation) {
         core.positionHandler().teleport(this, networkLocation); // Announce before connecting avoiding race conditions
         if (networkLocation.type().equals(NetworkLocation.Type.GROUP) && !server().groupName().equals(networkLocation.referenceName())) {
