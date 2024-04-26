@@ -158,6 +158,7 @@ public abstract class AbstractBrokerService implements BrokerService {
             return;
         }
 
+
         for (MessageProcessor processor : processors) {
             try {
                 processor.processMessage(message);

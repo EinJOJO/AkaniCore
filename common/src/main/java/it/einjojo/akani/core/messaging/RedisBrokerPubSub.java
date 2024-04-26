@@ -20,9 +20,14 @@ public class RedisBrokerPubSub extends JedisPubSub {
     public void onMessage(String channel, String message) {
         try {
             ChannelMessage channelMessage = gson.fromJson(message, ChannelMessage.class);
+            if (!requestService.pool().isClosed()) {
+                requestService.logger().warning("Received message while not connected to redis. Ignoring message.");
+                return;
+            }
             if (!requestService.isChannelMessageForMe(channelMessage)) return;
             if (requestService.completePendingRequest(channelMessage))
                 return; // if the message is a response to a pending request, we don't need to forward it to the processors
+
             requestService.forwardToProcessors(channelMessage);
         } catch (Exception e) {
             requestService.logger().severe("Error while processing message: " + e.getMessage());
