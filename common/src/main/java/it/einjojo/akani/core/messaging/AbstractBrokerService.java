@@ -4,9 +4,7 @@ import it.einjojo.akani.core.api.messaging.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 /**
@@ -21,6 +19,7 @@ public abstract class AbstractBrokerService implements BrokerService {
     protected final Logger logger;
     protected final Map<String, Set<MessageProcessor>> messageProcessors = new HashMap<>();
     protected Map<String, CompletableFuture<ChannelMessage>> pendingRequests;
+    protected ExecutorService messageForwardingExecutor = Executors.newFixedThreadPool(2);
 
 
     public AbstractBrokerService(String brokerName, String brokerGroup, Logger logger) {
@@ -158,14 +157,15 @@ public abstract class AbstractBrokerService implements BrokerService {
             return;
         }
 
-
-        for (MessageProcessor processor : processors) {
-            try {
-                processor.processMessage(message);
-            } catch (Exception e) {
-                printHandlingException(processor, e);
+        messageForwardingExecutor.execute(() -> {
+            for (MessageProcessor processor : processors) {
+                try {
+                    processor.processMessage(message);
+                } catch (Exception e) {
+                    printHandlingException(processor, e);
+                }
             }
-        }
+        });
     }
 
     public boolean isChannelMessageForMe(ChannelMessage message) {
