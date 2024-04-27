@@ -49,6 +49,7 @@ public class CommonBackService implements BackService {
         return loadBackLocation(player.uuid()).thenApply(optionalLocation -> {
             if (optionalLocation.isPresent()) {
                 player.teleport(optionalLocation.get());
+                deleteBackLocation(player.uuid());
                 return true;
             }
             return false;

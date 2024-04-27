@@ -20,7 +20,7 @@ public class RedisBrokerService extends AbstractBrokerService {
     private final JedisPool pool;
     private final Gson gson;
     private ExecutorService pubSubService;
-    private Jedis jedis;
+    private Jedis pubSubJedis;
     private boolean connected;
 
     public RedisBrokerService(String name, String group, Logger logger, JedisPool pool, Gson gson) {
@@ -40,22 +40,23 @@ public class RedisBrokerService extends AbstractBrokerService {
             logger.info("Currently no channels to subscribe to. Skipping establishing connection.");
             return;
         }
-        jedis = pool.getResource();
+        pubSubJedis = pool.getResource();
         this.pubSubService = Executors.newSingleThreadExecutor();
         logger.info("Connecting to redis pub sub service...");
         pubSubService.execute(() -> {
-            jedis.subscribe(pubSub, subscribedChannels.toArray(new String[0]));
+            pubSubJedis.subscribe(pubSub, subscribedChannels.toArray(new String[0]));
         });
+        connected = true;
     }
 
     @Override
     public void disconnect() {
         if (!connected) return;
-        Preconditions.checkArgument(jedis != null, "Jedis not initialized");
+        Preconditions.checkArgument(pubSubJedis != null, "Jedis not initialized");
         logger.info("Disconnecting from redis pub sub service...");
         pubSub.unsubscribe();
-        jedis.close(); // return to pool
-        jedis = null;
+        pubSubJedis.close(); // return to pool
+        pubSubJedis = null;
         ServiceUtil.close(pubSubService);
         connected = false;
         logger.info("Disconnected from redis pub sub service");
@@ -89,6 +90,32 @@ public class RedisBrokerService extends AbstractBrokerService {
             logger.info("Unsubscribed from all channels. ");
             disconnect();
         }
+    }
+
+    @Override
+    public Logger logger() {
+        return logger;
+    }
+
+    public Set<String> subscribedChannels() {
+        return subscribedChannels;
+    }
+
+    public RedisBrokerPubSub pubSub() {
+        return pubSub;
+    }
+
+    public JedisPool pool() {
+        return pool;
+    }
+
+    public Gson gson() {
+        return gson;
+    }
+
+
+    public boolean isConnected() {
+        return connected;
     }
 
 

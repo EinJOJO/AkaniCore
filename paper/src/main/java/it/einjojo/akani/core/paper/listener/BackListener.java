@@ -7,6 +7,7 @@ import it.einjojo.akani.core.paper.event.AsyncBackCreateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class BackListener implements Listener {
@@ -20,6 +21,8 @@ public class BackListener implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            var cause = event.getEntity().getLastDamageCause();
+            if (cause != null && cause.getCause() == EntityDamageEvent.DamageCause.VOID) return;
             AsyncBackCreateEvent backEvent = new AsyncBackCreateEvent(event.getPlayer(), event.getPlayer().getLocation());
             plugin.getServer().getPluginManager().callEvent(backEvent);
             if (backEvent.isCancelled()) return;
