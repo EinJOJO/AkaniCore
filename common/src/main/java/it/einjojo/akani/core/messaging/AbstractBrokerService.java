@@ -121,7 +121,7 @@ public abstract class AbstractBrokerService implements BrokerService {
     protected void printHandlingException(MessageProcessor processor, Exception ex) {
         logger.severe("=-=-=[ Message-Process-Exception ]=-=-=");
         logger.severe("Error handling message with processor: " + processor.getClass().getName());
-        ex.printStackTrace();
+        ex.fillInStackTrace();
         logger.severe("=-=-=[ Message-Process-Exception ]=-=-=");
     }
 
@@ -156,7 +156,6 @@ public abstract class AbstractBrokerService implements BrokerService {
             logger.warning("Received message but no processors registered for channel: " + message.channel());
             return;
         }
-
         messageForwardingExecutor.execute(() -> {
             for (MessageProcessor processor : processors) {
                 try {

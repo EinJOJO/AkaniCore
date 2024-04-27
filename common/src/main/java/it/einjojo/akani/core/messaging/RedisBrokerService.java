@@ -46,6 +46,7 @@ public class RedisBrokerService extends AbstractBrokerService {
         pubSubService.execute(() -> {
             pubSubJedis.subscribe(pubSub, subscribedChannels.toArray(new String[0]));
         });
+        connected = true;
     }
 
     @Override

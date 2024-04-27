@@ -20,7 +20,7 @@ public class RedisBrokerPubSub extends JedisPubSub {
     public void onMessage(String channel, String message) {
         try {
             ChannelMessage channelMessage = gson.fromJson(message, ChannelMessage.class);
-            if (!requestService.pool().isClosed()) {
+            if (requestService.pool().isClosed()) {
                 requestService.logger().warning("Received message while not connected to redis. Ignoring message.");
                 return;
             }
