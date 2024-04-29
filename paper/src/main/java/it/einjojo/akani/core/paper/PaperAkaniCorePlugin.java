@@ -3,6 +3,7 @@ package it.einjojo.akani.core.paper;
 import it.einjojo.akani.core.api.AkaniCoreProvider;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
 import it.einjojo.akani.core.config.YamlConfigFile;
+import it.einjojo.akani.core.paper.listener.BackListener;
 import it.einjojo.akani.core.paper.vault.VaultCoinsEconomy;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
@@ -47,6 +48,7 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         AkaniCoreProvider.register(paperAkaniCore);
         paperAkaniCore.load();
         paperAkaniCore.delayedMessageReload();
+        new BackListener(this);
         setupVault();
     }
 

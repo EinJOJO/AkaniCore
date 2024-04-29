@@ -10,6 +10,7 @@ public class BadBalanceException extends Exception {
         super(type.name());
         this.type = type;
 
+
     }
 
     public static BadBalanceException notEnoughFunds() {
@@ -20,8 +21,18 @@ public class BadBalanceException extends Exception {
         return new BadBalanceException(Type.NEGATIVE_BALANCE);
     }
 
+    public Type type() {
+        return type;
+    }
+
     public enum Type {
+        /**
+         * The player does not have enough funds to perform the operation.
+         */
         NOT_ENOUGH_FUNDS,
+        /**
+         * The provided number is negative.
+         */
         NEGATIVE_BALANCE
     }
 
