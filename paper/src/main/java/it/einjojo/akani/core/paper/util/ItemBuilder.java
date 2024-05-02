@@ -30,6 +30,11 @@ public class ItemBuilder {
         this.itemMeta = itemStack.getItemMeta();
     }
 
+    public ItemBuilder customModelData(int customModelData) {
+        this.itemMeta.setCustomModelData(customModelData);
+        return this;
+    }
+
 
     public ItemBuilder displayName(Component displayName) {
         this.itemMeta.displayName(displayName);
@@ -99,6 +104,8 @@ public class ItemBuilder {
         this.skullTexture = texture;
         return this;
     }
+
+
 
 
     public ItemStack build() {
