@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 @Plugin(
         authors = {"EinJojo @ kalypzo.de"},
         name = "AkaniCoreVelocity",
-        version = "1.2.0",
+        version = "1.2.3",
         url = "https://kalypzo.de",
         description = "The core plugin for the Akani network",
         id = "akani-core",
