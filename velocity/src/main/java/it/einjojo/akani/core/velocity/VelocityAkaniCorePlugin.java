@@ -9,8 +9,10 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import it.einjojo.akani.core.api.AkaniCoreProvider;
 import it.einjojo.akani.core.config.YamlConfigFile;
+import it.einjojo.akani.core.util.LuckPermsHook;
 import it.einjojo.akani.core.velocity.player.PlayerListener;
 import jakarta.inject.Inject;
+import net.luckperms.api.LuckPermsProvider;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -58,6 +60,7 @@ public class VelocityAkaniCorePlugin {
         if (core == null) return;
         logger.info("AkaniCoreVelocity is now loading!");
         try {
+            core.setLuckPermsHook(new LuckPermsHook(LuckPermsProvider.get()));
             core.load();
             logger.info("AkaniCoreVelocity loaded!");
             core.delayedMessageReload();
