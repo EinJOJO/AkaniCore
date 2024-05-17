@@ -48,7 +48,10 @@ public abstract class CommonAbstractEconomyManager implements EconomyManager, Me
             var payload = message.content().split(";");
             UUID uuid = UUID.fromString(payload[0]);
             long balance = Long.parseLong(payload[1]);
-            ((CommonEconomyHolder) cached.synchronous().get(uuid)).setBalanceWithoutNotify(balance);
+            var cachedEco = (CommonEconomyHolder) cached.synchronous().getIfPresent(uuid);
+            if (cachedEco != null) {
+                cachedEco.setBalanceWithoutNotify(balance);
+            }
         }
     }
 

@@ -12,6 +12,7 @@ public class ConnectionListener implements Listener {
 
     public ConnectionListener(PaperAkaniCorePlugin plugin) {
         this.plugin = plugin;
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
