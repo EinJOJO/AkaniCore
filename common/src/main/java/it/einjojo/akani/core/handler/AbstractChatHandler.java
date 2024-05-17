@@ -23,8 +23,8 @@ public abstract class AbstractChatHandler implements MessageProcessor, ChatHandl
 
     @Override
     public void processMessage(ChannelMessage message) {
-        if (message.channel().equals(PLAYER_CHAT_KEY)) {
-            var payload = ByteStreams.newDataInput(message.content().getBytes());
+        if (message.messageTypeID().equals(PLAYER_CHAT_KEY)) {
+            var payload = ByteStreams.newDataInput(message.contentBytes());
             var receiver = UUID.fromString(payload.readUTF());
             var messageContent = payload.readUTF();
             sendMessageLocally(receiver, deserializeComponent(messageContent));
