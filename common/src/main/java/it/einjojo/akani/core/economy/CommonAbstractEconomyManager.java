@@ -69,6 +69,9 @@ public abstract class CommonAbstractEconomyManager implements EconomyManager, Me
 
     @Override
     public void updateEconomy(EconomyHolder economyHolder) {
+        if (economyHolder instanceof CommonEconomyHolder holder) {
+            if (!holder.hasChanged()) return;
+        }
         storage.updateEconomy(economyHolder);
         invalidateEconomy(economyHolder.ownerUuid());
     }
