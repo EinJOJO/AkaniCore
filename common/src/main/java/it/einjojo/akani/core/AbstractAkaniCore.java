@@ -70,6 +70,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     private final AkaniPlayerManager playerManager;
     private final ConnectionHandler connectionHandler;
     private final BackService backService;
+    private final CommonHomeStorage homeStorage;
     private final HomeManager homeManager;
     boolean shuttingDown = false;
 
@@ -113,7 +114,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         backService = new CommonBackService(this);
 
         // home
-        homeManager = new CommonHomeManager(new CommonHomeStorage("core_", dataSource, gson, createHomeFactory()));
+        homeManager = new CommonHomeManager(homeStorage = new CommonHomeStorage("core_", dataSource, gson, createHomeFactory()));
     }
 
     @Override
@@ -169,6 +170,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         commonPlaytimeStorage.seedTables();
         commonPlayerStorage.seedTables();
         messageStorage.seedTables();
+        homeStorage.seedTables();
         networkManager.register(me);
         playerManager().loadOnlinePlayers();
     }
