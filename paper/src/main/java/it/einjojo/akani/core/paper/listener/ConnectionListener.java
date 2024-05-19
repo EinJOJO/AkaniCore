@@ -1,5 +1,6 @@
 package it.einjojo.akani.core.paper.listener;
 
+import it.einjojo.akani.core.home.CommonHomeManager;
 import it.einjojo.akani.core.paper.PaperAkaniCorePlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,6 +24,7 @@ public class ConnectionListener implements Listener {
         plugin.paperAkaniCore().thalerManager().playerEconomy(event.getPlayer().getUniqueId()).ifPresent((economyHolder -> {
             plugin.paperAkaniCore().thalerManager().updateEconomy(economyHolder);
         }));
+        ((CommonHomeManager) plugin.paperAkaniCore().homeManager()).invalidate(event.getPlayer().getUniqueId());
     }
 
 }
