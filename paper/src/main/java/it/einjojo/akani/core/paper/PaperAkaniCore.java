@@ -4,9 +4,11 @@ import it.einjojo.akani.core.AbstractAkaniCore;
 import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.config.YamlConfigFile;
+import it.einjojo.akani.core.home.HomeFactory;
 import it.einjojo.akani.core.paper.handler.PaperChatHandler;
 import it.einjojo.akani.core.paper.handler.PaperCommandHandler;
 import it.einjojo.akani.core.paper.handler.PaperPositionHandler;
+import it.einjojo.akani.core.paper.home.PaperHomeFactory;
 import it.einjojo.akani.core.paper.player.PaperPlayerFactory;
 import it.einjojo.akani.core.util.LuckPermsHook;
 import net.luckperms.api.LuckPerms;
@@ -79,6 +81,11 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
     @Override
     public LuckPermsHook luckPermsHook() {
         return luckPermsHook;
+    }
+
+    @Override
+    public HomeFactory createHomeFactory() {
+        return new PaperHomeFactory(plugin, this);
     }
 
     @Override

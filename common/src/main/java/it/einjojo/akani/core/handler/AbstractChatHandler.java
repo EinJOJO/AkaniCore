@@ -52,7 +52,7 @@ public abstract class AbstractChatHandler implements MessageProcessor, ChatHandl
         payload.writeUTF(serializeComponent(message));
         var messageToSend = ChannelMessage.builder()
                 .channel(processingChannel())
-                .messageTypeID("chat")
+                .messageTypeID(PLAYER_CHAT_KEY)
                 .content(payload.toByteArray())
                 .recipient(ChannelReceiver.server(playerServer))
                 .build();

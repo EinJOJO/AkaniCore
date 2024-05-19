@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.api.economy.EconomyManager;
+import it.einjojo.akani.core.api.home.HomeManager;
 import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.api.message.MessageManager;
 import it.einjojo.akani.core.api.message.MessageProvider;
@@ -22,6 +23,8 @@ import it.einjojo.akani.core.economy.ThalerEconomyManager;
 import it.einjojo.akani.core.handler.CloudnetConnectionHandler;
 import it.einjojo.akani.core.handler.ConnectionHandler;
 import it.einjojo.akani.core.handler.DummyConnectionHandler;
+import it.einjojo.akani.core.home.CommonHomeManager;
+import it.einjojo.akani.core.home.CommonHomeStorage;
 import it.einjojo.akani.core.message.CommonMessageStorage;
 import it.einjojo.akani.core.messaging.RedisBrokerService;
 import it.einjojo.akani.core.network.CommonNetworkManager;
@@ -67,7 +70,9 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     private final AkaniPlayerManager playerManager;
     private final ConnectionHandler connectionHandler;
     private final BackService backService;
+    private final HomeManager homeManager;
     boolean shuttingDown = false;
+
     /**
      * Called on the plugin's onEnable
      *
@@ -107,7 +112,8 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         messageStorage = new CommonMessageStorage(dataSource);
         backService = new CommonBackService(this);
 
-
+        // home
+        homeManager = new CommonHomeManager(new CommonHomeStorage("core_", dataSource, gson, createHomeFactory()));
     }
 
     @Override
@@ -283,5 +289,10 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
 
     public CommonPlaytimeStorage playtimeStorage() {
         return commonPlaytimeStorage;
+    }
+
+    @Override
+    public HomeManager homeManager() {
+        return homeManager;
     }
 }

@@ -6,10 +6,12 @@ import it.einjojo.akani.core.AbstractAkaniCore;
 import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.config.YamlConfigFile;
+import it.einjojo.akani.core.home.HomeFactory;
 import it.einjojo.akani.core.util.LuckPermsHook;
 import it.einjojo.akani.core.velocity.handler.VelocityChatHandler;
 import it.einjojo.akani.core.velocity.handler.VelocityCommandHandler;
 import it.einjojo.akani.core.velocity.handler.VelocityPositionHandler;
+import it.einjojo.akani.core.velocity.home.VelocityHomeFactory;
 import it.einjojo.akani.core.velocity.player.VelocityPlayerFactory;
 
 import java.time.Duration;
@@ -59,6 +61,11 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
 
     public ProxyServer proxyServer() {
         return plugin.proxyServer();
+    }
+
+    @Override
+    public HomeFactory createHomeFactory() {
+        return new VelocityHomeFactory(this);
     }
 
     @Override
