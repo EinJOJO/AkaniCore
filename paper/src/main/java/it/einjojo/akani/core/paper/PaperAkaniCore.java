@@ -10,6 +10,9 @@ import it.einjojo.akani.core.paper.handler.PaperCommandHandler;
 import it.einjojo.akani.core.paper.handler.PaperPositionHandler;
 import it.einjojo.akani.core.paper.home.PaperHomeFactory;
 import it.einjojo.akani.core.paper.player.PaperPlayerFactory;
+import it.einjojo.akani.core.paper.scoreboard.ScoreboardManager;
+import it.einjojo.akani.core.paper.scoreboard.defaults.DefaultScoreboardProvider;
+import it.einjojo.akani.core.paper.scoreboard.defaults.PlotworldScoreboardProvider;
 import it.einjojo.akani.core.util.LuckPermsHook;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,6 +27,7 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
     private final PaperMessageManager germanMessageManager;
     private final PaperMessageManager englishMessageManager;
     private final LuckPermsHook luckPermsHook;
+    private final ScoreboardManager scoreboardManager;
     private BukkitTask messageReloadTask;
 
     protected PaperAkaniCore(JavaPlugin plugin, LuckPerms luckperms, YamlConfigFile yamlConfigFile) {
@@ -36,6 +40,13 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
         commandHandler = new PaperCommandHandler(brokerService(), logger(), plugin);
         positionHandler = new PaperPositionHandler(plugin, brokerService(), gson());
         luckPermsHook = new LuckPermsHook(luckperms);
+        scoreboardManager = new ScoreboardManager(new DefaultScoreboardProvider(this));
+        scoreboardManager.registerProvider(new PlotworldScoreboardProvider(this));
+    }
+
+
+    public ScoreboardManager scoreboardManager() {
+        return scoreboardManager;
     }
 
     public JavaPlugin plugin() {

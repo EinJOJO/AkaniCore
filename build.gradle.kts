@@ -17,6 +17,7 @@ allprojects {
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.panda-lang.org/releases")
         maven("https://repo.akani.dev/releases")
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
 
     publishing {

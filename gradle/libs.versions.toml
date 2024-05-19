@@ -20,6 +20,8 @@ vgson = "2.10.1"
 vcaffeine = "3.1.8"
 vhikari = "5.1.0"
 vjedis = "5.1.0"
+fastboard="2.1.0"
+placeholderapi = "2.11.5"
 
 # Wandoria Specific
 vdialog-api = "1.2" #https://repo.wandoria.net/#/snapshots/net/wandoria/api/DialogAPI/
@@ -45,6 +47,8 @@ cloudnetwrapperjvm = { group = "eu.cloudnetservice.cloudnet", name = "wrapper-jv
 luckperms = { group = "net.luckperms", name = "api", version.ref = "vluckperms" }
 boostedyaml = { group = "dev.dejvokep", name = "boosted-yaml", version.ref = "vboostedyaml" }
 hikari = { group = "com.zaxxer", name = "HikariCP", version.ref = "vhikari" }
+fastboard = { group = "fr.mrmicky", name = "fastboard", version.ref = "fastboard" }
+placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
 vault = { group = "com.github.MilkBowl", name = "VaultAPI", version = "1.7" }
 
 [plugins]

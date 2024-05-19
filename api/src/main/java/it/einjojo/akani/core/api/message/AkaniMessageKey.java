@@ -10,4 +10,5 @@ public interface AkaniMessageKey {
     String NOT_ENOUGH_COINS = "essentials.coins.not_enough";
     String PLAYER_NOT_FOUND = "player_not_found";
     String PLAYER_NOT_ONLINE = "player_not_online";
+    String SCOREBOARD_TITLE = "scoreboard.title";
 }
