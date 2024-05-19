@@ -17,7 +17,7 @@ import java.util.UUID;
 public record CommonHomeStorage(String tablePrefix, HikariDataSource dataSource, Gson gson, HomeFactory homeFactory) {
 
     private String tableName() {
-        return tablePrefix + "_home";
+        return tablePrefix + "home";
     }
 
     public boolean deleteHome(UUID homeOwner, String homeName) {
