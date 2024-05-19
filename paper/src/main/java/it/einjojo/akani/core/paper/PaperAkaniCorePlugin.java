@@ -6,6 +6,7 @@ import it.einjojo.akani.core.config.YamlConfigFile;
 import it.einjojo.akani.core.paper.listener.BackListener;
 import it.einjojo.akani.core.paper.listener.ConnectionListener;
 import it.einjojo.akani.core.paper.scoreboard.AsyncScoreboardUpdateTask;
+import it.einjojo.akani.core.paper.scoreboard.ScoreboardManager;
 import it.einjojo.akani.core.paper.vault.VaultCoinsEconomy;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
@@ -53,6 +54,7 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         new BackListener(this);
         new ConnectionListener(this);
         new AsyncScoreboardUpdateTask(paperAkaniCore.scoreboardManager()).start(this);
+        getServer().getServicesManager().register(ScoreboardManager.class, paperAkaniCore.scoreboardManager(), this, ServicePriority.Normal);
         setupVault();
     }
 
