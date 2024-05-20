@@ -3,13 +3,15 @@ package it.einjojo.akani.core.home;
 import it.einjojo.akani.core.api.home.Home;
 import it.einjojo.akani.core.api.home.HomeHolder;
 import org.jetbrains.annotations.Blocking;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public record CommonHomeHolder(UUID owner, List<Home> homes, CommonHomeStorage storage) implements HomeHolder {
-    public Optional<Home> home(String name) {
+    public Optional<Home> home(@Nullable String name) {
+        if (name == null) return Optional.empty();
         for (Home home : homes) {
             if (home.name().equalsIgnoreCase(name)) {
                 return Optional.of(home);
@@ -22,7 +24,7 @@ public record CommonHomeHolder(UUID owner, List<Home> homes, CommonHomeStorage s
         return homes.size();
     }
 
-    public boolean hasHome(String name) {
+    public boolean hasHome(@Nullable String name) {
         return home(name).isPresent();
     }
 
@@ -36,6 +38,7 @@ public record CommonHomeHolder(UUID owner, List<Home> homes, CommonHomeStorage s
      */
     @Blocking
     public boolean addHome(Home home) {
+        if (home == null) return false;
         if (!home.owner().equals(owner)) {
             throw new IllegalArgumentException("Home owner must be the same as the holder");
         }
