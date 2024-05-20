@@ -1,5 +1,6 @@
 package it.einjojo.akani.core.paper;
 
+import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.AkaniCoreProvider;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
 import it.einjojo.akani.core.config.YamlConfigFile;
@@ -54,6 +55,8 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         new BackListener(this);
         new ConnectionListener(this);
         new AsyncScoreboardUpdateTask(paperAkaniCore.scoreboardManager()).start(this);
+        getServer().getServicesManager().register(AkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
+        getServer().getServicesManager().register(PaperAkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
         getServer().getServicesManager().register(ScoreboardManager.class, paperAkaniCore.scoreboardManager(), this, ServicePriority.Normal);
         setupVault();
     }
