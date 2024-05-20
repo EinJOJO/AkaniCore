@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 
-version = "1.2.3"
+version = "1.3.0"
 
 allprojects {
     apply(plugin = "java-library")
@@ -17,6 +17,7 @@ allprojects {
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.panda-lang.org/releases")
         maven("https://repo.akani.dev/releases")
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
 
     publishing {

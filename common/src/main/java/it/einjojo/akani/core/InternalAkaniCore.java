@@ -6,6 +6,7 @@ import it.einjojo.akani.core.handler.ChatHandler;
 import it.einjojo.akani.core.handler.CommandHandler;
 import it.einjojo.akani.core.handler.ConnectionHandler;
 import it.einjojo.akani.core.handler.PositionHandler;
+import it.einjojo.akani.core.home.HomeFactory;
 import it.einjojo.akani.core.player.AkaniPlayerFactory;
 import it.einjojo.akani.core.util.LuckPermsHook;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -26,6 +27,7 @@ public interface InternalAkaniCore extends AkaniCore {
 
     LuckPermsHook luckPermsHook();
 
+    HomeFactory createHomeFactory();
 
     boolean shuttingDown();
 

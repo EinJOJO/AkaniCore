@@ -8,17 +8,22 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class CommonEconomyHolder implements EconomyHolder {
     private final UUID uuid;
-    private final AtomicLong balance;
+    private final AtomicLong atomicBalance;
+    private EconomyObserver observer;
     private boolean hasChanged = false;
+
+    public CommonEconomyHolder(UUID uuid, long balance) {
+        this.uuid = uuid;
+        this.atomicBalance = new AtomicLong(balance);
+    }
+
+    public void setObserver(EconomyObserver observer) {
+        this.observer = observer;
+    }
 
     @Override
     public UUID ownerUuid() {
         return uuid;
-    }
-
-    public CommonEconomyHolder(UUID uuid, long balance) {
-        this.uuid = uuid;
-        this.balance = new AtomicLong(balance);
     }
 
     public boolean hasChanged() {
@@ -27,7 +32,11 @@ public class CommonEconomyHolder implements EconomyHolder {
 
     @Override
     public long balance() {
-        return balance.get();
+        return atomicBalance.get();
+    }
+
+    public void setBalanceWithoutNotify(long balance) {
+        atomicBalance.set(balance);
     }
 
     @Override
@@ -38,7 +47,6 @@ public class CommonEconomyHolder implements EconomyHolder {
     @Override
     public void addBalance(long balance) throws BadBalanceException {
         change(balance() + balance);
-
     }
 
     @Override
@@ -54,7 +62,13 @@ public class CommonEconomyHolder implements EconomyHolder {
         if (newBalance < 0) {
             throw BadBalanceException.negativeBalance();
         }
+        if (newBalance == balance()) {
+            return;
+        }
+        if (observer != null) {
+            observer.onBalanceChange(this, balance(), newBalance);
+        }
         hasChanged = true;
-        balance.set(newBalance);
+        atomicBalance.set(newBalance);
     }
 }

@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public abstract class CommonAbstractEconomyManager implements EconomyManager, MessageProcessor {
+public abstract class CommonAbstractEconomyManager implements EconomyManager, MessageProcessor, EconomyObserver {
     protected final BrokerService brokerService;
     protected final CommonEconomyStorage storage;
     protected final AsyncLoadingCache<UUID, EconomyHolder> cached;
@@ -24,18 +24,34 @@ public abstract class CommonAbstractEconomyManager implements EconomyManager, Me
         this.storage = storage;
         cached = Caffeine.newBuilder()
                 .expireAfterAccess(1, TimeUnit.MINUTES)
-                .buildAsync(((uuid, executor) -> CompletableFuture.supplyAsync(() -> storage.loadEconomy(uuid), executor)));
+                .buildAsync(((uuid, executor) -> CompletableFuture.supplyAsync(() -> {
+                    var res = (CommonEconomyHolder) storage.loadEconomy(uuid);
+                    if (res != null) {
+                        res.setObserver(this);
+                    }
+                    return res;
+                }, executor)));
         brokerService.registerMessageProcessor(this);
 
     }
 
     abstract String invalidateMessageId();
 
+    abstract String updateMessageId();
+
     @Override
     public void processMessage(ChannelMessage message) {
         if (message.messageTypeID().equals(invalidateMessageId())) {
             UUID uuid = UUID.fromString(message.content());
             invalidateLocalCachedEconomy(uuid);
+        } else if (message.messageTypeID().equals(updateMessageId())) {
+            var payload = message.content().split(";");
+            UUID uuid = UUID.fromString(payload[0]);
+            long balance = Long.parseLong(payload[1]);
+            var cachedEco = (CommonEconomyHolder) cached.synchronous().getIfPresent(uuid);
+            if (cachedEco != null) {
+                cachedEco.setBalanceWithoutNotify(balance);
+            }
         }
     }
 
@@ -56,6 +72,9 @@ public abstract class CommonAbstractEconomyManager implements EconomyManager, Me
 
     @Override
     public void updateEconomy(EconomyHolder economyHolder) {
+        if (economyHolder instanceof CommonEconomyHolder holder) {
+            if (!holder.hasChanged()) return;
+        }
         storage.updateEconomy(economyHolder);
         invalidateEconomy(economyHolder.ownerUuid());
     }
@@ -71,6 +90,16 @@ public abstract class CommonAbstractEconomyManager implements EconomyManager, Me
                 .messageTypeID(invalidateMessageId())
                 .recipient(ChannelReceiver.all())
                 .content(player.toString())
+                .channel(processingChannel())
+                .build());
+    }
+
+    @Override
+    public void onBalanceChange(EconomyHolder holder, long oldBalance, long newBalance) {
+        brokerService.publish(ChannelMessage.builder()
+                .messageTypeID(updateMessageId())
+                .recipient(ChannelReceiver.all())
+                .content(holder.ownerUuid().toString() + ";" + newBalance)
                 .channel(processingChannel())
                 .build());
     }

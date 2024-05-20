@@ -2,6 +2,7 @@ package it.einjojo.akani.core.api;
 
 import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.api.economy.EconomyManager;
+import it.einjojo.akani.core.api.home.HomeManager;
 import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.api.message.MessageManager;
 import it.einjojo.akani.core.api.message.MessageProvider;
@@ -71,9 +72,12 @@ public interface AkaniCore {
 
     /**
      * Provides methods to interact with the back location system
+     *
      * @return BackService instance
      */
     BackService backService();
+
+    HomeManager homeManager();
 
     /**
      * @return Network Manager

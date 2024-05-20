@@ -7,10 +7,22 @@ public interface EconomyHolder {
 
     long balance();
 
-    void setBalance(long balance) throws BadBalanceException;
+    /**
+     * @param balance the new balance
+     * @throws BadBalanceException
+     */
+    void setBalance(long balance);
 
-    void addBalance(long balance) throws BadBalanceException;
+    /**
+     * @param balance the amount to add
+     * @throws BadBalanceException
+     */
+    void addBalance(long balance);
 
-    void removeBalance(long balance) throws BadBalanceException;
+    /**
+     * @param balance the amount to remove
+     * @throws BadBalanceException
+     */
+    void removeBalance(long balance);
 
 }

@@ -3,7 +3,7 @@ package it.einjojo.akani.core.api.economy;
 /**
  * Exception thrown when a player does not have enough funds to perform an operation or the balance is negative.
  */
-public class BadBalanceException extends Exception {
+public class BadBalanceException extends IllegalArgumentException {
     private final Type type;
 
     public BadBalanceException(Type type) {

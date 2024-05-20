@@ -6,12 +6,13 @@ import it.einjojo.akani.core.AbstractAkaniCore;
 import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.config.YamlConfigFile;
+import it.einjojo.akani.core.home.HomeFactory;
 import it.einjojo.akani.core.util.LuckPermsHook;
 import it.einjojo.akani.core.velocity.handler.VelocityChatHandler;
 import it.einjojo.akani.core.velocity.handler.VelocityCommandHandler;
 import it.einjojo.akani.core.velocity.handler.VelocityPositionHandler;
+import it.einjojo.akani.core.velocity.home.VelocityHomeFactory;
 import it.einjojo.akani.core.velocity.player.VelocityPlayerFactory;
-import net.luckperms.api.LuckPermsProvider;
 
 import java.time.Duration;
 import java.util.logging.Logger;
@@ -24,7 +25,7 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
     private final VelocityPositionHandler positionHandler;
     private final VelocityMessageManager germanMessageManager;
     private final VelocityMessageManager englishMessageManager;
-    private final LuckPermsHook luckPermsHook;
+    private LuckPermsHook luckPermsHook;
     private ScheduledTask messageReloadTask;
 
     /**
@@ -33,7 +34,6 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
     protected VelocityAkaniCore(VelocityAkaniCorePlugin plugin, Logger pluginLogger, YamlConfigFile configFile) {
         super(pluginLogger, configFile.redisCredentials(), configFile.mariaDBConfig());
         this.plugin = plugin;
-        this.luckPermsHook = new LuckPermsHook(LuckPermsProvider.get());
         this.playerFactory = new VelocityPlayerFactory(this, null);
         this.commandHandler = new VelocityCommandHandler(brokerService(), logger());
         this.chatHandler = new VelocityChatHandler(brokerService());
@@ -47,12 +47,25 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
         return luckPermsHook;
     }
 
+    public void setLuckPermsHook(LuckPermsHook luckPermsHook) {
+        this.luckPermsHook = luckPermsHook;
+    }
+
+    public ScheduledTask messageReloadTask() {
+        return messageReloadTask;
+    }
+
     public VelocityAkaniCorePlugin plugin() {
         return plugin;
     }
 
     public ProxyServer proxyServer() {
         return plugin.proxyServer();
+    }
+
+    @Override
+    public HomeFactory createHomeFactory() {
+        return new VelocityHomeFactory(this);
     }
 
     @Override

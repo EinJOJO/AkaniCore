@@ -10,6 +10,8 @@ dependencies {
     api(project(":common"))
     implementation(libs.caffeine)
     compileOnly(libs.vault)
+    implementation(libs.fastboard)
+    api(libs.placeholderapi)
 
 }
 tasks {
@@ -25,6 +27,8 @@ tasks {
         archiveBaseName.set("AkaniCore")
         archiveVersion.set("")
         archiveClassifier.set("paper")
+
+        relocate("fr.mrmicky.fastboard", "it.einjojo.akani.core.paper.scoreboard.fastboard")
     }
 
     runServer {
