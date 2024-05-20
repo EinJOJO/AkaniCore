@@ -15,8 +15,6 @@ import it.einjojo.akani.core.paper.scoreboard.defaults.DefaultScoreboardProvider
 import it.einjojo.akani.core.paper.scoreboard.defaults.PlotworldScoreboardProvider;
 import it.einjojo.akani.core.util.LuckPermsHook;
 import net.luckperms.api.LuckPerms;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -99,7 +97,7 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
 
     @Override
     public HomeFactory createHomeFactory() {
-        return new PaperHomeFactory(plugin, this);
+        return new PaperHomeFactory(this);
     }
 
     @Override

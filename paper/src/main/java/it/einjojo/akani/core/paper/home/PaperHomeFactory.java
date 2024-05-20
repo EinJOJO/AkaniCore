@@ -12,11 +12,9 @@ import java.util.UUID;
 
 public class PaperHomeFactory implements HomeFactory {
 
-    private final JavaPlugin plugin;
     private final PaperAkaniCore akaniCore;
 
-    public PaperHomeFactory(@NotNull JavaPlugin plugin, @NotNull PaperAkaniCore akaniCore) {
-        this.plugin = plugin;
+    public PaperHomeFactory(@NotNull PaperAkaniCore akaniCore) {
         this.akaniCore = akaniCore;
     }
 
@@ -26,6 +24,6 @@ public class PaperHomeFactory implements HomeFactory {
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(location);
         Preconditions.checkNotNull(akaniCore.playerManager(), "Player manager is not initialized");
-        return new PaperHome(owner, name, location, akaniCore.playerManager(), plugin);
+        return new PaperHome(owner, name, location, akaniCore);
     }
 }
