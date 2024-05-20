@@ -103,10 +103,10 @@ public class VaultCoinsEconomy extends AbstractEconomy {
     public EconomyResponse depositPlayer(String playerName, double amount) {
         try {
             core.playerManager().loadPlayerByName(playerName).join().orElseThrow().coins().addBalance((long) amount);
+            return new EconomyResponse(amount, getBalance(playerName), EconomyResponse.ResponseType.SUCCESS, "");
         } catch (BadBalanceException e) {
             return new EconomyResponse(amount, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, e.getMessage());
         }
-        return new EconomyResponse(amount, getBalance(playerName), EconomyResponse.ResponseType.SUCCESS, "");
     }
 
     @Override

@@ -11,7 +11,7 @@ dependencies {
     implementation(libs.caffeine)
     compileOnly(libs.vault)
     implementation(libs.fastboard)
-    api(libs.placeholderapi)
+    compileOnly(libs.placeholderapi)
 
 }
 tasks {
