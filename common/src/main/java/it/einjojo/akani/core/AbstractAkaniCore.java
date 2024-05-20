@@ -25,6 +25,7 @@ import it.einjojo.akani.core.handler.ConnectionHandler;
 import it.einjojo.akani.core.handler.DummyConnectionHandler;
 import it.einjojo.akani.core.home.CommonHomeManager;
 import it.einjojo.akani.core.home.CommonHomeStorage;
+import it.einjojo.akani.core.message.CommonMessageProvider;
 import it.einjojo.akani.core.message.CommonMessageStorage;
 import it.einjojo.akani.core.messaging.RedisBrokerService;
 import it.einjojo.akani.core.network.CommonNetworkManager;
@@ -172,6 +173,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         messageStorage.seedTables();
         homeStorage.seedTables();
         networkManager.register(me);
+        registerMessageProvider(new CommonMessageProvider());
         playerManager().loadOnlinePlayers();
     }
 
