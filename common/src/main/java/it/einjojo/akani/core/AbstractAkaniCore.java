@@ -14,6 +14,7 @@ import it.einjojo.akani.core.api.network.Server;
 import it.einjojo.akani.core.api.player.AkaniPlayerManager;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeManager;
 import it.einjojo.akani.core.api.service.BackService;
+import it.einjojo.akani.core.api.util.HikariDataSourceProxy;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
 import it.einjojo.akani.core.config.MariaDbConfig;
 import it.einjojo.akani.core.config.RedisCredentials;
@@ -35,6 +36,7 @@ import it.einjojo.akani.core.player.CommonPlayerStorage;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeManager;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeStorage;
 import it.einjojo.akani.core.service.CommonBackService;
+import it.einjojo.akani.core.util.HikariDataSourceProxyImpl;
 import it.einjojo.akani.core.util.HikariFactory;
 import it.einjojo.akani.core.util.JedisPoolFactory;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -52,6 +54,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     private final Logger logger;
     private final JedisPool jedisPool;
     private final HikariDataSource dataSource;
+    private final HikariDataSourceProxy dataSourceProxy;
     private final BrokerService brokerService;
     private final Gson gson;
     //message
@@ -95,6 +98,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
             connectionHandler = new DummyConnectionHandler();
         }
         dataSource = HikariFactory.create(mariaDBConfig);
+        dataSourceProxy = new HikariDataSourceProxyImpl(dataSource);
         jedisPool = JedisPoolFactory.create(redisCredentials);
         gson = new Gson();
         brokerService = new RedisBrokerService(me.name(), me.groupName(), pluginLogger, jedisPool, gson);
@@ -121,6 +125,11 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     @Override
     public MiniMessage miniMessage() {
         return miniMessage;
+    }
+
+    @Override
+    public HikariDataSourceProxy dataSourceProxy() {
+        return dataSourceProxy;
     }
 
     @Override

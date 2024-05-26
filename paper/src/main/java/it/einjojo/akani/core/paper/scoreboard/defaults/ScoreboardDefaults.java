@@ -10,14 +10,14 @@ import java.util.List;
 
 public class ScoreboardDefaults {
     public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-    public static final Component BAR = deserialize("  <dark_gray>◆<st>                                  </st>◆  ");
+    public static final Component BAR = deserialize(" <dark_gray>◆<st>                                </st>◆ ");
 
     public static List<Component> playerSection(AkaniPlayer akaniPlayer) {
         return List.of(
-                deserialize("   <#f8c1a1><b>ᴘʟᴀʏᴇʀ"),
-                deserialize("    <dark_gray>▪ <gray>ʀᴀɴɢ: <white>" + akaniPlayer.plainPrefix().join()),
-                deserialize("    <dark_gray>▪ <gray>ᴄᴏɪɴs: <white>" + akaniPlayer.coins().balance()),
-                deserialize("    <dark_gray>▪ <gray>ꜱᴘɪᴇʟᴢᴇɪᴛ: <white>" + playtimeString(akaniPlayer))
+                deserialize("  <#f8c1a1><b>ᴘʟᴀʏᴇʀ"),
+                deserialize("   <dark_gray>▪ <gray>ʀᴀɴɢ: <white>" + akaniPlayer.plainPrefix().join()),
+                deserialize("   <dark_gray>▪ <gray>ᴄᴏɪɴs: <white>" + akaniPlayer.coins().balance()),
+                deserialize("   <dark_gray>▪ <gray>ꜱᴘɪᴇʟᴢᴇɪᴛ: <white>" + playtimeString(akaniPlayer))
         );
     }
 

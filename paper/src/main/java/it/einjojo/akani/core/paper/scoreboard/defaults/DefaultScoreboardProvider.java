@@ -44,13 +44,13 @@ public class DefaultScoreboardProvider implements ScoreboardProvider {
         list.addAll(ScoreboardDefaults.playerSection(akaniPlayer));
         list.addAll(List.of(
                 Component.empty(),
-                deserialize("   <#f8c1a1><b>ꜱᴇʀᴠᴇʀ"),
-                deserialize("    <dark_gray>▪ <gray>ɴᴀᴍᴇ: <white>" + core.serverName()),
-                deserialize("    <dark_gray>▪ <gray>ᴏɴʟɪɴᴇ: <white>" + Bukkit.getServer().getOnlinePlayers().size()),
-                deserialize("    <dark_gray>▪ <gray>ᴛᴘs: <white>" + "%.2f".formatted(Bukkit.getServer().getTPS()[0])),
+                deserialize("  <#f8c1a1><b>ꜱᴇʀᴠᴇʀ"),
+                deserialize("   <dark_gray>▪ <gray>ɴᴀᴍᴇ: <white>" + core.serverName()),
+                deserialize("   <dark_gray>▪ <gray>ᴏɴʟɪɴᴇ: <white>" + Bukkit.getServer().getOnlinePlayers().size()),
+                deserialize("   <dark_gray>▪ <gray>ᴛᴘs: <white>" + "%.2f".formatted(Bukkit.getServer().getTPS()[0])),
                 Component.empty(),
-                deserialize("   <#f8c1a1><b>ᴇᴠᴇɴᴛꜱ"),
-                deserialize("    <dark_gray>▪ <red>ɴᴏɴᴇ"),
+                deserialize("  <#f8c1a1><b>ᴇᴠᴇɴᴛꜱ"),
+                deserialize("   <dark_gray>▪ <red>ɴᴏɴᴇ"),
                 ScoreboardDefaults.BAR
         ));
         sb.updateLines(list);

@@ -1,5 +1,6 @@
 package it.einjojo.akani.core.paper;
 
+import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.AkaniCoreProvider;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
@@ -60,6 +61,8 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         getServer().getServicesManager().register(AkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
         getServer().getServicesManager().register(PaperAkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
         getServer().getServicesManager().register(ScoreboardManager.class, paperAkaniCore.scoreboardManager(), this, ServicePriority.Normal);
+        getServer().getServicesManager().register(HikariDataSource.class, paperAkaniCore.dataSource(), this, ServicePriority.Normal);
+        getSLF4JLogger().info("Registerd {} in services manager", HikariDataSource.class.getName());
         setupVault();
     }
 

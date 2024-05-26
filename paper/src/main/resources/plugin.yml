@@ -10,3 +10,6 @@ depend:
 softdepend:
   - "CloudNet-Bridge"
   - "PlaceholderAPI"
+libraries:
+  - "${caffeine}"
+  - "${hikari}"
