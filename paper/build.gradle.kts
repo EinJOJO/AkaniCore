@@ -6,12 +6,13 @@ plugins {
 dependencies {
     compileOnly(libs.paper)
     compileOnly(libs.luckperms)
+    api(libs.hikari)
     api(project(":api"))
     api(project(":common"))
-    implementation(libs.caffeine)
+    compileOnly(libs.caffeine)
     compileOnly(libs.vault)
     implementation(libs.fastboard)
-    api(libs.placeholderapi)
+    compileOnly(libs.placeholderapi)
 
 }
 tasks {
@@ -29,6 +30,7 @@ tasks {
         archiveClassifier.set("paper")
 
         relocate("fr.mrmicky.fastboard", "it.einjojo.akani.core.paper.scoreboard.fastboard")
+        relocate("com.zaxxer.hikari", "it.einjojo.akani.core.hikari")
     }
 
     runServer {
@@ -37,7 +39,13 @@ tasks {
 
     processResources {
         filesMatching("plugin.yml") {
-            expand(mapOf("version" to project.version.toString()))
+            expand(
+                mapOf(
+                    "version" to project.version.toString(),
+                    "hikari" to libs.hikari.get(),
+                    "caffeine" to libs.caffeine.get()
+                )
+            )
         }
     }
 }

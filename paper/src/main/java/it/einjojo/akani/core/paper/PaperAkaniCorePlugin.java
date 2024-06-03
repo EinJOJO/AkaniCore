@@ -1,10 +1,13 @@
 package it.einjojo.akani.core.paper;
 
+import com.zaxxer.hikari.HikariDataSource;
+import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.AkaniCoreProvider;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
 import it.einjojo.akani.core.config.YamlConfigFile;
 import it.einjojo.akani.core.paper.listener.BackListener;
 import it.einjojo.akani.core.paper.listener.ConnectionListener;
+import it.einjojo.akani.core.paper.listener.ScoreboardListener;
 import it.einjojo.akani.core.paper.scoreboard.AsyncScoreboardUpdateTask;
 import it.einjojo.akani.core.paper.scoreboard.ScoreboardManager;
 import it.einjojo.akani.core.paper.vault.VaultCoinsEconomy;
@@ -53,8 +56,13 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         paperAkaniCore.delayedMessageReload();
         new BackListener(this);
         new ConnectionListener(this);
+        new ScoreboardListener(this, paperAkaniCore.scoreboardManager());
         new AsyncScoreboardUpdateTask(paperAkaniCore.scoreboardManager()).start(this);
+        getServer().getServicesManager().register(AkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
+        getServer().getServicesManager().register(PaperAkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
         getServer().getServicesManager().register(ScoreboardManager.class, paperAkaniCore.scoreboardManager(), this, ServicePriority.Normal);
+        getServer().getServicesManager().register(HikariDataSource.class, paperAkaniCore.dataSource(), this, ServicePriority.Normal);
+        getSLF4JLogger().info("Registerd {} in services manager", HikariDataSource.class.getName());
         setupVault();
     }
 

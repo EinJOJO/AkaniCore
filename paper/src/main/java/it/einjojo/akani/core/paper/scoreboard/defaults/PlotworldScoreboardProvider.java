@@ -44,21 +44,21 @@ public class PlotworldScoreboardProvider implements ScoreboardProvider {
         List<Component> content = new LinkedList<>();
         content.add(ScoreboardDefaults.BAR);
         content.addAll(ScoreboardDefaults.playerSection(akaniPlayer));
-        content.add(deserialize(TextUtil.transformAmpersandToMiniMessage(placeholders(bukkitPlayer, "    &8▪ &7ᴘʟᴏᴛꜱ: &f%plotsquared_plot_count%&8/&7%plotsquared_allowed_plot_count%"))));
+        content.add(deserialize(TextUtil.transformAmpersandToMiniMessage(placeholders(bukkitPlayer, "   &8▪ &7ᴘʟᴏᴛꜱ: &f%plotsquared_plot_count%&8/&7%plotsquared_allowed_plot_count%"))));
         content.addAll(List.of(
                 Component.empty(),
-                deserialize("   <#f8c1a1><b>ᴘʟᴏᴛɪɴꜰᴏ"),
-                deserialize("    <dark_gray>▪ <gray>ᴘᴏꜱɪᴛɪᴏɴ: <gray>" + (plotOwner.isBlank() ? "-" : placeholders(bukkitPlayer, "%plotsquared_currentplot_xy%"))),
-                deserialize("    <dark_gray>▪ <gray>ɪɴʜᴀʙᴇʀ: <gray>" + (plotOwner.isBlank() || plotOwner.contains(" ") ? "-" : TextUtil.transformAmpersandToMiniMessage(plotOwner))),
+                deserialize("  <#f8c1a1><b>ᴘʟᴏᴛɪɴꜰᴏ"),
+                deserialize("   <dark_gray>▪ <gray>ᴘᴏꜱɪᴛɪᴏɴ: <gray>" + (plotOwner.isBlank() ? "-" : placeholders(bukkitPlayer, "%plotsquared_currentplot_xy%"))),
+                deserialize("   <dark_gray>▪ <gray>ɪɴʜᴀʙᴇʀ: <gray>" + (plotOwner.isBlank() || plotOwner.contains(" ") ? "-" : TextUtil.transformAmpersandToMiniMessage(plotOwner))),
                 Component.empty(),
-                deserialize("   <#f8c1a1><b>ᴛɪᴘᴘꜱ")
+                deserialize("  <#f8c1a1><b>ᴛɪᴘᴘꜱ")
         ));
 
         if (placeholders(bukkitPlayer, "%plotsquared_has_plot%").equals("false")) {
-            content.add(deserialize("    <dark_gray>▪ <yellow>Nutze /p auto"));
+            content.add(deserialize("   <dark_gray>▪ <yellow>Nutze /p auto"));
         } else {
-            content.add(deserialize("    <dark_gray>▪ <gray>Materialien findest du"));
-            content.add(deserialize("    <dark_gray>▪ <gray>auf <red>Dungeons</red>!"));
+            content.add(deserialize("   <dark_gray>▪ <gray>Materialien findest du"));
+            content.add(deserialize("   <dark_gray>▪ <gray>auf <red>Dungeons</red>!"));
         }
         content.add(ScoreboardDefaults.BAR);
         sb.updateLines(content);

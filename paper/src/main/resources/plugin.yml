@@ -9,3 +9,7 @@ depend:
   - LuckPerms
 softdepend:
   - "CloudNet-Bridge"
+  - "PlaceholderAPI"
+libraries:
+  - "${caffeine}"
+  - "${hikari}"
