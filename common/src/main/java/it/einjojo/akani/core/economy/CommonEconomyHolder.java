@@ -41,16 +41,25 @@ public class CommonEconomyHolder implements EconomyHolder {
 
     @Override
     public void setBalance(long balance) throws BadBalanceException {
+        if (balance < 0) {
+            throw BadBalanceException.negativeBalance();
+        }
         change(balance);
     }
 
     @Override
     public void addBalance(long balance) throws BadBalanceException {
+        if (balance < 0) {
+            throw BadBalanceException.negativeBalance();
+        }
         change(balance() + balance);
     }
 
     @Override
     public void removeBalance(long balance) throws BadBalanceException {
+        if (balance < 0) {
+            throw BadBalanceException.negativeBalance();
+        }
         long newBalance = balance() - balance;
         if (newBalance < 0) {
             throw BadBalanceException.notEnoughFunds();

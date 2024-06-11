@@ -20,7 +20,7 @@ import it.einjojo.akani.core.config.MariaDbConfig;
 import it.einjojo.akani.core.config.RedisCredentials;
 import it.einjojo.akani.core.economy.CoinsEconomyManager;
 import it.einjojo.akani.core.economy.CommonEconomyStorage;
-import it.einjojo.akani.core.economy.ThalerEconomyManager;
+import it.einjojo.akani.core.economy.RubinEconomyManager;
 import it.einjojo.akani.core.handler.CloudnetConnectionHandler;
 import it.einjojo.akani.core.handler.ConnectionHandler;
 import it.einjojo.akani.core.handler.DummyConnectionHandler;
@@ -65,8 +65,8 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     //economy
     private final CommonEconomyStorage coinsStorage;
     private final EconomyManager coinsEconomyManager;
-    private final CommonEconomyStorage thalerStorage;
-    private final EconomyManager thalerEconomyManager;
+    private final CommonEconomyStorage premiumEconomyStorage;
+    private final EconomyManager rubinEconomyManager;
     //player
     private final CommonPlaytimeStorage commonPlaytimeStorage;
     private final PlaytimeManager playtimeManager;
@@ -107,9 +107,9 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
 
         //economy
         coinsStorage = new CommonEconomyStorage("core_economy_coins", dataSource);
-        thalerStorage = new CommonEconomyStorage("core_economy_thaler", dataSource);
+        premiumEconomyStorage = new CommonEconomyStorage("core_economy_premium", dataSource);
         coinsEconomyManager = new CoinsEconomyManager(brokerService, coinsStorage);
-        thalerEconomyManager = new ThalerEconomyManager(this.brokerService, thalerStorage);
+        rubinEconomyManager = new RubinEconomyManager(brokerService, premiumEconomyStorage);
         // ...
         commonPlaytimeStorage = new CommonPlaytimeStorage("core_playtime", jedisPool, dataSource);
         playtimeManager = new CommonPlaytimeManager(commonPlaytimeStorage);
@@ -120,6 +120,12 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
 
         // home
         homeManager = new CommonHomeManager(homeStorage = new CommonHomeStorage("core_", dataSource, gson, createHomeFactory()));
+    }
+
+
+    @Override
+    public EconomyManager rubinManager() {
+        return rubinEconomyManager;
     }
 
     @Override
@@ -176,7 +182,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         logger.info("Loading Akani Core...");
         brokerService().connect();
         coinsStorage.seedTables();
-        thalerStorage.seedTables();
+        premiumEconomyStorage.seedTables();
         commonPlaytimeStorage.seedTables();
         commonPlayerStorage.seedTables();
         messageStorage.seedTables();
@@ -230,8 +236,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
 
     @Override
     public EconomyManager thalerManager() {
-        Preconditions.checkNotNull(thalerEconomyManager, "Thaler economy manager is not initialized");
-        return thalerEconomyManager;
+        return rubinEconomyManager;
     }
 
     public Set<MessageProvider> messageProviders() {
@@ -293,11 +298,12 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     }
 
     public CommonEconomyStorage thalerStorage() {
-        return thalerStorage;
+        return premiumEconomyStorage;
     }
 
+    @Deprecated
     public EconomyManager thalerEconomyManager() {
-        return thalerEconomyManager;
+        return rubinEconomyManager;
     }
 
     public CommonPlaytimeStorage playtimeStorage() {

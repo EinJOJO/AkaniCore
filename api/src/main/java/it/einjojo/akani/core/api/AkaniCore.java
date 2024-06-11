@@ -32,6 +32,9 @@ public interface AkaniCore {
      */
     HikariDataSource dataSource();
 
+    /**
+     * @return HikariDataSourceProxy instance
+     */
     HikariDataSourceProxy dataSourceProxy();
 
     BrokerService brokerService();
@@ -42,9 +45,16 @@ public interface AkaniCore {
     EconomyManager coinsManager();
 
     /**
-     * @return Premium Currency Manager (Thaler)
+     * @return Premium Currency Manager (Rubin)
+     * Use {@link #rubinManager()} instead
      */
+    @Deprecated
     EconomyManager thalerManager();
+
+    /**
+     * @return Premium Currency Manager (Rubin)
+     */
+    EconomyManager rubinManager();
 
     /**
      * @return default german message manager instance
