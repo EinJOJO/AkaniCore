@@ -2,12 +2,13 @@ package it.einjojo.akani.core.api.player;
 
 import it.einjojo.akani.core.api.economy.EconomyHolder;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeHolder;
+import it.einjojo.akani.core.api.tags.TagHolder;
 import net.kyori.adventure.text.Component;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface AkaniOfflinePlayer {
+public interface AkaniOfflinePlayer extends TagHolder {
     UUID uuid();
 
     String name();
@@ -30,6 +31,7 @@ public interface AkaniOfflinePlayer {
 
     CompletableFuture<Component> suffix();
 
+    TagHolder tagHolder();
 
     CompletableFuture<EconomyHolder> coinsAsync();
 

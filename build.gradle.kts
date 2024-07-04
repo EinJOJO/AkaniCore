@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 
-version = "1.3.2"
+version = "1.4.0"
 
 allprojects {
     apply(plugin = "java-library")
@@ -20,18 +20,18 @@ allprojects {
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
 
-    publishing {
-        repositories {
-            maven {
-                name = "AkaniDev"
-                url = uri("https://repo.akani.dev/releases")
-                credentials {
-                    username = providers.gradleProperty("AKANI_REPO_USER").get()
-                    password = providers.gradleProperty("AKANI_REPO_PASS").get()
-                }
-            }
-        }
-    }
+    //publishing {
+    //    repositories {
+    //        maven {
+    //            name = "AkaniDev"
+    //            url = uri("https://repo.akani.dev/releases")
+    //            credentials {
+    //                username = providers.gradleProperty("AKANI_REPO_USER").get()
+    //                password = providers.gradleProperty("AKANI_REPO_PASS").get()
+    //            }
+    //        }
+    //    }
+    //}
 }
 
 tasks {
