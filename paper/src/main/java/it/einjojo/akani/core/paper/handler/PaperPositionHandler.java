@@ -3,7 +3,7 @@ package it.einjojo.akani.core.paper.handler;
 import com.google.gson.Gson;
 import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.api.network.NetworkLocation;
-import it.einjojo.akani.core.handler.AbstractPositionHandler;
+import it.einjojo.akani.core.handler.position.AbstractPositionHandler;
 import it.einjojo.akani.core.paper.AkaniBukkitAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface TagHolder {
 
-    UUID ownerUuid();
+    UUID uuid();
 
     /**
      * Get all available tags for the player

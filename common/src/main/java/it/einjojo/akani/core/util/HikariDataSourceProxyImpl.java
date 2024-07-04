@@ -27,9 +27,10 @@ public class HikariDataSourceProxyImpl implements HikariDataSourceProxy {
     }
 
     @Override
-    public void prepareStatement(String sql, Consumer<PreparedStatement> psConsumer) throws SQLException {
+    public ResultSet prepareStatement(String sql, Consumer<PreparedStatement> psConsumer) throws SQLException {
         try (Connection connection = getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
             psConsumer.accept(ps);
+            return ps.executeQuery();
         }
 
     }

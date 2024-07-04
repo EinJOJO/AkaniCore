@@ -1,7 +1,7 @@
 package it.einjojo.akani.core.velocity.handler;
 
 import it.einjojo.akani.core.api.messaging.BrokerService;
-import it.einjojo.akani.core.handler.AbstractCommandHandler;
+import it.einjojo.akani.core.handler.command.AbstractCommandHandler;
 
 import java.util.UUID;
 import java.util.logging.Logger;

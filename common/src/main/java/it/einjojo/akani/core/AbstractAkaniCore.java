@@ -21,9 +21,11 @@ import it.einjojo.akani.core.config.RedisCredentials;
 import it.einjojo.akani.core.economy.CoinsEconomyManager;
 import it.einjojo.akani.core.economy.CommonEconomyStorage;
 import it.einjojo.akani.core.economy.ThalerEconomyManager;
-import it.einjojo.akani.core.handler.CloudnetConnectionHandler;
-import it.einjojo.akani.core.handler.ConnectionHandler;
-import it.einjojo.akani.core.handler.DummyConnectionHandler;
+import it.einjojo.akani.core.handler.connection.CloudnetConnectionHandler;
+import it.einjojo.akani.core.handler.connection.ConnectionHandler;
+import it.einjojo.akani.core.handler.connection.DummyConnectionHandler;
+import it.einjojo.akani.core.handler.permission.LuckPermsPermissionCheckHandler;
+import it.einjojo.akani.core.handler.permission.PermissionCheckHandler;
 import it.einjojo.akani.core.home.CommonHomeManager;
 import it.einjojo.akani.core.home.CommonHomeStorage;
 import it.einjojo.akani.core.message.CommonMessageProvider;
@@ -40,8 +42,10 @@ import it.einjojo.akani.core.util.HikariDataSourceProxyImpl;
 import it.einjojo.akani.core.util.HikariFactory;
 import it.einjojo.akani.core.util.JedisPoolFactory;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.luckperms.api.LuckPermsProvider;
 import redis.clients.jedis.JedisPool;
 
+import java.security.Permission;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -76,6 +80,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     private final BackService backService;
     private final CommonHomeStorage homeStorage;
     private final HomeManager homeManager;
+    private final PermissionCheckHandler permissionCheckHandler;
     boolean shuttingDown = false;
 
     /**
@@ -97,7 +102,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
             me = new CommonServer(this, UUID.randomUUID().toString(), "local");
             connectionHandler = new DummyConnectionHandler();
         }
-        dataSource = HikariFactory.create(mariaDBConfig);
+        dataSource =  new HikariFactory().create(mariaDBConfig);
         dataSourceProxy = new HikariDataSourceProxyImpl(dataSource);
         jedisPool = JedisPoolFactory.create(redisCredentials);
         gson = new Gson();
@@ -117,9 +122,14 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         playerManager = new CommonPlayerManager(commonPlayerStorage, brokerService);
         messageStorage = new CommonMessageStorage(dataSource);
         backService = new CommonBackService(this);
+        permissionCheckHandler = createPermissionCheckHandler();
 
         // home
         homeManager = new CommonHomeManager(homeStorage = new CommonHomeStorage("core_", dataSource, gson, createHomeFactory()));
+    }
+
+    public PermissionCheckHandler createPermissionCheckHandler() {
+        return new LuckPermsPermissionCheckHandler(LuckPermsProvider.get());
     }
 
     @Override
@@ -169,6 +179,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
             }
         }
     }
+
 
     public abstract void delayedMessageReload();
 
@@ -232,6 +243,12 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     public EconomyManager thalerManager() {
         Preconditions.checkNotNull(thalerEconomyManager, "Thaler economy manager is not initialized");
         return thalerEconomyManager;
+    }
+
+
+    @Override
+    public PermissionCheckHandler permissionCheckHandler() {
+        return permissionCheckHandler;
     }
 
     public Set<MessageProvider> messageProviders() {

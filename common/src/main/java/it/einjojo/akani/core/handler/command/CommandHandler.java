@@ -1,4 +1,4 @@
-package it.einjojo.akani.core.handler;
+package it.einjojo.akani.core.handler.command;
 
 import java.util.UUID;
 

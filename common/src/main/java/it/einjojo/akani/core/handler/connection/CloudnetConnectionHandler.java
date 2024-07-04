@@ -1,4 +1,4 @@
-package it.einjojo.akani.core.handler;
+package it.einjojo.akani.core.handler.connection;
 
 import eu.cloudnetservice.modules.bridge.player.executor.ServerSelectorType;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;

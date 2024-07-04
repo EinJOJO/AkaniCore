@@ -23,7 +23,7 @@ public class CommonAkaniOfflinePlayer implements AkaniOfflinePlayer {
     }
 
     @Override
-    public CompletableFuture<Boolean> hasPermission(String permission) {
+    public CompletableFuture<Boolean> hasPermissionAsync(String permission) {
         return core.luckPermsHook().hasPlayerPermission(uuid(), permission);
     }
 

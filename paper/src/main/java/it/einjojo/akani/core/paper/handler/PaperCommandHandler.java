@@ -1,7 +1,7 @@
 package it.einjojo.akani.core.paper.handler;
 
 import it.einjojo.akani.core.api.messaging.BrokerService;
-import it.einjojo.akani.core.handler.AbstractCommandHandler;
+import it.einjojo.akani.core.handler.command.AbstractCommandHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

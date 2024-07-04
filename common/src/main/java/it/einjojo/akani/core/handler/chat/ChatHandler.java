@@ -1,4 +1,4 @@
-package it.einjojo.akani.core.handler;
+package it.einjojo.akani.core.handler.chat;
 
 import net.kyori.adventure.text.Component;
 

@@ -1,7 +1,7 @@
 package it.einjojo.akani.core.velocity.handler;
 
 import it.einjojo.akani.core.api.messaging.BrokerService;
-import it.einjojo.akani.core.handler.AbstractChatHandler;
+import it.einjojo.akani.core.handler.chat.AbstractChatHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 

@@ -21,7 +21,9 @@ public interface AkaniOfflinePlayer extends TagHolder {
 
     EconomyHolder coins();
 
-    CompletableFuture<Boolean> hasPermission(String permission);
+    boolean hasPermission(String permission);
+
+    CompletableFuture<Boolean> hasPermissionAsync(String permission);
 
     CompletableFuture<String> plainPrefix();
 

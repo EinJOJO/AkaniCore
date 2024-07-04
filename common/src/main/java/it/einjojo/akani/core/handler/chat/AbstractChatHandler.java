@@ -1,4 +1,4 @@
-package it.einjojo.akani.core.handler;
+package it.einjojo.akani.core.handler.chat;
 
 import com.google.common.io.ByteStreams;
 import it.einjojo.akani.core.api.messaging.BrokerService;
