@@ -39,7 +39,9 @@ import it.einjojo.akani.core.player.CommonPlayerStorage;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeManager;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeStorage;
 import it.einjojo.akani.core.service.CommonBackService;
+import it.einjojo.akani.core.tags.CommonTagFactory;
 import it.einjojo.akani.core.tags.CommonTagManager;
+import it.einjojo.akani.core.tags.CommonTagsStorage;
 import it.einjojo.akani.core.util.HikariDataSourceProxyImpl;
 import it.einjojo.akani.core.util.HikariFactory;
 import it.einjojo.akani.core.util.JedisPoolFactory;
@@ -127,11 +129,15 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         backService = new CommonBackService(this);
         permissionCheckHandler = createPermissionCheckHandler();
 
-        tagManager = new CommonTagManager();
+        tagManager = new CommonTagManager(new CommonTagsStorage(permissionCheckHandler, dataSourceProxy,
+                new CommonTagFactory(miniMessage()), "core_" ));
 
         // home
-        homeManager = new CommonHomeManager(homeStorage = new CommonHomeStorage("core_", dataSource, gson, createHomeFactory()));
+        homeManager = new CommonHomeManager(homeStorage = new CommonHomeStorage("core_", dataSource, gson,
+                createHomeFactory()));
     }
+
+
 
     public PermissionCheckHandler createPermissionCheckHandler() {
         return new LuckPermsPermissionCheckHandler(LuckPermsProvider.get());
