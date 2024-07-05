@@ -13,5 +13,9 @@ public interface Tag {
 
     Component displayText();
 
+    String lore();
+
     TagRarity rarity();
+
+    String permission();
 }

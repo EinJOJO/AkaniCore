@@ -4,8 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public interface TagStorage {
+
+    void init();
 
     @NotNull
     Collection<Tag> loadTags();
@@ -18,7 +21,7 @@ public interface TagStorage {
     void deleteTag(@NotNull String id);
 
     @Nullable
-    TagHolder loadTagHolder(String uuid);
+    TagHolder loadTagHolder(UUID uuid);
 
     void saveTagHolder(@NotNull TagHolder tagHolder);
 

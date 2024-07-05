@@ -17,16 +17,7 @@ public record CommonTag(
         String id,
         String plainText,
         Component displayText,
-        TagRarity rarity
-) implements Tag {
-
-    public CommonTag(String id, String plainText, Component displayText, TagRarity rarity) {
-        if (ID_PATTERN.matcher(id).matches()) {
-            throw new IllegalArgumentException("Invalid tag id: " + id);
-        }
-        this.id = id;
-        this.plainText = plainText;
-        this.displayText = displayText;
-        this.rarity = rarity;
-    }
-}
+        TagRarity rarity,
+        String permission,
+        String lore
+) implements Tag {}

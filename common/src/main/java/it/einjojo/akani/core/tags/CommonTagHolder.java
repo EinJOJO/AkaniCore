@@ -4,16 +4,13 @@ import it.einjojo.akani.core.api.tags.Tag;
 import it.einjojo.akani.core.api.tags.TagHolder;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class CommonTagHolder implements TagHolder {
     private final UUID uuid;
     private final List<Tag> tags = new LinkedList<>();
     private @Nullable Tag selectedTag;
-    private transient @Nullable CommonTagObserver observer;
+    private transient @Nullable CommonTagHolderObserver observer;
 
     public CommonTagHolder(UUID uuid, Collection<Tag> tags, @Nullable Tag selectedTag) {
         this.uuid = uuid;
@@ -22,11 +19,11 @@ public class CommonTagHolder implements TagHolder {
     }
 
     @Nullable
-    public CommonTagObserver observer() {
+    public CommonTagHolderObserver observer() {
         return observer;
     }
 
-    public void setObserver(@Nullable CommonTagObserver observer) {
+    public void setObserver(@Nullable CommonTagHolderObserver observer) {
         this.observer = observer;
     }
 
@@ -49,12 +46,25 @@ public class CommonTagHolder implements TagHolder {
     public void setSelectedTag(@Nullable Tag tag) {
         this.selectedTag = tag;
         if (observer != null) {
-            observer.onChangeTag(this, tag);
+            observer.onSelectTag(this, tag);
         }
     }
 
     @Override
     public boolean hasSelectedTag() {
         return selectedTag != null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommonTagHolder that = (CommonTagHolder) o;
+        return Objects.equals(uuid, that.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(uuid);
     }
 }

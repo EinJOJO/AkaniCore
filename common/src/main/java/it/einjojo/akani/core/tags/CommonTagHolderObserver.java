@@ -3,8 +3,9 @@ package it.einjojo.akani.core.tags;
 import it.einjojo.akani.core.api.tags.Tag;
 import it.einjojo.akani.core.api.tags.TagHolder;
 
-public interface CommonTagObserver {
+public interface CommonTagHolderObserver {
 
-    void onChangeTag(TagHolder tagHolder, Tag tag);
+    void onSelectTag(TagHolder tagHolder, Tag tag);
+
 
 }
