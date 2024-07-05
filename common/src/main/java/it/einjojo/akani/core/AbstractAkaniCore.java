@@ -14,6 +14,7 @@ import it.einjojo.akani.core.api.network.Server;
 import it.einjojo.akani.core.api.player.AkaniPlayerManager;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeManager;
 import it.einjojo.akani.core.api.service.BackService;
+import it.einjojo.akani.core.api.tags.TagManager;
 import it.einjojo.akani.core.api.util.HikariDataSourceProxy;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
 import it.einjojo.akani.core.config.MariaDbConfig;
@@ -38,6 +39,7 @@ import it.einjojo.akani.core.player.CommonPlayerStorage;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeManager;
 import it.einjojo.akani.core.player.playtime.CommonPlaytimeStorage;
 import it.einjojo.akani.core.service.CommonBackService;
+import it.einjojo.akani.core.tags.CommonTagManager;
 import it.einjojo.akani.core.util.HikariDataSourceProxyImpl;
 import it.einjojo.akani.core.util.HikariFactory;
 import it.einjojo.akani.core.util.JedisPoolFactory;
@@ -81,6 +83,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     private final CommonHomeStorage homeStorage;
     private final HomeManager homeManager;
     private final PermissionCheckHandler permissionCheckHandler;
+    private final TagManager tagManager;
     boolean shuttingDown = false;
 
     /**
@@ -124,6 +127,8 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         backService = new CommonBackService(this);
         permissionCheckHandler = createPermissionCheckHandler();
 
+        tagManager = new CommonTagManager();
+
         // home
         homeManager = new CommonHomeManager(homeStorage = new CommonHomeStorage("core_", dataSource, gson, createHomeFactory()));
     }
@@ -150,6 +155,11 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     @Override
     public boolean shuttingDown() {
         return shuttingDown;
+    }
+
+    @Override
+    public TagManager tagManager() {
+        return tagManager;
     }
 
     @Override

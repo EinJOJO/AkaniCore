@@ -8,7 +8,10 @@ voraxen = "1.168.0"
 vhusksync = "3.3.1"
 vcloudnet = "4.0.0-RC10"
 vluckperms = "5.4"
+akaniutils = "1.0.2"
 acf = "0.5.1-SNAPSHOT"
+
+
 
 # Libraries
 vboostedyaml = "1.3"
@@ -20,13 +23,14 @@ vgson = "2.10.1"
 vcaffeine = "3.1.8"
 vhikari = "5.1.0"
 vjedis = "5.1.0"
-fastboard="2.1.0"
+fastboard = "2.1.0"
 placeholderapi = "2.11.5"
 
 # Wandoria Specific
 vdialog-api = "1.2" #https://repo.wandoria.net/#/snapshots/net/wandoria/api/DialogAPI/
 
 [libraries]
+akaniutils = { group = "com.github.KalypzoSolutions", name = "AkaniUtils", version.ref = "akaniutils" }
 fawe = { group = "com.intellectualsites.bom", name = "bom-newest", version.ref = "vfawe-bom" }
 paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "vpaper-api" }
 acf = { group = "co.aikar", name = "acf-paper", version.ref = "acf" }
