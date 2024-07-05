@@ -3,7 +3,7 @@ package it.einjojo.akani.core.velocity.handler;
 import com.google.gson.Gson;
 import it.einjojo.akani.core.api.messaging.BrokerService;
 import it.einjojo.akani.core.api.network.NetworkLocation;
-import it.einjojo.akani.core.handler.AbstractPositionHandler;
+import it.einjojo.akani.core.handler.position.AbstractPositionHandler;
 
 import java.util.UUID;
 

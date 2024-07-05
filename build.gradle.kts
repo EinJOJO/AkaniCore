@@ -18,20 +18,24 @@ allprojects {
         maven("https://repo.panda-lang.org/releases")
         maven("https://repo.akani.dev/releases")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        maven("https://repo.aikar.co/content/groups/aikar/")
+        maven("https://repo.codemc.io/repository/maven-releases/")
+        maven("https://mvn.lumine.io/repository/maven-public/")
+        maven("https://libraries.minecraft.net/")
     }
 
-    publishing {
-        repositories {
-            maven {
-                name = "AkaniDev"
-                url = uri("https://repo.akani.dev/releases")
-                credentials {
-                    username = providers.gradleProperty("AKANI_REPO_USER").get()
-                    password = providers.gradleProperty("AKANI_REPO_PASS").get()
-                }
-            }
-        }
-    }
+    //publishing {
+    //    repositories {
+    //        maven {
+    //            name = "AkaniDev"
+    //            url = uri("https://repo.akani.dev/releases")
+    //            credentials {
+    //                username = providers.gradleProperty("AKANI_REPO_USER").get()
+    //                password = providers.gradleProperty("AKANI_REPO_PASS").get()
+    //            }
+    //        }
+    //    }
+    //}
 }
 
 tasks {

@@ -4,8 +4,12 @@ import it.einjojo.akani.core.InternalAkaniCore;
 import it.einjojo.akani.core.api.economy.EconomyHolder;
 import it.einjojo.akani.core.api.player.AkaniOfflinePlayer;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeHolder;
+import it.einjojo.akani.core.api.tags.Tag;
+import it.einjojo.akani.core.api.tags.TagHolder;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +27,7 @@ public class CommonAkaniOfflinePlayer implements AkaniOfflinePlayer {
     }
 
     @Override
-    public CompletableFuture<Boolean> hasPermission(String permission) {
+    public CompletableFuture<Boolean> hasPermissionAsync(String permission) {
         return core.luckPermsHook().hasPlayerPermission(uuid(), permission);
     }
 
@@ -104,5 +108,32 @@ public class CommonAkaniOfflinePlayer implements AkaniOfflinePlayer {
         return core.thalerManager().playerEconomy(uuid()).orElseThrow();
     }
 
+    public TagHolder tagHolder() {
+        return core.tagManager().tagHolder(uuid());
+    }
 
+    @Override
+    public boolean hasPermission(String permission) {
+        return core.permissionCheckHandler().hasPermission(uuid(), permission);
+    }
+
+    @Override
+    public List<Tag> availableTags() {
+        return tagHolder().availableTags();
+    }
+
+    @Override
+    public @Nullable Tag selectedTag() {
+        return tagHolder().selectedTag();
+    }
+
+    @Override
+    public void setSelectedTag(@Nullable Tag tag) {
+        tagHolder().setSelectedTag(tag);
+    }
+
+    @Override
+    public boolean hasSelectedTag() {
+        return tagHolder().hasSelectedTag();
+    }
 }

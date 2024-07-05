@@ -12,6 +12,7 @@ import it.einjojo.akani.core.api.network.Server;
 import it.einjojo.akani.core.api.player.AkaniPlayerManager;
 import it.einjojo.akani.core.api.player.playtime.PlaytimeManager;
 import it.einjojo.akani.core.api.service.BackService;
+import it.einjojo.akani.core.api.tags.TagManager;
 import it.einjojo.akani.core.api.util.HikariDataSourceProxy;
 import org.jetbrains.annotations.ApiStatus;
 import redis.clients.jedis.JedisPool;
@@ -110,5 +111,7 @@ public interface AkaniCore {
     @ApiStatus.Internal
     Logger logger();
 
+
+    TagManager tagManager();
 
 }

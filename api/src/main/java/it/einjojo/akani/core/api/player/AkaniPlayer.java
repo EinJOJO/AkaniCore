@@ -7,6 +7,9 @@ import net.kyori.adventure.text.Component;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Represents a player that is currently online
+ */
 public interface AkaniPlayer extends AkaniOfflinePlayer {
 
     String serverName();
@@ -43,6 +46,6 @@ public interface AkaniPlayer extends AkaniOfflinePlayer {
 
     @Override
     default boolean isOnline() {
-        return true;
+        return true; // TODO is not always true since the objects can persist after the player logs out
     }
 }

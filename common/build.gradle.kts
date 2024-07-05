@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api(project(":api"))
-    api(libs.jedis)
+    implementation(libs.jedis)
     implementation("org.mariadb.jdbc:mariadb-java-client:3.3.3")
     implementation(libs.guava)
     implementation(libs.gson)

@@ -14,7 +14,7 @@ public interface HikariDataSourceProxy {
 
     Connection getConnection() throws SQLException;
 
-    void prepareStatement(String sql, Consumer<PreparedStatement> psConsumer) throws SQLException;
+    ResultSet prepareStatement(String sql, Consumer<PreparedStatement> psConsumer) throws SQLException;
 
     void query(PreparedStatement ps, Consumer<ResultSet> resultSet) throws SQLException;
 

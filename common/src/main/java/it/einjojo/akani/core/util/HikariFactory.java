@@ -6,7 +6,7 @@ import it.einjojo.akani.core.config.MariaDbConfig;
 
 public class HikariFactory {
 
-    public static HikariDataSource create(MariaDbConfig mariaconfig) {
+    public HikariDataSource create(MariaDbConfig mariaconfig) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
         } catch (ClassNotFoundException e) {

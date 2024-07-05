@@ -3,6 +3,7 @@ package it.einjojo.akani.core.util;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -24,9 +25,10 @@ public class LuckPermsHook {
         }
     }
 
-    protected boolean checkPermission(User lpUser, String permission) {
+    public boolean checkPermission(User lpUser, String permission) {
         return lpUser.getCachedData().getPermissionData().checkPermission(permission).asBoolean();
     }
+
 
 
     public CompletableFuture<String> prefix(UUID playerUuid) {

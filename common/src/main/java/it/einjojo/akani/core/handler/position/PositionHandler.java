@@ -1,4 +1,4 @@
-package it.einjojo.akani.core.handler;
+package it.einjojo.akani.core.handler.position;
 
 import it.einjojo.akani.core.api.network.NetworkLocation;
 import it.einjojo.akani.core.api.player.AkaniPlayer;

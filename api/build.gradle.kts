@@ -5,7 +5,6 @@ dependencies {
     api(libs.hikari)
     compileOnly(libs.cloudnetwrapperjvm)
     compileOnly(libs.cloudnetbridge)
-    compileOnly(libs.litecommands)
 }
 
 

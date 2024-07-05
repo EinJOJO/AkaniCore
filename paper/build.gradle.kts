@@ -6,13 +6,15 @@ plugins {
 dependencies {
     compileOnly(libs.paper)
     compileOnly(libs.luckperms)
-    api(libs.hikari)
+    compileOnly(libs.hikari)
     api(project(":api"))
     api(project(":common"))
-    compileOnly(libs.caffeine)
+    //compileOnly(libs.caffeine)
     compileOnly(libs.vault)
+    compileOnly(libs.akaniutils)
     implementation(libs.fastboard)
     compileOnly(libs.placeholderapi)
+
 
 }
 tasks {
