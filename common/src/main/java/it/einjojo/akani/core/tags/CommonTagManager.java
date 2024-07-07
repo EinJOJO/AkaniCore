@@ -6,6 +6,7 @@ import it.einjojo.akani.core.api.tags.Tag;
 import it.einjojo.akani.core.api.tags.TagHolder;
 import it.einjojo.akani.core.api.tags.TagManager;
 import it.einjojo.akani.core.api.tags.TagStorage;
+import it.einjojo.akani.core.util.LuckPermsHook;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -21,8 +22,9 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
     private final LoadingCache<UUID, TagHolder> tagHolderLoadingCache;
     private final Set<TagHolder> dirtyTagHolders = new HashSet<>();
     private final TagStorage tagStorage;
+    private final LuckPermsHook luckPermsHook;
 
-    public CommonTagManager(TagStorage tagStorage) {
+    public CommonTagManager(TagStorage tagStorage, LuckPermsHook luckPermsHook) {
         this.tagStorage = tagStorage;
         this.tagHolderLoadingCache = Caffeine.newBuilder()
                 .expireAfterAccess(Duration.ofMinutes(2))
@@ -35,6 +37,7 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
                     }
                     return tagHolder;
                 });
+        this.luckPermsHook = luckPermsHook;
     }
 
 
@@ -60,5 +63,11 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
 
     public Set<TagHolder> dirtyTagHolders() {
         return dirtyTagHolders;
+    }
+
+    @Override
+    public void onAddTag(TagHolder tagHolder, Tag added) {
+        this.luckPermsHook.addPermission(tagHolder.uuid(), added.permission());
+        log.debug("Permission {} granted to {} ", added.permission(), tagHolder.uuid());
     }
 }

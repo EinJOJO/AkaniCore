@@ -2,6 +2,8 @@ package it.einjojo.akani.core.util;
 
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;
+import net.luckperms.api.node.Node;
+import net.luckperms.api.node.NodeBuilder;
 
 import java.util.List;
 import java.util.UUID;
@@ -49,7 +51,13 @@ public class LuckPermsHook {
         }
     }
 
+    public void addPermission(User user, String permission) {
+        user.getNodes().add(Node.builder(permission).build());
+    }
 
+    public CompletableFuture<Void> addPermission(UUID userId, String permission) {
+        return luckPerms.getUserManager().loadUser(userId).thenAccept((u) -> addPermission(u, permission));
+    }
     public LuckPerms luckPerms() {
         return luckPerms;
     }
