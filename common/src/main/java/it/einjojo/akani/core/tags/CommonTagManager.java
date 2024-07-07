@@ -9,13 +9,13 @@ import it.einjojo.akani.core.api.tags.TagStorage;
 import it.einjojo.akani.core.util.LuckPermsHook;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class CommonTagManager implements TagManager, CommonTagHolderObserver {
     private static final Logger log = LoggerFactory.getLogger(CommonTagManager.class);
@@ -23,6 +23,7 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
     private final Set<TagHolder> dirtyTagHolders = new HashSet<>();
     private final TagStorage tagStorage;
     private final LuckPermsHook luckPermsHook;
+    private List<Tag> loadedTags;
 
     public CommonTagManager(TagStorage tagStorage, LuckPermsHook luckPermsHook) {
         this.tagStorage = tagStorage;
@@ -67,7 +68,43 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
 
     @Override
     public void onAddTag(TagHolder tagHolder, Tag added) {
-        this.luckPermsHook.addPermission(tagHolder.uuid(), added.permission());
-        log.debug("Permission {} granted to {} ", added.permission(), tagHolder.uuid());
+        luckPermsHook.luckPerms().getUserManager().loadUser(tagHolder.uuid()).thenAccept(user -> {
+            if (luckPermsHook.checkPermission(user, added.permission())) {
+                return;
+            };
+            luckPermsHook.addPermission(user, added.permission());
+        });
     }
+
+    public LoadingCache<UUID, TagHolder> tagHolderLoadingCache() {
+        return tagHolderLoadingCache;
+    }
+
+    @Override
+    public List<Tag> availableTags() {
+        if (tagStorage instanceof CommonTagsStorage commonTagsStorage) {
+            return commonTagsStorage.lastLoadedTags();
+        } else {
+            if (loadedTags == null) {
+                loadedTags = new LinkedList<>(tagStorage.loadTags());
+            }
+            return loadedTags;
+        }
+    }
+
+    @Override
+    public @Nullable Tag tagById(String id) {
+        return tagByFirstMatchPredicate((tag) -> tag.id().equalsIgnoreCase(id));
+    }
+
+
+
+
+    public @Nullable Tag tagByFirstMatchPredicate(Predicate<Tag> predicate) {
+        for (Tag tag : availableTags()) {
+            if (predicate.test(tag)) return tag;
+        }
+        return null;
+    }
+
 }

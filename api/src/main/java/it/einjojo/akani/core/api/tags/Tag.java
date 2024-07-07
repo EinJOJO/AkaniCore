@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 public interface Tag {
     Pattern ID_PATTERN = Pattern.compile("[a-z0-9_]+");
+    String PERMISSION_PREFIX = "akani.core.tags";
 
     String id();
 

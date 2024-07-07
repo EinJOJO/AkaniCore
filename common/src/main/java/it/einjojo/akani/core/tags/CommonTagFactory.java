@@ -1,5 +1,6 @@
 package it.einjojo.akani.core.tags;
 
+import it.einjojo.akani.core.api.tags.Tag;
 import it.einjojo.akani.core.api.tags.TagRarity;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -21,7 +22,7 @@ public class CommonTagFactory {
     }
 
     public String createPermission(String tagId) {
-        return "akani.core.tags." + tagId;
+        return Tag.PERMISSION_PREFIX + tagId;
     }
 
 }

@@ -30,6 +30,7 @@ public class CommonTagsStorage implements TagStorage {
     private final CommonTagFactory tagFactory;
     private final String tablePrefix;
     private @NotNull List<Tag> lastLoadedTags = List.of();
+    private boolean initSuccessful;
 
     public CommonTagsStorage(PermissionCheckHandler permissionCheckHandler, HikariDataSourceProxy dataSourceProxy, CommonTagFactory tagFactory, String tablePrefix) {
         this.permissionCheckHandler = permissionCheckHandler;
@@ -61,6 +62,8 @@ public class CommonTagsStorage implements TagStorage {
                         FOREIGN KEY (selected_tag) REFERENCES %s(id)
                     )
                     """.formatted(tagHolderTableName, tagsTableName));
+            initSuccessful = true; // Ensures that all tables are available.
+            loadTags();
         } catch (SQLException ex) {
             throw new StorageException("init", "all", null, ex);
         }
@@ -68,6 +71,7 @@ public class CommonTagsStorage implements TagStorage {
 
     @Override
     public @NotNull Collection<Tag> loadTags() {
+        checkInit();
         try (ResultSet resultSet = dataSourceProxy.prepareStatement("SELECT * FROM %s".formatted(tagsTableName), ps -> {
         })) {
             List<Tag> tags = new LinkedList<>();
@@ -85,6 +89,7 @@ public class CommonTagsStorage implements TagStorage {
     }
 
     public @Nullable Tag parseTag(ResultSet rs) {
+        checkInit();
         try {
             String id = rs.getString("id");
             String nameMiniMessage = rs.getString("display_text");
@@ -99,6 +104,7 @@ public class CommonTagsStorage implements TagStorage {
 
     @Override
     public @Nullable Tag loadTag(@NotNull String id) {
+        checkInit();
         try (ResultSet rs = dataSourceProxy.prepareStatement("SELECT * FROM %s WHERE id = ?".formatted(tagsTableName), ps -> {
             try {
                 ps.setString(1, id);
@@ -117,6 +123,7 @@ public class CommonTagsStorage implements TagStorage {
 
     @Override
     public void saveTag(@NotNull Tag tag) {
+        checkInit();
         try (ResultSet rs = dataSourceProxy.prepareStatement("INSERT INTO %s (id, display_text, rarity, lore) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE display_text = ?, rarity = ?, lore = ?".formatted(tagsTableName), ps -> {
             try {
                 ps.setString(1, tag.id());
@@ -140,6 +147,7 @@ public class CommonTagsStorage implements TagStorage {
 
     @Override
     public void deleteTag(@NotNull String id) {
+        checkInit();
         try (ResultSet rs = dataSourceProxy.prepareStatement("DELETE FROM %s WHERE id = ?".formatted(tagsTableName), ps -> {
             try {
                 ps.setString(1, id);
@@ -167,6 +175,7 @@ public class CommonTagsStorage implements TagStorage {
     }
 
     public String loadSelectedTagId(UUID uuid) {
+        checkInit();
         try (ResultSet rs = dataSourceProxy.prepareStatement("SELECT selected_tag FROM %s WHERE uuid = ?".formatted(tagHolderTableName), ps -> {
             try {
                 ps.setString(1, uuid.toString());
@@ -201,6 +210,7 @@ public class CommonTagsStorage implements TagStorage {
 
     @Override
     public void saveTagHolder(@NotNull TagHolder tagHolder) {
+        checkInit();
         try (ResultSet rs = dataSourceProxy.prepareStatement("INSERT INTO %s (uuid, selected_tag) VALUES (?, ?) ON DUPLICATE KEY UPDATE selected_tag = ?".formatted(tagHolderTableName), ps -> {
             try {
                 Tag selectedTag = tagHolder.selectedTag();
@@ -217,6 +227,20 @@ public class CommonTagsStorage implements TagStorage {
             }
         } catch (SQLException ex) {
             throw new StorageException("save tag holder", tagHolder.uuid().toString(), null, ex);
+        }
+    }
+
+    /**
+     * @return Cached loaded tags
+     */
+    @NotNull
+    public List<Tag> lastLoadedTags() {
+        return lastLoadedTags;
+    }
+
+    private void checkInit() {
+        if (!initSuccessful) {
+            throw new IllegalStateException("Not initialized");
         }
     }
 }
