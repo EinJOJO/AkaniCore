@@ -128,6 +128,11 @@ public class CommonAkaniOfflinePlayer implements AkaniOfflinePlayer {
     }
 
     @Override
+    public void addTag(Tag tag) {
+        tagHolder().addTag(tag);
+    }
+
+    @Override
     public void setSelectedTag(@Nullable Tag tag) {
         tagHolder().setSelectedTag(tag);
     }

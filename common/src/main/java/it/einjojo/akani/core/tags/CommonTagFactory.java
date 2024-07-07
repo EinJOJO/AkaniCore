@@ -21,7 +21,7 @@ public class CommonTagFactory {
     }
 
     public String createPermission(String tagId) {
-        return "akani.tags." + tagId;
+        return "akani.core.tags." + tagId;
     }
 
 }

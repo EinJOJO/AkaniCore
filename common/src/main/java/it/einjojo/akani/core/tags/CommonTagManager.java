@@ -61,6 +61,4 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
     public Set<TagHolder> dirtyTagHolders() {
         return dirtyTagHolders;
     }
-
-
 }

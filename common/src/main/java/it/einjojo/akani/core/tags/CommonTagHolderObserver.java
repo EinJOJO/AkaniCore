@@ -7,5 +7,6 @@ public interface CommonTagHolderObserver {
 
     void onSelectTag(TagHolder tagHolder, Tag tag);
 
+    void onAddTag(TagHolder tagHolder, Tag added);
 
 }

@@ -2,6 +2,7 @@ package it.einjojo.akani.core.api.tags;
 
 import net.kyori.adventure.text.Component;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public interface Tag {
@@ -18,4 +19,5 @@ public interface Tag {
     TagRarity rarity();
 
     String permission();
+
 }

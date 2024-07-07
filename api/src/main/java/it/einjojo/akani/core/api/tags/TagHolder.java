@@ -38,5 +38,6 @@ public interface TagHolder {
      */
     boolean hasSelectedTag();
 
+    void addTag(Tag tag);
 
 }

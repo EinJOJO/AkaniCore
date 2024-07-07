@@ -64,6 +64,14 @@ public class CommonTagHolder implements TagHolder {
     }
 
     @Override
+    public void addTag(Tag tag) {
+        tags.add(tag);
+        if (observer != null) {
+            observer.onAddTag(this, tag);
+        }
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hashCode(uuid);
     }

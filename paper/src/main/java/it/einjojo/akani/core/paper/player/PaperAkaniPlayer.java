@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public class PaperAkaniPlayer extends CommonAkaniPlayer {
 
+
     public PaperAkaniPlayer(InternalAkaniCore core, UUID uuid, String name, String serverName) {
         super(core, uuid, name, serverName);
     }
