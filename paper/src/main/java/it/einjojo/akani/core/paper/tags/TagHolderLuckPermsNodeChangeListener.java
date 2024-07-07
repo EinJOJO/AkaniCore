@@ -1,6 +1,7 @@
 package it.einjojo.akani.core.paper.tags;
 
 import com.google.common.eventbus.Subscribe;
+import it.einjojo.akani.core.api.tags.Tag;
 import it.einjojo.akani.core.tags.CommonTagManager;
 import net.luckperms.api.event.node.NodeAddEvent;
 import net.luckperms.api.model.user.User;
@@ -21,6 +22,7 @@ public class TagHolderLuckPermsNodeChangeListener {
     public void onLuckPermsNodeAdd(NodeAddEvent addEvent) {
         log.info("Node added k:{} v: {}", addEvent.getNode().getKey(), addEvent.getNode().getValue());
 
+        if (!addEvent.getNode().getKey().startsWith(Tag.PERMISSION_PREFIX)) return;
         var target = addEvent.getTarget();
         if (target instanceof User user) {
             commonTagManager.tagHolder(user.getUniqueId())
