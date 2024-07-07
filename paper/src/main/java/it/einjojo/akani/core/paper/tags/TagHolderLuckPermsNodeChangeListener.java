@@ -25,6 +25,8 @@ public class TagHolderLuckPermsNodeChangeListener {
         if (target instanceof User user) {
             commonTagManager.tagHolder(user.getUniqueId())
                     .addTag(commonTagManager.tagByFirstMatchPredicate(tag -> tag.permission().equals(addEvent.getNode().getKey())));
+        } else {
+            commonTagManager.tagHolderLoadingCache().invalidateAll();
         }
 
 
