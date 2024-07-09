@@ -68,10 +68,8 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
 
     @Override
     public void onAddTag(TagHolder tagHolder, Tag added) {
-        luckPermsHook.luckPerms().getUserManager().loadUser(tagHolder.uuid()).thenAccept(user -> {
-            if (luckPermsHook.checkPermission(user, added.permission())) {
-                return;
-            };
+        luckPermsHook.luckPerms().getUserManager().modifyUser(tagHolder.uuid(), user -> {
+            if (luckPermsHook.checkPermission(user, added.permission())) return;
             luckPermsHook.addPermission(user, added.permission());
         });
     }

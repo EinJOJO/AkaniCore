@@ -10,7 +10,9 @@ import it.einjojo.akani.core.paper.listener.ConnectionListener;
 import it.einjojo.akani.core.paper.listener.ScoreboardListener;
 import it.einjojo.akani.core.paper.scoreboard.AsyncScoreboardUpdateTask;
 import it.einjojo.akani.core.paper.scoreboard.ScoreboardManager;
+import it.einjojo.akani.core.paper.tags.TagHolderLuckPermsNodeChangeListener;
 import it.einjojo.akani.core.paper.vault.VaultCoinsEconomy;
+import it.einjojo.akani.core.tags.CommonTagManager;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -18,9 +20,15 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 public class PaperAkaniCorePlugin extends JavaPlugin {
     private PaperAkaniCore paperAkaniCore;
     private YamlConfigFile yamlConfigFile;
+    private List<Closeable> shutdownClosables = new LinkedList<>();
 
     public PaperAkaniCore paperAkaniCore() {
         return paperAkaniCore;
@@ -40,8 +48,8 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
             return;
         }
 
-        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-        if (provider == null) {
+        RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if (lpProvider == null) {
             getLogger().severe("LuckPerms is not available. Disabling plugin.");
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -50,7 +58,7 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         if (!SimpleCloudnetAPI.isAvailable()) {
             getLogger().warning("Cloudnet-API is not available. Will use random UUIDs for server identification");
         }
-        paperAkaniCore = new PaperAkaniCore(this, provider.getProvider(), yamlConfigFile);
+        paperAkaniCore = new PaperAkaniCore(this, lpProvider.getProvider(), yamlConfigFile);
         AkaniCoreProvider.register(paperAkaniCore);
         paperAkaniCore.load();
         paperAkaniCore.delayedMessageReload();
@@ -58,6 +66,7 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         new ConnectionListener(this);
         new ScoreboardListener(this, paperAkaniCore.scoreboardManager());
         new AsyncScoreboardUpdateTask(paperAkaniCore.scoreboardManager()).start(this);
+        shutdownClosables.add(new TagHolderLuckPermsNodeChangeListener(lpProvider.getProvider(), (CommonTagManager) paperAkaniCore.tagManager()));
         getServer().getServicesManager().register(AkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
         getServer().getServicesManager().register(PaperAkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
         getServer().getServicesManager().register(ScoreboardManager.class, paperAkaniCore.scoreboardManager(), this, ServicePriority.Normal);
@@ -68,6 +77,13 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for (Closeable closeable : shutdownClosables) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                getSLF4JLogger().error("Failed to close resource: {}", e.getMessage());
+            }
+        }
         if (paperAkaniCore != null) {
             paperAkaniCore.unload();
             AkaniCoreProvider.unregister();

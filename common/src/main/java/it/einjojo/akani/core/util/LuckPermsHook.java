@@ -4,6 +4,7 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
 import net.luckperms.api.node.NodeBuilder;
+import net.luckperms.api.node.types.PermissionNode;
 
 import java.util.List;
 import java.util.UUID;
@@ -52,7 +53,7 @@ public class LuckPermsHook {
     }
 
     public void addPermission(User user, String permission) {
-        user.getNodes().add(Node.builder(permission).build());
+        user.getNodes().add(PermissionNode.builder(permission).build());
     }
 
     public CompletableFuture<Void> addPermission(UUID userId, String permission) {
