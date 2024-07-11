@@ -5,6 +5,7 @@ import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.AkaniCoreProvider;
 import it.einjojo.akani.core.api.util.SimpleCloudnetAPI;
 import it.einjojo.akani.core.config.YamlConfigFile;
+import it.einjojo.akani.core.paper.command.TagsCommand;
 import it.einjojo.akani.core.paper.listener.BackListener;
 import it.einjojo.akani.core.paper.listener.ConnectionListener;
 import it.einjojo.akani.core.paper.listener.ScoreboardListener;
@@ -13,13 +14,18 @@ import it.einjojo.akani.core.paper.scoreboard.ScoreboardManager;
 import it.einjojo.akani.core.paper.tags.TagHolderLuckPermsNodeChangeListener;
 import it.einjojo.akani.core.paper.vault.VaultCoinsEconomy;
 import it.einjojo.akani.core.tags.CommonTagManager;
+import it.einjojo.akani.util.commands.PaperCommandManager;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
+import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.awt.print.Paper;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -62,17 +68,29 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         AkaniCoreProvider.register(paperAkaniCore);
         paperAkaniCore.load();
         paperAkaniCore.delayedMessageReload();
+        new AsyncScoreboardUpdateTask(paperAkaniCore.scoreboardManager()).start(this);
+        loadCommands();
+        loadListeners(lpProvider.getProvider());
+        ServicesManager servicesManager = getServer().getServicesManager();
+        servicesManager.register(AkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
+        servicesManager.register(PaperAkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
+        servicesManager.register(ScoreboardManager.class, paperAkaniCore.scoreboardManager(), this, ServicePriority.Normal);
+        servicesManager.register(HikariDataSource.class, paperAkaniCore.dataSource(), this, ServicePriority.Normal);
+        getSLF4JLogger().info("Registerd {} in services manager", HikariDataSource.class.getName());
+        setupVault();
+    }
+
+    private void loadCommands() {
+        PaperCommandManager commandManager = new PaperCommandManager(this);
+        new TagsCommand(commandManager, paperAkaniCore().tagManager(), paperAkaniCore.miniMessage());
+    }
+
+    private void loadListeners(@NotNull LuckPerms luckPerms) {
         new BackListener(this);
         new ConnectionListener(this);
         new ScoreboardListener(this, paperAkaniCore.scoreboardManager());
-        new AsyncScoreboardUpdateTask(paperAkaniCore.scoreboardManager()).start(this);
-        shutdownClosables.add(new TagHolderLuckPermsNodeChangeListener(lpProvider.getProvider(), (CommonTagManager) paperAkaniCore.tagManager()));
-        getServer().getServicesManager().register(AkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
-        getServer().getServicesManager().register(PaperAkaniCore.class, paperAkaniCore, this, ServicePriority.Normal);
-        getServer().getServicesManager().register(ScoreboardManager.class, paperAkaniCore.scoreboardManager(), this, ServicePriority.Normal);
-        getServer().getServicesManager().register(HikariDataSource.class, paperAkaniCore.dataSource(), this, ServicePriority.Normal);
-        getSLF4JLogger().info("Registerd {} in services manager", HikariDataSource.class.getName());
-        setupVault();
+        shutdownClosables.add(new TagHolderLuckPermsNodeChangeListener(luckPerms, (CommonTagManager) paperAkaniCore.tagManager()));
+
     }
 
     @Override
@@ -80,8 +98,9 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         for (Closeable closeable : shutdownClosables) {
             try {
                 closeable.close();
-            } catch (IOException e) {
-                getSLF4JLogger().error("Failed to close resource: {}", e.getMessage());
+            } catch (Exception e) {
+                getSLF4JLogger().error("Failed to close resource: {} - {}",
+                        closeable.getClass().getName(), closeable, e);
             }
         }
         if (paperAkaniCore != null) {

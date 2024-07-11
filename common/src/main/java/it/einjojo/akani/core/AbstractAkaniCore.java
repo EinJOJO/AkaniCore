@@ -49,7 +49,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.LuckPermsProvider;
 import redis.clients.jedis.JedisPool;
 
-import java.security.Permission;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -85,7 +84,8 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     private final CommonHomeStorage homeStorage;
     private final HomeManager homeManager;
     private final PermissionCheckHandler permissionCheckHandler;
-    private final TagManager tagManager;
+    private final CommonTagManager tagManager;
+    private final CommonTagsStorage tagsStorage;
     boolean shuttingDown = false;
 
     /**
@@ -107,7 +107,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
             me = new CommonServer(this, UUID.randomUUID().toString(), "local");
             connectionHandler = new DummyConnectionHandler();
         }
-        dataSource =  new HikariFactory().create(mariaDBConfig);
+        dataSource = new HikariFactory().create(mariaDBConfig);
         dataSourceProxy = new HikariDataSourceProxyImpl(dataSource);
         jedisPool = JedisPoolFactory.create(redisCredentials);
         gson = new Gson();
@@ -128,15 +128,14 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         messageStorage = new CommonMessageStorage(dataSource);
         backService = new CommonBackService(this);
         permissionCheckHandler = createPermissionCheckHandler();
-
-        tagManager = new CommonTagManager(new CommonTagsStorage(permissionCheckHandler, dataSourceProxy,
-                new CommonTagFactory(miniMessage()), "core_" ));
+        tagsStorage = new CommonTagsStorage(permissionCheckHandler, dataSourceProxy,
+                new CommonTagFactory(miniMessage()), "core_");
+        tagManager = new CommonTagManager(tagsStorage);
 
         // home
         homeManager = new CommonHomeManager(homeStorage = new CommonHomeStorage("core_", dataSource, gson,
                 createHomeFactory()));
     }
-
 
 
     public PermissionCheckHandler createPermissionCheckHandler() {
@@ -196,19 +195,24 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
         }
     }
 
+    public CommonTagsStorage tagsStorage() {
+        return tagsStorage;
+    }
 
     public abstract void delayedMessageReload();
 
     public void load() {
         logger.info("Loading Akani Core...");
         brokerService().connect();
-        coinsStorage.seedTables();
-        thalerStorage.seedTables();
-        commonPlaytimeStorage.seedTables();
-        commonPlayerStorage.seedTables();
-        messageStorage.seedTables();
-        homeStorage.seedTables();
+        coinsStorage.init();
+        thalerStorage.init();
+        commonPlaytimeStorage.init();
+        commonPlayerStorage.init();
+        messageStorage.init();
+        homeStorage.init();
         networkManager.register(me);
+        tagsStorage.init();
+        tagManager.setLuckPermsHook(luckPermsHook());
         registerMessageProvider(new CommonMessageProvider());
         playerManager().loadOnlinePlayers();
     }

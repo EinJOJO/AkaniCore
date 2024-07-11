@@ -72,6 +72,16 @@ public class CommonTagHolder implements TagHolder {
     }
 
     @Override
+    public String toString() {
+        return "CommonTagHolder{" +
+                "uuid=" + uuid +
+                ", observed=" + (observer == null ? "no" : observer.getClass().getSimpleName())  +
+                ", selectedTag=" + (selectedTag == null ? "none" : selectedTag.id()) +
+                ", tags=" + tags.size() +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hashCode(uuid);
     }

@@ -3,6 +3,7 @@ package it.einjojo.akani.core.tags;
 import it.einjojo.akani.core.api.tags.Tag;
 import it.einjojo.akani.core.api.tags.TagRarity;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.jetbrains.annotations.NotNull;
 
 import static it.einjojo.akani.core.api.tags.Tag.ID_PATTERN;
 
@@ -10,7 +11,7 @@ public class CommonTagFactory {
 
     private final MiniMessage miniMessage;
 
-    public CommonTagFactory(MiniMessage miniMessage) {
+    public CommonTagFactory(@NotNull MiniMessage miniMessage) {
         this.miniMessage = miniMessage;
     }
 

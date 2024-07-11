@@ -133,7 +133,7 @@ public record CommonPlayerStorage(String tableName, JedisPool jedisPool, HikariD
         }
     }
 
-    public void seedTables() {
+    public void init() {
         try (var connection = dataSource.getConnection()) {
             var statement = connection.createStatement();
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + tableName + " (uuid VARCHAR(36) PRIMARY KEY, name VARCHAR(32))");

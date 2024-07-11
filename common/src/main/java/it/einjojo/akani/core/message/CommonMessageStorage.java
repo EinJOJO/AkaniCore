@@ -10,7 +10,7 @@ import java.util.Map;
 public record CommonMessageStorage(HikariDataSource dataSource) implements MessageStorage {
     private static final String TABLE_NAME = "core_messages";
 
-    public void seedTables() {
+    public void init() {
         try (var con = dataSource.getConnection()) {
             con.createStatement().execute("CREATE TABLE IF NOT EXISTS %s (lang VARCHAR(5), message_key VARCHAR(100), message TEXT, PRIMARY KEY (lang, message_key));".formatted(TABLE_NAME));
             if (!isRegistered("de", "prefix")) {

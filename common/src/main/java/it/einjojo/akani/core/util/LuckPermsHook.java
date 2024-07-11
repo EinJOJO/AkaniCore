@@ -10,14 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class LuckPermsHook {
-
-    private final LuckPerms luckPerms;
-
-
-    public LuckPermsHook(LuckPerms luckPerms) {
-        this.luckPerms = luckPerms;
-    }
+public record LuckPermsHook(LuckPerms luckPerms) {
 
     public CompletableFuture<Boolean> hasPlayerPermission(UUID playerUuid, String permission) {
         User user = luckPerms.getUserManager().getUser(playerUuid);
@@ -31,7 +24,6 @@ public class LuckPermsHook {
     public boolean checkPermission(User lpUser, String permission) {
         return lpUser.getCachedData().getPermissionData().checkPermission(permission).asBoolean();
     }
-
 
 
     public CompletableFuture<String> prefix(UUID playerUuid) {
@@ -58,8 +50,5 @@ public class LuckPermsHook {
 
     public CompletableFuture<Void> addPermission(UUID userId, String permission) {
         return luckPerms.getUserManager().loadUser(userId).thenAccept((u) -> addPermission(u, permission));
-    }
-    public LuckPerms luckPerms() {
-        return luckPerms;
     }
 }

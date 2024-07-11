@@ -11,6 +11,7 @@ import it.einjojo.akani.core.home.HomeFactory;
 import it.einjojo.akani.core.player.AkaniPlayerFactory;
 import it.einjojo.akani.core.util.LuckPermsHook;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.jetbrains.annotations.Nullable;
 
 public interface InternalAkaniCore extends AkaniCore {
 
@@ -28,7 +29,7 @@ public interface InternalAkaniCore extends AkaniCore {
 
     PositionHandler positionHandler();
 
-    LuckPermsHook luckPermsHook();
+    @Nullable LuckPermsHook luckPermsHook();
 
     HomeFactory createHomeFactory();
 

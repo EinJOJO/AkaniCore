@@ -42,7 +42,6 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
         luckPermsHook = new LuckPermsHook(luckperms);
         scoreboardManager = new ScoreboardManager(new DefaultScoreboardProvider(this));
         scoreboardManager.registerProvider(new PlotworldScoreboardProvider(this));
-
     }
 
 
@@ -92,6 +91,7 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
 
     @Override
     public LuckPermsHook luckPermsHook() {
+
         return luckPermsHook;
     }
 

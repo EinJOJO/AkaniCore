@@ -22,10 +22,10 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
     private final LoadingCache<UUID, TagHolder> tagHolderLoadingCache;
     private final Set<TagHolder> dirtyTagHolders = new HashSet<>();
     private final TagStorage tagStorage;
-    private final LuckPermsHook luckPermsHook;
+    private @Nullable LuckPermsHook luckPermsHook;
     private List<Tag> loadedTags;
 
-    public CommonTagManager(TagStorage tagStorage, LuckPermsHook luckPermsHook) {
+    public CommonTagManager(@NotNull TagStorage tagStorage) {
         this.tagStorage = tagStorage;
         this.tagHolderLoadingCache = Caffeine.newBuilder()
                 .expireAfterAccess(Duration.ofMinutes(2))
@@ -38,9 +38,16 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
                     }
                     return tagHolder;
                 });
-        this.luckPermsHook = luckPermsHook;
     }
 
+    @Nullable
+    public LuckPermsHook luckPermsHook() {
+        return luckPermsHook;
+    }
+
+    public void setLuckPermsHook(@Nullable LuckPermsHook luckPermsHook) {
+        this.luckPermsHook = luckPermsHook;
+    }
 
     @Override
     public @NotNull TagHolder tagHolder(UUID uuid) {
@@ -68,6 +75,10 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
 
     @Override
     public void onAddTag(TagHolder tagHolder, Tag added) {
+        if (luckPermsHook == null) {
+            log.warn("TagHolder {} was modified but luckpermsHook has not been set. Thus permission for the added tag was not granted.", tagHolder);
+            return;
+        };
         luckPermsHook.luckPerms().getUserManager().modifyUser(tagHolder.uuid(), user -> {
             if (luckPermsHook.checkPermission(user, added.permission())) return;
             luckPermsHook.addPermission(user, added.permission());

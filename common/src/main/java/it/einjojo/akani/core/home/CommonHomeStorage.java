@@ -34,7 +34,7 @@ public record CommonHomeStorage(String tablePrefix, HikariDataSource dataSource,
         }
     }
 
-    public void seedTables() {
+    public void init() {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS %s (owner VARCHAR(36), name VARCHAR(16), location JSON, PRIMARY KEY (owner, name), CHECK(JSON_VALID(location)))".formatted(tableName()))) {
                 ps.executeUpdate();

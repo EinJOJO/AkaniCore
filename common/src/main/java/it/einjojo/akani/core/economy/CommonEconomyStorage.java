@@ -8,7 +8,7 @@ import java.util.UUID;
 
 //TODO
 public record CommonEconomyStorage(String tableName, HikariDataSource dataSource) {
-    public void seedTables() {
+    public void init() {
         try (var con = dataSource.getConnection()) {
             try (var ps = con.prepareStatement("CREATE TABLE IF NOT EXISTS " + tableName + " (player_uuid VARCHAR(36) PRIMARY KEY, balance BIGINT NOT NULL)")) {
                 ps.setString(1, tableName);
