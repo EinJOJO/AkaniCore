@@ -49,7 +49,7 @@ public class TextUtil {
                 String replacement = AMPERSAND_TO_MINIMESSAGE.get(code);
                 if (replacement != null) {
                     sb.append(replacement);
-                    i++; // Skip the next character
+                    i++;
                     continue;
                 }
             }

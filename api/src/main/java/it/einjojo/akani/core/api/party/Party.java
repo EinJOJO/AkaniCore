@@ -99,7 +99,7 @@ public interface Party {
     /**
      * Invite a player to the party.
      * When a player is invited:
-     * 1. The player should be notified of the invitation.
+     * 1. The player will be notified of the invitation.
      *
      * @param player The player to invite
      */
