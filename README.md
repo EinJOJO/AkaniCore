@@ -33,7 +33,7 @@ repositories {
 
 dependencies {
     // Verfügbare Module: api (paper | velocity nur für ganz wilde sachen)
-    compileOnly("it.einjojo.akani.core:paper:1.5.1")
+    compileOnly("it.einjojo.akani.core:api:1.5.1")
 }
 
 ```
