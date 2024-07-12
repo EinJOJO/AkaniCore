@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 
-version = "1.5.0"
+version = "1.5.1"
 
 allprojects {
     apply(plugin = "java-library")
@@ -24,25 +24,31 @@ allprojects {
         maven("https://libraries.minecraft.net/")
     }
 
-    //publishing {
-    //    repositories {
-    //        maven {
-    //            name = "AkaniDev"
-    //            url = uri("https://repo.akani.dev/releases")
-    //            credentials {
-    //                username = providers.gradleProperty("AKANI_REPO_USER").get()
-    //                password = providers.gradleProperty("AKANI_REPO_PASS").get()
-    //            }
-    //        }
-    //    }
-    //}
+    publishing {
+        repositories {
+            maven {
+                name = "akani-repo"
+                url = uri("https://repo.akani.dev/releases")
+                credentials {
+                    username = providers.gradleProperty("AKANI_REPO_USER").get()
+                    password = providers.gradleProperty("AKANI_REPO_PASS").get()
+                }
+            }
+        }
+    }
 }
 
 tasks {
     jar {
         enabled = false
     }
+    register("print-akani-credentials") {
+        doLast {
+            println("AKANI_REPO_USER: ${providers.gradleProperty("AKANI_REPO_USER").get()}")
+            println("AKANI_REPO_PASS: ${providers.gradleProperty("AKANI_REPO_PASS").get()}")
+        }
 
+    }
 }
 
 
