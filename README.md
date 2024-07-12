@@ -28,7 +28,7 @@ Konkretes Anwendungsbeispiel ist das [Essentials Plugin](https://github.com/EinJ
 #### API Verfügbar machen: `build.gradle.kts`
 ```kotlin
 repositories {
-    maven("https://repo.akani.dev/releases") # Keine Authentifizierung benötigt.
+    maven("https://repo.akani.dev/releases") // Keine Authentifizierung benötigt.
 }
 
 dependencies {
