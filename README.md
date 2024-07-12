@@ -28,12 +28,12 @@ Konkretes Anwendungsbeispiel ist das [Essentials Plugin](https://github.com/EinJ
 #### API Verfügbar machen: `build.gradle.kts`
 ```kotlin
 repositories {
-    maven("https://repo.akani.dev/releases")
+    maven("https://repo.akani.dev/releases") # Keine Authentifizierung benötigt.
 }
 
 dependencies {
-    // Verfügbare Module: paper | velocity | api
-    compileOnly("it.einjojo.akani.core:paper:1.2.0")
+    // Verfügbare Module: api (paper | velocity nur für ganz wilde sachen)
+    compileOnly("it.einjojo.akani.core:paper:1.5.1")
 }
 
 ```
@@ -50,78 +50,6 @@ depend: [ AkaniCore ]
 PaperAkaniCore core = (PaperAkaniCore) AkaniCoreProvider.get(); 
 
 ```
-
-
-
-
-
-### Umgang mit dem Message-System
-
-Ermöglicht übersetzbare Nachrichten an einem Ort zu haben.
-Relevante Klassen sind `MessageProvider`, `AkaniCore`, `MessageManager<PLATFORM_PLAYER>`
-
-Als Plugin kann man eigene Nachrichten hinzufügen:
-```java
-// Optional wenn man sich den Message-Prefix sparen will
-public interface MessageKey {
-    String PREFIX = "essentials.";
-    String GENERIC_ERROR = PREFIX + "generic_error";
-    String SPECIFY_PLAYER = PREFIX + "essentials.specify_player";
-
-    static String of(String key) {
-        return PREFIX + key;
-    }
-}
-
-// 2. Man erstellt einen MessageProvider,
-public class EssentialsMessageProvider implements MessageProvider {
-    @Override
-    public String providerName() {
-        return "Essentials";
-    }
-
-    @Override
-    public boolean shouldInsert(MessageStorage messageStorage) {
-        return true; // Nur für die Entwicklung. 
-        // Es bietet sich an, im Storage zu gucken, ob eine Nachricht bereits existiert, um dann nicht jede einzelene Nachricht in die Datenbank zu jagen. 
-        // Bei DuplicateKey passiert zwar nichts, man kann sich dann aber die Anfrage auch sparen. 
-    }
-
-    @Override
-    public void insertMessages(MessageStorage s) {
-        s.registerMessage("de", MessageKey.GENERIC_ERROR, "%prefix% <red>Ein Fehler ist aufgetreten!");
-        s.registerMessage("de", MessageKey.SPECIFY_PLAYER, "%prefix% <red>Du musst einen Spieler angeben!");
-        s.registerMessage("de", MessageKey.of("teleport.not_self"), "%prefix% <red>Du kannst dich nicht zu dir selbst teleportieren!");
-        s.registerMessage("de", MessageKey.of("teleport.teleporting"), "%prefix% <yellow>Du wirst zu %player% teleportiert!");
-    }
-}
-// 3
-public class PluginMain extends JavaPlugin {
-
-    private PaperAkaniCore core;
-    public void onEnable() {
-        core = (PaperAkaniCore) AkaniCoreProvider.get();
-    }
-
-    public PaperAkaniCore core() {
-        return core;
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        // Sende eine Nachricht beim Joinen. Ersetze aber vorher potentielle Placeholder. 
-        // Es ist auch möglich die PlaceholderAPI dazwischen zu packen.
-        core.messageManager().sendMessage(event.getPlayer(), "pluginname.message.key", (plainMessage) -> {
-            String changed = plainMessage.replaceAll("%player%", "Mit der Nachrichten faxxen machen");
-            changed += "<red>Modifiziert</red>";
-            return changed;
-        });
-    } 
-}
-```
-
-
-
 
 
 
