@@ -14,10 +14,12 @@ import it.einjojo.akani.core.paper.scoreboard.ScoreboardManager;
 import it.einjojo.akani.core.paper.tags.TagHolderLuckPermsNodeChangeListener;
 import it.einjojo.akani.core.paper.vault.VaultCoinsEconomy;
 import it.einjojo.akani.core.tags.CommonTagManager;
+import it.einjojo.akani.util.commands.BukkitMessageFormatter;
 import it.einjojo.akani.util.commands.PaperCommandManager;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
@@ -82,8 +84,19 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
 
     private void loadCommands() {
         PaperCommandManager commandManager = new PaperCommandManager(this);
+        commandManager.setDefaultExceptionHandler((command, registeredCommand, sender, args, t) -> {
+            CommandSender commandSender = (CommandSender) sender;
+            if (t instanceof IllegalArgumentException) {
+                commandSender.sendMessage(paperAkaniCore().miniMessage().deserialize("<red>Ungültige Argumente: <gray>" + t.getMessage()));
+                return true;
+            }
+            commandSender.sendMessage(paperAkaniCore().miniMessage().deserialize("<red>Ein Fehler ist aufgetreten."));
+            getSLF4JLogger().error("Error while executing command: {}", command, t);
+            return false;
+        }, false);
         new TagsCommand(commandManager, paperAkaniCore().tagManager(), paperAkaniCore.miniMessage());
     }
+
 
     private void loadListeners(@NotNull LuckPerms luckPerms) {
         new BackListener(this);

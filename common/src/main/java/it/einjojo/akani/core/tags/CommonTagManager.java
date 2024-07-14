@@ -102,6 +102,12 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
     }
 
     @Override
+    public void addAvailableTag(Tag tag) {
+        tagStorage.saveTag(tag);
+        availableTags().add(tag);
+    }
+
+    @Override
     public @Nullable Tag tagById(String id) {
         return tagByFirstMatchPredicate((tag) -> tag.id().equalsIgnoreCase(id));
     }

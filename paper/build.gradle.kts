@@ -39,6 +39,7 @@ tasks {
         minecraftVersion("1.20.4")
     }
 
+
     processResources {
         filesMatching("plugin.yml") {
             expand(

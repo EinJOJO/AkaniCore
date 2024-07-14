@@ -15,8 +15,16 @@ public class CommonTagFactory {
         this.miniMessage = miniMessage;
     }
 
+    /**
+     * @param id
+     * @param displayNameMiniMessage
+     * @param rarity
+     * @param lore
+     * @throws IllegalArgumentException if the id is invalid
+     * @return
+     */
     public CommonTag createTag(String id, String displayNameMiniMessage, TagRarity rarity, String lore) {
-        if (ID_PATTERN.matcher(id).matches()) {
+        if (!ID_PATTERN.matcher(id).matches()) {
             throw new IllegalArgumentException("Invalid tag id: " + id);
         }
         return new CommonTag(id, displayNameMiniMessage, miniMessage.deserialize(displayNameMiniMessage), rarity, createPermission(id), lore);
