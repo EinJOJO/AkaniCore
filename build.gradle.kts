@@ -30,12 +30,8 @@ allprojects {
                 name = "akani-repo"
                 url = uri("https://repo.akani.dev/releases")
                 credentials {
-                    username = providers.gradleProperty("AKANI_REPO_USER")
-                        .orElse(providers.environmentVariable("AKANI_REPO_USER"))
-                        .get()
-                    password = providers.gradleProperty("AKANI_REPO_PASS")
-                        .orElse(providers.environmentVariable("AKANI_REPO_PASS"))
-                        .get()
+                    username = findProperty("AKANI_REPO_USER") as String? ?: System.getenv("AKANI_REPO_USER")
+                    password = findProperty("AKANI_REPO_PASS") as String? ?: System.getenv("AKANI_REPO_PASS")
                 }
             }
         }

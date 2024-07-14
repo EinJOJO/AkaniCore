@@ -36,7 +36,7 @@ jobs:
         run: ./gradlew test
 
       - name: Publish to Akani Repository
-        run: ./gradlew publish
+        run: ./gradlew publish -PAKANI_REPO_USER=${{ secrets.AKANI_REPO_USER }} -PAKANI_REPO_PASS=${{ secrets.AKANI_REPO_PASS }}
         env:
           AKANI_REPO_USER: ${{ secrets.AKANI_REPO_USER }}
           AKANI_REPO_PASS: ${{ secrets.AKANI_REPO_PASS }}
