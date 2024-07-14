@@ -138,9 +138,7 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     }
 
 
-    public PermissionCheckHandler createPermissionCheckHandler() {
-        return new LuckPermsPermissionCheckHandler(LuckPermsProvider.get());
-    }
+    public abstract PermissionCheckHandler createPermissionCheckHandler();
 
 
     @Override

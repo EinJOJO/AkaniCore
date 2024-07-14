@@ -31,4 +31,7 @@ public interface TagManager {
 
     @Nullable
     Tag tagById(String id);
+
+    void addAvailableTag(Tag tag);
+
 }

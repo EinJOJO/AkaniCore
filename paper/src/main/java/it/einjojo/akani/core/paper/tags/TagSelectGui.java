@@ -38,6 +38,9 @@ public class TagSelectGui extends Gui {
     public void onOpen(InventoryOpenEvent event) {
         paginationManager.getItems().clear();
         for (Tag tag : tagManager.availableTags()) {
+            if (!player.hasPermission(tag.permission())) {
+                return;
+            }
             Icon icon = new Icon(Material.NAME_TAG).toComp()
                     .setName(tag.displayText())
                     .setLore(List.of(

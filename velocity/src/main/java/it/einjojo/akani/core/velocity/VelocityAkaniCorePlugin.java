@@ -13,6 +13,7 @@ import it.einjojo.akani.core.util.LuckPermsHook;
 import it.einjojo.akani.core.velocity.player.PlayerListener;
 import jakarta.inject.Inject;
 import net.luckperms.api.LuckPermsProvider;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -32,13 +33,13 @@ public class VelocityAkaniCorePlugin {
 
     private final ProxyServer proxyServer;
     private final Logger logger;
+    private @Nullable YamlConfigFile config = null;
     private VelocityAkaniCore core;
 
     @Inject
     public VelocityAkaniCorePlugin(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory) {
         this.proxyServer = proxyServer;
         this.logger = logger;
-        YamlConfigFile config = null;
         try {
             config = new YamlConfigFile(dataDirectory.resolve("config.yml"));
         } catch (IOException e) {
@@ -46,21 +47,24 @@ public class VelocityAkaniCorePlugin {
             logger.severe(e.getMessage());
             return;
         }
-        try {
-            core = new VelocityAkaniCore(this, logger, config);
-            AkaniCoreProvider.register(core);
-        } catch (Exception e) {
-            logger.severe("Failed to construct AkaniCoreVelocity: Reason: " + e.getMessage());
-        }
+
     }
 
 
     @Subscribe
     public void onEnable(ProxyInitializeEvent event) {
-        if (core == null) return;
+        if (config == null) {
+            return;
+        }
+        try {
+            core = new VelocityAkaniCore(this, logger, config, LuckPermsProvider.get());
+            AkaniCoreProvider.register(core);
+        } catch (Exception e) {
+            logger.severe("Failed to construct AkaniCoreVelocity: Reason: " + e.getMessage());
+            return;
+        }
         logger.info("AkaniCoreVelocity is now loading!");
         try {
-            core.setLuckPermsHook(new LuckPermsHook(LuckPermsProvider.get()));
             core.load();
             logger.info("AkaniCoreVelocity loaded!");
             core.delayedMessageReload();

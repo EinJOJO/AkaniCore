@@ -6,6 +6,8 @@ import it.einjojo.akani.core.AbstractAkaniCore;
 import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.message.Language;
 import it.einjojo.akani.core.config.YamlConfigFile;
+import it.einjojo.akani.core.handler.permission.LuckPermsPermissionCheckHandler;
+import it.einjojo.akani.core.handler.permission.PermissionCheckHandler;
 import it.einjojo.akani.core.home.HomeFactory;
 import it.einjojo.akani.core.util.LuckPermsHook;
 import it.einjojo.akani.core.velocity.handler.VelocityChatHandler;
@@ -13,6 +15,7 @@ import it.einjojo.akani.core.velocity.handler.VelocityCommandHandler;
 import it.einjojo.akani.core.velocity.handler.VelocityPositionHandler;
 import it.einjojo.akani.core.velocity.home.VelocityHomeFactory;
 import it.einjojo.akani.core.velocity.player.VelocityPlayerFactory;
+import net.luckperms.api.LuckPerms;
 
 import java.time.Duration;
 import java.util.logging.Logger;
@@ -25,13 +28,13 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
     private final VelocityPositionHandler positionHandler;
     private final VelocityMessageManager germanMessageManager;
     private final VelocityMessageManager englishMessageManager;
-    private LuckPermsHook luckPermsHook;
+    private final LuckPermsHook luckPermsHook;
     private ScheduledTask messageReloadTask;
 
     /**
      * Called on the plugin's onEnable
      */
-    protected VelocityAkaniCore(VelocityAkaniCorePlugin plugin, Logger pluginLogger, YamlConfigFile configFile) {
+    protected VelocityAkaniCore(VelocityAkaniCorePlugin plugin, Logger pluginLogger, YamlConfigFile configFile, LuckPerms luckPerms) {
         super(pluginLogger, configFile.redisCredentials(), configFile.mariaDBConfig());
         this.plugin = plugin;
         this.playerFactory = new VelocityPlayerFactory(this, null);
@@ -40,6 +43,7 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
         this.positionHandler = new VelocityPositionHandler(brokerService(), gson());
         this.germanMessageManager = new VelocityMessageManager(Language.GERMAN, miniMessage(), messageStorage());
         this.englishMessageManager = new VelocityMessageManager(Language.ENGLISH, miniMessage(), messageStorage());
+        this.luckPermsHook = new LuckPermsHook(luckPerms);
     }
 
     @Override
@@ -47,8 +51,12 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
         return luckPermsHook;
     }
 
-    public void setLuckPermsHook(LuckPermsHook luckPermsHook) {
-        this.luckPermsHook = luckPermsHook;
+    @Override
+    public PermissionCheckHandler createPermissionCheckHandler() {
+        if (luckPermsHook == null) {
+            throw new IllegalStateException("LuckPermsHook is not available.");
+        }
+        return new LuckPermsPermissionCheckHandler(luckPermsHook.luckPerms());
     }
 
     public ScheduledTask messageReloadTask() {
