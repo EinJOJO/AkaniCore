@@ -86,6 +86,9 @@ public class TagSelectGui extends Gui {
             paginationManager.addItem(icon);
         }
         paginationManager.update();
+        if (paginationManager.getItems().isEmpty()) {
+            addItem(9 * 2 + 4, new Icon(Material.BARRIER).setName("§cDu besitzt keine Tags"));
+        }
     }
 
     private void onSelectTag(InventoryClickEvent event, Tag tag) {
