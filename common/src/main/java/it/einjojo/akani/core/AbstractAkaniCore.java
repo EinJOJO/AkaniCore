@@ -46,6 +46,7 @@ import it.einjojo.akani.core.util.HikariDataSourceProxyImpl;
 import it.einjojo.akani.core.util.HikariFactory;
 import it.einjojo.akani.core.util.JedisPoolFactory;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import redis.clients.jedis.JedisPool;
 
@@ -138,7 +139,10 @@ public abstract class AbstractAkaniCore implements InternalAkaniCore {
     }
 
 
-    public abstract PermissionCheckHandler createPermissionCheckHandler();
+    public PermissionCheckHandler createPermissionCheckHandler() {
+        LuckPerms luckPerms = LuckPermsProvider.get();
+        return new LuckPermsPermissionCheckHandler(luckPerms);
+    }
 
 
     @Override

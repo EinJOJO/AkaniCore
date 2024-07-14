@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 
-version = "1.5.1"
+version = "1.5.3"
 
 allprojects {
     apply(plugin = "java-library")
@@ -68,6 +68,8 @@ subprojects {
         // options
         options.encoding = "UTF-8"
         options.isIncremental = true
+        options.compilerArgs.add("-parameters")
+
     }
 
 

@@ -16,6 +16,7 @@ import it.einjojo.akani.core.velocity.handler.VelocityPositionHandler;
 import it.einjojo.akani.core.velocity.home.VelocityHomeFactory;
 import it.einjojo.akani.core.velocity.player.VelocityPlayerFactory;
 import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 
 import java.time.Duration;
 import java.util.logging.Logger;
@@ -51,13 +52,7 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
         return luckPermsHook;
     }
 
-    @Override
-    public PermissionCheckHandler createPermissionCheckHandler() {
-        if (luckPermsHook == null) {
-            throw new IllegalStateException("LuckPermsHook is not available.");
-        }
-        return new LuckPermsPermissionCheckHandler(luckPermsHook.luckPerms());
-    }
+
 
     public ScheduledTask messageReloadTask() {
         return messageReloadTask;
