@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 
-version = "1.5.3"
+version = "1.5.3-SNAPSHOT"
 
 allprojects {
     apply(plugin = "java-library")
