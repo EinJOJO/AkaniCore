@@ -26,17 +26,42 @@ public class TagSelectGui extends Gui {
     private final TagManager tagManager;
     private final PaginationManager paginationManager;
     private final TagHolder tagHolder;
+
     public TagSelectGui(@NotNull Player player, TagManager tagManager) {
         super(player, "tags_select", TITLE, 6);
         this.tagManager = tagManager;
         this.paginationManager = new PaginationManager(this);
+        paginationManager.registerPageSlotsBetween(0, 9 * 5 - 1);
         this.tagHolder = tagManager.tagHolder(player.getUniqueId());
 
+    }
+
+    private void addPageSwitchItems() {
+        Icon previousPage = new Icon(Material.ARROW).onClick((event) -> {
+            if (paginationManager.isFirstPage()) {
+                return;
+            }
+            paginationManager.setPage(paginationManager.getCurrentPage() - 1);
+            paginationManager.update();
+            addPageSwitchItems();
+        }).setName((paginationManager.isFirstPage() ? "§7" : "§a") + "Vorherige Seite");;
+
+        Icon nextPage = new Icon(Material.ARROW).onClick((event) -> {
+            if (paginationManager.isLastPage()) {
+                return;
+            }
+            paginationManager.setPage(paginationManager.getCurrentPage() + 1);
+            paginationManager.update();
+            addPageSwitchItems();
+        }).setName((paginationManager.isLastPage() ? "§7" : "§a") + "Nächste Seite");
+        addItem(45, previousPage);
+        addItem(53, nextPage);
     }
 
     @Override
     public void onOpen(InventoryOpenEvent event) {
         paginationManager.getItems().clear();
+        addPageSwitchItems();
         for (Tag tag : tagManager.availableTags()) {
             if (!player.hasPermission(tag.permission())) {
                 return;
@@ -60,18 +85,19 @@ public class TagSelectGui extends Gui {
             }
             paginationManager.addItem(icon);
         }
+        paginationManager.update();
     }
 
     private void onSelectTag(InventoryClickEvent event, Tag tag) {
-        open();
         tagHolder.setSelectedTag(tag);
         player.playSound(player, Sound.UI_BUTTON_CLICK, 1, 1.2f);
+        open();
     }
 
     @Override
     public void onClose(InventoryCloseEvent event) {
         super.onClose(event);
-        player.sendMessage(event.getReason().name()); //TODO
+        player.sendMessage(event.getReason().name()); //TODO remove debug
         if (event.getReason().equals(InventoryCloseEvent.Reason.OPEN_NEW)) {
             return;
         }
