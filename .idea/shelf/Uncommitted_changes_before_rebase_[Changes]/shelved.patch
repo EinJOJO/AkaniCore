@@ -1,0 +1,64 @@
+Index: api/src/main/java/it/einjojo/akani/core/api/network/Group.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.einjojo.akani.core.api.network;\n\nimport java.util.List;\nimport java.util.Set;\n\npublic interface Group {\n    String name();\n    Set<String> serverNames();\n\n    void runCommand(String command);\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/api/src/main/java/it/einjojo/akani/core/api/network/Group.java b/api/src/main/java/it/einjojo/akani/core/api/network/Group.java
+--- a/api/src/main/java/it/einjojo/akani/core/api/network/Group.java	(revision 03951581c547f56bd9a62e0ec9184078c4e416bb)
++++ b/api/src/main/java/it/einjojo/akani/core/api/network/Group.java	(date 1721460628427)
+@@ -1,12 +1,25 @@
+ package it.einjojo.akani.core.api.network;
+ 
++import net.kyori.adventure.text.Component;
++
+ import java.util.List;
+ import java.util.Set;
+ 
+ public interface Group {
+     String name();
++
+     Set<String> serverNames();
+ 
++    /**
++     * Sends a message to all players on the group
++     *
++     * @param message the message to send
++     */
++    void broadcast(Component message);
++
++
++
++
+     void runCommand(String command);
+ 
+ }
+Index: api/src/main/java/it/einjojo/akani/core/api/AkaniCore.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.einjojo.akani.core.api;\n\nimport com.zaxxer.hikari.HikariDataSource;\nimport it.einjojo.akani.core.api.economy.EconomyManager;\nimport it.einjojo.akani.core.api.home.HomeManager;\nimport it.einjojo.akani.core.api.message.Language;\nimport it.einjojo.akani.core.api.message.MessageManager;\nimport it.einjojo.akani.core.api.message.MessageProvider;\nimport it.einjojo.akani.core.api.messaging.BrokerService;\nimport it.einjojo.akani.core.api.network.NetworkManager;\nimport it.einjojo.akani.core.api.network.Server;\nimport it.einjojo.akani.core.api.player.AkaniPlayerManager;\nimport it.einjojo.akani.core.api.player.playtime.PlaytimeManager;\nimport it.einjojo.akani.core.api.service.BackService;\nimport it.einjojo.akani.core.api.tags.TagManager;\nimport it.einjojo.akani.core.api.util.HikariDataSourceProxy;\nimport org.jetbrains.annotations.ApiStatus;\nimport redis.clients.jedis.JedisPool;\n\nimport java.util.logging.Logger;\n\n/**\n * Main interface for AkaniCore\n */\npublic interface AkaniCore {\n    /**\n     * @return JedisPool instance\n     */\n    JedisPool jedisPool();\n\n    /**\n     * @return HikariDataSource instance\n     */\n    HikariDataSource dataSource();\n\n    /**\n     * @return HikariDataSourceProxy instance\n     */\n    HikariDataSourceProxy dataSourceProxy();\n\n    BrokerService brokerService();\n\n    /**\n     * @return Main Currency Manager\n     */\n    EconomyManager coinsManager();\n\n    /**\n     * @return Premium Currency Manager (Rubin)\n     * Use {@link #rubinManager()} instead\n     */\n    @Deprecated\n    EconomyManager thalerManager();\n\n    /**\n     * @return Premium Currency Manager (Rubin)\n     */\n    EconomyManager rubinManager();\n\n    /**\n     * @return default german message manager instance\n     */\n    default MessageManager<?> messageManager() {\n        return messageManager(Language.GERMAN);\n    }\n\n    MessageManager<?> messageManager(Language language);\n\n    /**\n     * Register a new MessageProvider to the core to extend the message system\n     *\n     * @param messageProvider the provider to register\n     */\n    void registerMessageProvider(MessageProvider messageProvider);\n\n    /**\n     * @return Playtime Manager\n     */\n    PlaytimeManager playtimeManager();\n\n    /**\n     * @return Player Manager\n     */\n    AkaniPlayerManager playerManager();\n\n\n    /**\n     * Provides methods to interact with the back location system\n     *\n     * @return BackService instance\n     */\n    BackService backService();\n\n    HomeManager homeManager();\n\n    /**\n     * @return Network Manager\n     */\n    NetworkManager networkManager();\n\n    default String serverName() {\n        return server().name();\n    }\n\n    default String groupName() {\n        return server().groupName();\n    }\n\n    Server server();\n\n    @ApiStatus.Internal\n    Logger logger();\n\n\n    TagManager tagManager();\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/api/src/main/java/it/einjojo/akani/core/api/AkaniCore.java b/api/src/main/java/it/einjojo/akani/core/api/AkaniCore.java
+--- a/api/src/main/java/it/einjojo/akani/core/api/AkaniCore.java	(revision 03951581c547f56bd9a62e0ec9184078c4e416bb)
++++ b/api/src/main/java/it/einjojo/akani/core/api/AkaniCore.java	(date 1721460483748)
+@@ -17,6 +17,7 @@
+ import org.jetbrains.annotations.ApiStatus;
+ import redis.clients.jedis.JedisPool;
+ 
++import java.awt.*;
+ import java.util.logging.Logger;
+ 
+ /**
+@@ -111,6 +112,9 @@
+     @ApiStatus.Internal
+     Logger logger();
+ 
++    void broadcast(Component message);
++
++    void broadcast(String miniMessage);
+ 
+     TagManager tagManager();
+ 
