@@ -66,7 +66,7 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
     @Override
     public void onSelectTag(TagHolder tagHolder, Tag tag) {
         dirtyTagHolders.add(tagHolder);
-        log.debug("Tag holder {} has selected tag {}", tagHolder.uuid(), tag.id());
+        log.debug("Tag holder {} has selected tag {}", tagHolder.uuid(), tag == null ? "null" : tag.id());
     }
 
     public Set<TagHolder> dirtyTagHolders() {
@@ -78,7 +78,8 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
         if (luckPermsHook == null) {
             log.warn("TagHolder {} was modified but luckpermsHook has not been set. Thus permission for the added tag was not granted.", tagHolder);
             return;
-        };
+        }
+        ;
         luckPermsHook.luckPerms().getUserManager().modifyUser(tagHolder.uuid(), user -> {
             if (luckPermsHook.checkPermission(user, added.permission())) return;
             luckPermsHook.addPermission(user, added.permission());
@@ -111,8 +112,6 @@ public class CommonTagManager implements TagManager, CommonTagHolderObserver {
     public @Nullable Tag tagById(String id) {
         return tagByFirstMatchPredicate((tag) -> tag.id().equalsIgnoreCase(id));
     }
-
-
 
 
     public @Nullable Tag tagByFirstMatchPredicate(Predicate<Tag> predicate) {
