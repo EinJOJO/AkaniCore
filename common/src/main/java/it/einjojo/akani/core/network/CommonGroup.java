@@ -3,6 +3,7 @@ package it.einjojo.akani.core.network;
 import com.google.common.collect.ImmutableSet;
 import it.einjojo.akani.core.InternalAkaniCore;
 import it.einjojo.akani.core.api.network.Group;
+import net.kyori.adventure.text.Component;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +16,12 @@ public class CommonGroup implements Group {
     public CommonGroup(String name, InternalAkaniCore core) {
         this.name = name;
         this.core = core;
+    }
+
+
+    @Override
+    public void broadcast(Component message) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
