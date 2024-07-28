@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.runpaper)
 }
 
+
+
 dependencies {
     compileOnly(libs.paper)
     compileOnly(libs.luckperms)
@@ -14,8 +16,7 @@ dependencies {
     compileOnly(libs.akaniutils)
     implementation(libs.fastboard)
     compileOnly(libs.placeholderapi)
-
-
+    compileOnly(libs.viaversion)
 }
 tasks {
     build {

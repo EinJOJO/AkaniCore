@@ -1,5 +1,7 @@
 package it.einjojo.akani.core.paper;
 
+import com.viaversion.viaversion.api.Via;
+import com.viaversion.viaversion.api.ViaAPI;
 import com.zaxxer.hikari.HikariDataSource;
 import it.einjojo.akani.core.api.AkaniCore;
 import it.einjojo.akani.core.api.AkaniCoreProvider;
@@ -9,6 +11,7 @@ import it.einjojo.akani.core.paper.command.TagsCommand;
 import it.einjojo.akani.core.paper.listener.BackListener;
 import it.einjojo.akani.core.paper.listener.ConnectionListener;
 import it.einjojo.akani.core.paper.listener.ScoreboardListener;
+import it.einjojo.akani.core.paper.player.ClientVersionChecker;
 import it.einjojo.akani.core.paper.scoreboard.AsyncScoreboardUpdateTask;
 import it.einjojo.akani.core.paper.scoreboard.ScoreboardManager;
 import it.einjojo.akani.core.paper.tags.TagHolderLuckPermsNodeChangeListener;
@@ -70,6 +73,7 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         AkaniCoreProvider.register(paperAkaniCore);
         paperAkaniCore.load();
         paperAkaniCore.delayedMessageReload();
+
         new AsyncScoreboardUpdateTask(paperAkaniCore.scoreboardManager()).start(this);
         loadCommands();
         loadListeners(lpProvider.getProvider());
@@ -80,6 +84,7 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
         servicesManager.register(HikariDataSource.class, paperAkaniCore.dataSource(), this, ServicePriority.Normal);
         getSLF4JLogger().info("Registerd {} in services manager", HikariDataSource.class.getName());
         setupVault();
+        setupVersionChecker();
     }
 
     private void loadCommands() {
@@ -125,5 +130,14 @@ public class PaperAkaniCorePlugin extends JavaPlugin {
     private void setupVault() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) return;
         getServer().getServicesManager().register(Economy.class, new VaultCoinsEconomy(paperAkaniCore), this, ServicePriority.Normal);
+    }
+
+    private void setupVersionChecker() {
+        try {
+
+            new ClientVersionChecker(this, Via.getAPI());
+        } catch (NoClassDefFoundError e) {
+            getLogger().warning("ViaVersion not found. Skipping version checker.");
+        }
     }
 }

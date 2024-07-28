@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 
-version = "1.5.6"
+version = "1.5.7"
 
 allprojects {
     apply(plugin = "java-library")
@@ -22,6 +22,7 @@ allprojects {
         maven("https://repo.codemc.io/repository/maven-releases/")
         maven("https://mvn.lumine.io/repository/maven-public/")
         maven("https://libraries.minecraft.net/")
+        maven("https://repo.viaversion.com")
     }
 
     publishing {
