@@ -15,6 +15,7 @@ import it.einjojo.akani.core.velocity.handler.VelocityCommandHandler;
 import it.einjojo.akani.core.velocity.handler.VelocityPositionHandler;
 import it.einjojo.akani.core.velocity.home.VelocityHomeFactory;
 import it.einjojo.akani.core.velocity.player.VelocityPlayerFactory;
+import net.kyori.adventure.text.Component;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 
@@ -53,6 +54,15 @@ public class VelocityAkaniCore extends AbstractAkaniCore implements AkaniCore {
     }
 
 
+    @Override
+    public void broadcast(Component message) {
+        proxyServer().sendMessage(message);
+    }
+
+    @Override
+    public void broadcast(String miniMessage) {
+        broadcast(miniMessage().deserialize(miniMessage));
+    }
 
     public ScheduledTask messageReloadTask() {
         return messageReloadTask;

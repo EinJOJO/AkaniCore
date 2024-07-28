@@ -137,9 +137,7 @@ public class CommonTagsStorage implements TagStorage {
                 throw new StorageException("save tag", tag.id(), "prepared statement", e);
             }
         })) {
-            if (!rs.next()) {
-                throw new StorageException("save tag", tag.id(), "no rows affected", null);
-            }
+            log.debug(rs.toString());
         } catch (SQLException ex) {
             throw new StorageException("save tag", tag.id(), null, ex);
         }
@@ -222,9 +220,7 @@ public class CommonTagsStorage implements TagStorage {
                 throw new StorageException("save tag holder", tagHolder.uuid().toString(), "prepared statement", e);
             }
         })) {
-            if (!rs.next()) {
-                throw new StorageException("save tag holder", tagHolder.uuid().toString(), "no rows affected", null);
-            }
+            log.debug(rs.toString());
         } catch (SQLException ex) {
             throw new StorageException("save tag holder", tagHolder.uuid().toString(), null, ex);
         }
