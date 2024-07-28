@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class TagSelectGui extends Gui {
     private static final String TITLE = "§cWähle einen Tag aus";
@@ -44,7 +45,8 @@ public class TagSelectGui extends Gui {
             paginationManager.setPage(paginationManager.getCurrentPage() - 1);
             paginationManager.update();
             addPageSwitchItems();
-        }).setName((paginationManager.isFirstPage() ? "§7" : "§a") + "Vorherige Seite");;
+        }).setName((paginationManager.isFirstPage() ? "§7" : "§a") + "Vorherige Seite");
+        ;
 
         Icon nextPage = new Icon(Material.ARROW).onClick((event) -> {
             if (paginationManager.isLastPage()) {
@@ -74,14 +76,12 @@ public class TagSelectGui extends Gui {
                             Component.empty(),
                             Component.text("Auswählen", NamedTextColor.GREEN)
                     ))
-                    .toIcon();
+                    .toIcon().onClick((clickEvent -> {
+                        onSelectTag(clickEvent, tag);
+                    }));
             if (tag.equals(tagHolder.selectedTag())) {
                 icon.enchant(Enchantment.ARROW_DAMAGE);
                 icon.hideFlags(ItemFlag.HIDE_ENCHANTS);
-            } else {
-                icon.onClick((clickEvent -> {
-                    onSelectTag(clickEvent, tag);
-                }));
             }
             paginationManager.addItem(icon);
         }
@@ -92,7 +92,11 @@ public class TagSelectGui extends Gui {
     }
 
     private void onSelectTag(InventoryClickEvent event, Tag tag) {
-        tagHolder.setSelectedTag(tag);
+        if (Objects.equals(tagHolder.selectedTag(), tag)) {
+            tagHolder.setSelectedTag(null);
+        } else {
+            tagHolder.setSelectedTag(tag);
+        }
         player.playSound(player, Sound.UI_BUTTON_CLICK, 1, 1.2f);
         open();
     }
@@ -100,11 +104,9 @@ public class TagSelectGui extends Gui {
     @Override
     public void onClose(InventoryCloseEvent event) {
         super.onClose(event);
-        player.sendMessage(event.getReason().name()); //TODO remove debug
-        if (event.getReason().equals(InventoryCloseEvent.Reason.OPEN_NEW)) {
-            return;
+        if (event.getReason().equals(InventoryCloseEvent.Reason.PLAYER)) {
+            tagManager.updateTagHolder(player.getUniqueId(), tagHolder);
         }
-        tagManager.updateTagHolder(player.getUniqueId(), tagHolder);
 
     }
 }

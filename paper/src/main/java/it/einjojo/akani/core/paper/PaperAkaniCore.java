@@ -14,9 +14,13 @@ import it.einjojo.akani.core.paper.scoreboard.ScoreboardManager;
 import it.einjojo.akani.core.paper.scoreboard.defaults.DefaultScoreboardProvider;
 import it.einjojo.akani.core.paper.scoreboard.defaults.PlotworldScoreboardProvider;
 import it.einjojo.akani.core.util.LuckPermsHook;
+import net.kyori.adventure.text.Component;
 import net.luckperms.api.LuckPerms;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.awt.*;
 
 public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
     private final JavaPlugin plugin;
@@ -45,8 +49,6 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
     }
 
 
-
-
     public ScoreboardManager scoreboardManager() {
         return scoreboardManager;
     }
@@ -58,6 +60,16 @@ public class PaperAkaniCore extends AbstractAkaniCore implements AkaniCore {
     @Override
     public PaperMessageManager messageManager() {
         return germanMessageManager;
+    }
+
+    @Override
+    public void broadcast(Component message) {
+        Bukkit.broadcast(message);
+    }
+
+    @Override
+    public void broadcast(String miniMessage) {
+        Bukkit.broadcast(miniMessage().deserialize(miniMessage));
     }
 
     @Override
