@@ -47,9 +47,9 @@ public class ClientVersionChecker implements Listener {
 
     public void sendUnsupportedClientMessage(Player player) {
         Title title = Title.title(
-                Component.text("Deine Version wird nicht vollständig untertüzt!", NamedTextColor.RED).decorate(TextDecoration.BOLD),
+                Component.text("Inkompatible Version!", NamedTextColor.RED).decorate(TextDecoration.BOLD),
                 Component.text("Wir empfehlen die ", NamedTextColor.GRAY).append(Component.text("1.20.4", NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)),
-                Title.Times.times(Duration.ofMillis(10), Duration.ofSeconds(2), Duration.ofMillis(10))
+                Title.Times.times(Duration.ofMillis(10), Duration.ofSeconds(5), Duration.ofMillis(10))
         );
         player.showTitle(title);
         player.sendMessage(Component.text("Deine Version wird nicht vollständig untertüzt!", NamedTextColor.RED).decorate(TextDecoration.BOLD));
