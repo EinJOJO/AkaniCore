@@ -20,4 +20,13 @@ public record CommonTag(
         TagRarity rarity,
         String permission,
         String lore
-) implements Tag {}
+) implements Tag {
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        CommonTag commonTag = (CommonTag) obj;
+        return id.equals(commonTag.id);
+    }
+}
