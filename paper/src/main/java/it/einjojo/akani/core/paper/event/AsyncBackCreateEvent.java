@@ -7,6 +7,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Event called when player dies and a back location is about to be created.
+ */
 public class AsyncBackCreateEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player player;

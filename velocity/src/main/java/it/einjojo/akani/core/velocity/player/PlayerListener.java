@@ -26,6 +26,7 @@ public class PlayerListener {
 
     @Subscribe
     public void playerJoin(PostLoginEvent event) {
+
         executor.execute(() -> {
             var player = event.getPlayer();
             var playerUuid = player.getUniqueId();
@@ -47,8 +48,8 @@ public class PlayerListener {
                 corePlugin.logger().info("Creating coins economy for " + player.getUsername());
                 corePlugin.core().coinsStorage().createEconomy(playerUuid);
             }
-            var optionalThaler = corePlugin.core().thalerEconomyManager().playerEconomy(playerUuid);
-            if (optionalThaler.isEmpty()) {
+            var optionalRubin = corePlugin.core().rubinManager().playerEconomy(playerUuid);
+            if (optionalRubin.isEmpty()) {
                 corePlugin.logger().info("Creating thaler economy for " + player.getUsername());
                 corePlugin.core().thalerStorage().createEconomy(playerUuid);
             }
@@ -61,6 +62,7 @@ public class PlayerListener {
         var player = event.getPlayer();
         UUID playerUuid = player.getUniqueId();
         var serverName = event.getServer().getServerInfo().getName();
+        if (serverName == null) return;
         var akaniPlayer = corePlugin.core().playerFactory().player(playerUuid, player.getUsername(), serverName);
         playerManager().updateOnlinePlayer(akaniPlayer);
 
@@ -71,9 +73,10 @@ public class PlayerListener {
         executor.execute(() -> {
             var player = event.getPlayer();
             playerManager().removeOnlinePlayer(player.getUniqueId());
-
             //update playtime
             CommonPlaytimeHolder pt = (CommonPlaytimeHolder) corePlugin.core().playtimeManager().playtimeHolder(player.getUniqueId());
+            Instant lastJoin = pt.lastJoin();
+            if (lastJoin == null) return;
             Duration duration = Duration.between(pt.lastJoin(), Instant.now());
             pt.playtimeMillis(pt.playtimeMillis() + duration.toMillis());
             corePlugin.core().playtimeManager().updatePlaytime(pt);

@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -45,18 +46,18 @@ public class PaperPositionHandler extends AbstractPositionHandler implements Lis
         if (bukkitPlayer != null) {
             return AkaniBukkitAdapter.networkLocation(bukkitPlayer.getLocation()).type(NetworkLocation.Type.SERVER).referenceName(brokerService().brokerName()).build();
         }
-        throw new IllegalArgumentException("Player with UUID " + uuid + " not found.");
+        throw new IllegalArgumentException("Position locally failed player not found.");
     }
 
     @Override
-    public void teleportLocally(UUID player, NetworkLocation location) {
+    public void teleportLocally(@NotNull UUID player, @NotNull NetworkLocation location) {
         logger().debug("Teleporting player {} locally to {}", player, location);
         Bukkit.getScheduler().runTask(plugin, () -> {
             var bukkitPlayer = Bukkit.getPlayer(player);
             if (bukkitPlayer != null) {
                 bukkitPlayer.teleportAsync(AkaniBukkitAdapter.bukkitLocation(location));
             } else {
-                throw new IllegalArgumentException("Player with UUID " + player + " not found.");
+                throw new IllegalArgumentException("Teleport locally failed player not found.");
             }
         });
     }

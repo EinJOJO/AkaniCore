@@ -10,7 +10,7 @@ vcloudnet = "4.0.0-RC10"
 vluckperms = "5.4"
 akaniutils = "1.0.3"
 acf = "0.5.1-SNAPSHOT"
-
+viaversion = "5.0.1"
 
 
 # Libraries
@@ -32,6 +32,7 @@ vdialog-api = "1.2" #https://repo.wandoria.net/#/snapshots/net/wandoria/api/Dial
 [libraries]
 akaniutils = { group = "com.github.KalypzoSolutions", name = "AkaniUtils", version.ref = "akaniutils" }
 fawe = { group = "com.intellectualsites.bom", name = "bom-newest", version.ref = "vfawe-bom" }
+viaversion = { group = "com.viaversion", name = "viaversion-api", version.ref = "viaversion" }
 paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "vpaper-api" }
 acf = { group = "co.aikar", name = "acf-paper", version.ref = "acf" }
 litecommands = { group = "dev.rollczi", name = "litecommands-bukkit", version.ref = "vlitecommands" }

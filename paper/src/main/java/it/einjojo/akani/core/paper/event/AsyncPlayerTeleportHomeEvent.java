@@ -10,7 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-
+/**
+ * Event called when a player is about to teleport to a home.
+ */
 public class AsyncPlayerTeleportHomeEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Home home;
